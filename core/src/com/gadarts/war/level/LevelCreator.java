@@ -14,10 +14,11 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
 import com.badlogic.gdx.physics.bullet.collision.btBroadphaseProxy;
+import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.gadarts.shared.LevelModeler;
 import com.gadarts.shared.SharedC;
@@ -34,6 +35,7 @@ import com.gadarts.war.systems.physics.PhysicsSystem;
 public class LevelCreator extends LevelModeler {
     private static Vector3 auxVector31 = new Vector3();
     private static Vector3 auxVector32 = new Vector3();
+    private static Matrix4 auxMatrix = new Matrix4();
 
     private final PooledEngine engine;
 
@@ -81,7 +83,14 @@ public class LevelCreator extends LevelModeler {
         PhysicsComponent physicsComponent = engine.createComponent(PhysicsComponent.class);
         ModelInstanceComponent modelInstanceComponent = ComponentsMapper.modelInstance.get(entity);
         ModelInstance modelInstance = modelInstanceComponent.getModelInstance();
-        physicsComponent.init(0, Bullet.obtainStaticNodeShape(modelInstance.model.nodes), modelInstance.transform);
+        int halfWidth = SharedC.Level.REGION_SIZE;
+        btCompoundShape compoundShape = new btCompoundShape(true);
+        for (int i = 0; i < SharedC.Level.REGION_SIZE; i++) {
+            for (int j = 0; j < SharedC.Level.REGION_SIZE; j++) {
+                compoundShape.addChildShape(auxMatrix.idt().trn(j + 0.5f, 0, i + 0.5f), new btBoxShape(auxVector31.set(0.5f, 0.1f, 0.5f)));
+            }
+        }
+        physicsComponent.init(0, compoundShape, modelInstance.transform);
         entity.add(physicsComponent);
         btRigidBody body = physicsComponent.getBody();
         body.userData = entity;

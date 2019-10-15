@@ -55,7 +55,7 @@ class BattleScreen implements Screen {
 
     private void createStreetLamp() {
         String modelFileName = GameC.Files.MODELS_FOLDER_NAME + "/" + "street_lamp.g3dj";
-        Entity lamp = characterFactory.createEnvironmentObject(modelFileName, 5, 3, 7);
+        Entity lamp = characterFactory.createEnvironmentObject(modelFileName, 11, 2, 7);
         entitiesEngine.addEntity(lamp);
     }
 

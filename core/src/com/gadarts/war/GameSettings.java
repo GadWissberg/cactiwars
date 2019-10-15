@@ -8,6 +8,6 @@ public final class GameSettings {
     public static final boolean FULL_SCREEN = false;
     public static final boolean SHOW_GL_PROFILING = true;
     public static final boolean SHOW_AXIS = false;
-    public static final boolean ALLOW_SOUND = true;
+    public static final boolean ALLOW_SOUND = false;
 
 }
