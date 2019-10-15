@@ -1,9 +1,8 @@
 package com.gadarts.war.sound;
 
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.math.MathUtils;
-import com.gadarts.war.GameAssetManager;
-import com.gadarts.war.GameSettings;
+import com.badlogic.gdx.audio.*;
+import com.badlogic.gdx.math.*;
+import com.gadarts.war.*;
 
 public class SoundPlayer {
     public long play(Sound sound) {
@@ -26,7 +25,6 @@ public class SoundPlayer {
     }
 
     public long playRandomByDefinitions(SFX sound1, SFX sound2) {
-        long result = playByDefinition(MathUtils.randomBoolean() ? sound1 : sound2);
-        return result;
+        return playByDefinition(MathUtils.randomBoolean() ? sound1 : sound2);
     }
 }

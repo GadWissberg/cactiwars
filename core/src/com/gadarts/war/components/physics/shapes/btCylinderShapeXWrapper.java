@@ -1,9 +1,9 @@
 package com.gadarts.war.components.physics.shapes;
 
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.collision.btCylinderShapeX;
+import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.physics.bullet.collision.*;
 
-public class btCylinderShapeXWrapper extends btCylinderShapeX {
+class btCylinderShapeXWrapper extends btCylinderShapeX {
     private static final Vector3 dimensions = new Vector3();
 
     public btCylinderShapeXWrapper() {

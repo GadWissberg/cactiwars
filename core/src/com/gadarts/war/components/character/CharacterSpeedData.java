@@ -1,6 +1,6 @@
 package com.gadarts.war.components.character;
 
-public class CharacterSpeedData {
+class CharacterSpeedData {
     private float maxFrontSpeed;
     private float maxReverseSpeed;
     private MovementState movementState = MovementState.IDLE;
