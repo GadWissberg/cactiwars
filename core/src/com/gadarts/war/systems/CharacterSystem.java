@@ -1,15 +1,23 @@
 package com.gadarts.war.systems;
 
-import com.badlogic.ashley.core.*;
-import com.badlogic.ashley.utils.*;
-import com.badlogic.gdx.math.*;
-import com.badlogic.gdx.physics.bullet.collision.*;
-import com.gadarts.war.*;
-import com.gadarts.war.components.*;
-import com.gadarts.war.components.character.*;
-import com.gadarts.war.components.physics.*;
-import com.gadarts.war.sound.*;
-import com.gadarts.war.systems.physics.*;
+import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
+import com.gadarts.war.GameSettings;
+import com.gadarts.war.components.ComponentsMapper;
+import com.gadarts.war.components.character.CharacterComponent;
+import com.gadarts.war.components.character.CharacterSoundData;
+import com.gadarts.war.components.character.MovementState;
+import com.gadarts.war.components.physics.PhysicsComponent;
+import com.gadarts.war.sound.SoundPlayer;
+import com.gadarts.war.systems.physics.PhysicsSystem;
 
 class CharacterSystem extends EntitySystem {
     private static Vector3 auxVector31 = new Vector3();
@@ -104,7 +112,7 @@ class CharacterSystem extends EntitySystem {
         auxVector32.set(0, 1, 0).rot(auxMat);
         rayFrom.add(auxVector32.scl(0.5f));
         auxVector32.set(0, -1, 0).rot(auxMat);
-        rayTo.set(auxVector32).scl(0.85f).add(rayFrom);
+        rayTo.set(auxVector32).scl(0.6f).add(rayFrom);
         callback.setCollisionObject(null);
         callback.setClosestHitFraction(1);
     }
