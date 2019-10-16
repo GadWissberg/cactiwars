@@ -5,20 +5,16 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
-import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
 import com.badlogic.gdx.physics.bullet.collision.btBroadphaseProxy;
 import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
+import com.badlogic.gdx.physics.bullet.collision.btStaticPlaneShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.gadarts.shared.LevelModeler;
 import com.gadarts.shared.SharedC;
@@ -28,7 +24,6 @@ import com.gadarts.war.GameSettings;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.GroundComponent;
 import com.gadarts.war.components.model.ModelInstanceComponent;
-import com.gadarts.war.components.physics.MotionState;
 import com.gadarts.war.components.physics.PhysicsComponent;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 
@@ -42,34 +37,6 @@ public class LevelCreator extends LevelModeler {
     public LevelCreator(PooledEngine engine) {
         super(new ModelBuilder());
         this.engine = engine;
-    }
-
-    private void createNorthBoundary() {
-        float length = (SharedC.Level.LEVEL_SIZE * SharedC.Level.REGION_SIZE);
-        Vector3 extents = auxVector31.set(length / 2f, length / 2f, 0.01f);
-        Vector3 position = auxVector32.set(length / 2f, length / 2f, 0);
-        createBoundaryPhysics(extents, position);
-    }
-
-    private void createSouthBoundary() {
-        float length = (SharedC.Level.LEVEL_SIZE * SharedC.Level.REGION_SIZE);
-        Vector3 extents = auxVector31.set(length / 2f, length / 2f, 0.01f);
-        Vector3 position = auxVector32.set(length / 2f, length / 2f, length);
-        createBoundaryPhysics(extents, position);
-    }
-
-    private void createWestBoundary() {
-        float length = (SharedC.Level.LEVEL_SIZE * SharedC.Level.REGION_SIZE);
-        Vector3 extents = auxVector31.set(0.01f, length / 2f, length / 2f);
-        Vector3 position = auxVector32.set(0, length / 2f, length / 2f);
-        createBoundaryPhysics(extents, position);
-    }
-
-    private void createEastBoundary() {
-        float length = (SharedC.Level.LEVEL_SIZE * SharedC.Level.REGION_SIZE);
-        Vector3 extents = auxVector31.set(0.01f, length / 2f, length / 2f);
-        Vector3 position = auxVector32.set(length, length / 2f, length / 2f);
-        createBoundaryPhysics(extents, position);
     }
 
     private void createGroundBody() {
@@ -97,19 +64,17 @@ public class LevelCreator extends LevelModeler {
         engine.getSystem(PhysicsSystem.class).getCollisionWorld().addRigidBody(body);
     }
 
-    private GroundBody createBoundaryPhysics(Vector3 boxHalfExtents, Vector3 position) {
+    private GroundBody createBoundaryPhysics(Vector3 planeNormal, float distanceFromOrigin) {
         GroundBody boundaryBody = new GroundBody();
-        MotionState ms = new MotionState();
-        btRigidBody btRigidBody = createBoundaryRigidBody(boxHalfExtents, boundaryBody, ms);
+        btRigidBody btRigidBody = createBoundaryRigidBody(planeNormal, boundaryBody, distanceFromOrigin);
         boundaryBody.setBody(btRigidBody);
-        boundaryBody.setMotionState(ms);
-        ms.setWorldTranslation(position);
         engine.getSystem(PhysicsSystem.class).getCollisionWorld().addRigidBody((btRigidBody) boundaryBody.getBody());
         return boundaryBody;
     }
 
-    private btRigidBody createBoundaryRigidBody(Vector3 boxHalfExtents, GroundBody boundaryBody, MotionState ms) {
-        boundaryBody.setBodyInfo(new btRigidBody.btRigidBodyConstructionInfo(0, ms, new btBoxShape(boxHalfExtents)));
+    private btRigidBody createBoundaryRigidBody(Vector3 planeNormal, GroundBody boundaryBody, float distanceFromOrigin) {
+        btStaticPlaneShape collisionShape = new btStaticPlaneShape(planeNormal, distanceFromOrigin);
+        boundaryBody.setBodyInfo(new btRigidBody.btRigidBodyConstructionInfo(0, null, collisionShape));
         btRigidBody btRigidBody = new btRigidBody(boundaryBody.getBodyInfo());
         btRigidBody.setContactCallbackFlag(btBroadphaseProxy.CollisionFilterGroups.KinematicFilter);
         return btRigidBody;
@@ -118,20 +83,17 @@ public class LevelCreator extends LevelModeler {
 
     public void createLevelPhysics() {
         createGroundBody();
-        createNorthBoundary();
-        createWestBoundary();
-        createSouthBoundary();
-        createEastBoundary();
+        int distanceFromOrigin = SharedC.Level.REGION_SIZE * SharedC.Level.LEVEL_SIZE;
+        createBoundaryPhysics(auxVector31.set(0, 0, 1), 0);
+        createBoundaryPhysics(auxVector31.set(1, 0, 0), 0);
+        createBoundaryPhysics(auxVector31.set(0, 0, -1), -distanceFromOrigin);
+        createBoundaryPhysics(auxVector31.set(-1, 0, 0), -distanceFromOrigin);
     }
 
     public void modelLevelGround() {
         for (int i = 0; i < SharedC.Level.LEVEL_SIZE; i++) {
             for (int j = 0; j < SharedC.Level.LEVEL_SIZE; j++) {
-                if (i == 0 && j == 0) {
-                    modelTestHillGroundRegion((i % SharedC.Level.LEVEL_SIZE) * SharedC.Level.REGION_SIZE, j);
-                } else {
-                    modelGroundRegion((i % SharedC.Level.LEVEL_SIZE) * SharedC.Level.REGION_SIZE, j);
-                }
+                modelGroundRegion((i % SharedC.Level.LEVEL_SIZE) * SharedC.Level.REGION_SIZE, j);
             }
         }
         modelSurroundingGround();
@@ -174,60 +136,6 @@ public class LevelCreator extends LevelModeler {
         ground.add(engine.createComponent(GroundComponent.class));
         engine.addEntity(ground);
     }
-
-    private void modelTestHillGroundRegion(int zPosition, int x) {
-        Entity ground = new Entity();
-        TextureAtlas tiles = GameAssetManager.getInstance().get(GameC.Files.TEXTURES_FOLDER_NAME + "/" + SharedC.TILE_FILE_NAME, TextureAtlas.class);
-        Vector3 normal = new Vector3();
-        ModelBuilder builder = getBuilder();
-        builder.begin();
-        MeshPartBuilder meshBuilder = builder.part("hill", GL20.GL_TRIANGLES,
-                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal |
-                        VertexAttributes.Usage.TextureCoordinates, new Material(TextureAttribute.createDiffuse(tiles.findRegion("grass"))));
-        meshBuilder.setUVRange(0, 0, 1, 1);
-
-        normal.set(0.0F, 1.0F, 0.0F);
-
-        Vector3 corner00 = new Vector3();
-        Vector3 corner10 = new Vector3();
-        Vector3 corner01 = new Vector3();
-        Vector3 corner11 = new Vector3();
-        for (int i = 0; i < SharedC.Level.REGION_SIZE - 2; ++i) {
-            for (int j = 0; j < SharedC.Level.REGION_SIZE - 2; ++j) {
-                int z = i % SharedC.Level.REGION_SIZE - 2;
-                meshBuilder.rect(corner00.set((float) j + 1, 1, (float) z + 3), corner10.set((float) j + 1, 1, (float) (z + 1 + 3)), corner11.set((float) (j + 1 + 1), 1, (float) (z + 1 + 3)), corner01.set((float) (j + 1 + 1), 1, (float) z + 3), normal);
-            }
-        }
-        for (int i = 0; i < SharedC.Level.REGION_SIZE - 2; ++i) {
-            int z = i % SharedC.Level.REGION_SIZE - 2;
-            meshBuilder.rect(corner00.set((float) 0, 0, (float) z + 3), corner10.set((float) 0, 0, (float) (z + 1 + 3)), corner11.set((float) (1), 1, (float) (z + 1 + 3)), corner01.set((float) (1), 1, (float) z + 3), normal);
-        }
-        meshBuilder.rect(corner00.set((float) 0, 0, SharedC.Level.REGION_SIZE - 1), corner10.set(0, 0, SharedC.Level.REGION_SIZE), corner11.set(1, 0, SharedC.Level.REGION_SIZE), corner01.set(1, 1, SharedC.Level.REGION_SIZE - 1), normal);
-        for (int i = 0; i < SharedC.Level.REGION_SIZE - 2; ++i) {
-            int z = SharedC.Level.REGION_SIZE - 1;
-            meshBuilder.rect(corner00.set((float) i + 1, 1, (float) z), corner10.set((float) i + 1, 0, (float) z + 1), corner11.set((float) i + 2, 0, (float) z + 1), corner01.set(i + 2, 1, z), normal);
-        }
-        meshBuilder.rect(corner00.set(SharedC.Level.REGION_SIZE - 1, 1, SharedC.Level.REGION_SIZE - 1), corner10.set(SharedC.Level.REGION_SIZE - 1, 0, SharedC.Level.REGION_SIZE), corner11.set(SharedC.Level.REGION_SIZE, 0, SharedC.Level.REGION_SIZE), corner01.set(SharedC.Level.REGION_SIZE, 0, SharedC.Level.REGION_SIZE - 1), normal);
-        for (int i = 0; i < SharedC.Level.REGION_SIZE - 2; ++i) {
-            int z = i % SharedC.Level.REGION_SIZE - 2;
-            meshBuilder.rect(corner00.set(SharedC.Level.REGION_SIZE - 1, 1, (float) z + 3), corner10.set(SharedC.Level.REGION_SIZE - 1, 1, (float) (z + 1 + 3)), corner11.set(SharedC.Level.REGION_SIZE, 0, (float) (z + 1 + 3)), corner01.set(SharedC.Level.REGION_SIZE, 0, (float) z + 3), normal);
-        }
-
-        Model groundModel = builder.end();
-
-
-        ModelInstanceComponent modelInstanceComponent = engine.createComponent(ModelInstanceComponent.class);
-        ModelInstance modelInstance = new ModelInstance(groundModel);
-        x = x * SharedC.Level.REGION_SIZE;
-        int y = 0;
-
-        modelInstance.transform.setToTranslation(x, y, zPosition);
-        modelInstanceComponent.init(modelInstance);
-        ground.add(modelInstanceComponent);
-        ground.add(engine.createComponent(GroundComponent.class));
-        engine.addEntity(ground);
-    }
-
 
     private ModelInstanceComponent createGroundRegionModelInstanceComponent(int z, int x, Model regionModel,
                                                                             int regionSize) {
