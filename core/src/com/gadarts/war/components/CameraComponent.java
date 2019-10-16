@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Pool;
 
 public class CameraComponent implements Component, Pool.Poolable {
     private PerspectiveCamera camera;
+    private float manipulationSpeed;
 
     public Entity getTarget() {
         return target;
@@ -32,4 +33,11 @@ public class CameraComponent implements Component, Pool.Poolable {
     }
 
 
+    public float getManipulationSpeed() {
+        return manipulationSpeed;
+    }
+
+    public void setManipulationSpeed(float manipulationSpeed) {
+        this.manipulationSpeed = manipulationSpeed;
+    }
 }

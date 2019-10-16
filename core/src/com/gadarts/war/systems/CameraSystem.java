@@ -93,6 +93,8 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
     }
 
     private void handleCameraFrontOffset(float deltaTime, Entity target, Vector3 cameraPosition, Vector3 targetPos) {
+        CameraComponent cameraComponent = ComponentsMapper.camera.get(camera);
+        cameraComponent.setManipulationSpeed(cameraComponent.getManipulationSpeed() + 0.1f);
         Vector3 targetDirection = auxVector.set(1, 0, 0).rot(auxMatrix).nor();
         float newX = calculateNewXForTargetFollowing(deltaTime, target, targetPos, targetDirection);
         float newZ = calculateNewZForTargetFollowing(deltaTime, target, targetPos, targetDirection);
@@ -100,27 +102,30 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
     }
 
     private float calculateNewXForTargetFollowing(float deltaTime, Entity target, Vector3 targetPos, Vector3 targetDir) {
+        CameraComponent cameraComponent = ComponentsMapper.camera.get(camera);
         float linearSpeed = ComponentsMapper.physics.get(target).getBody().getLinearVelocity().len2();
         float minX = targetPos.x - GameC.Camera.MAX_X_FRONT_OFFSET;
         float maxX = targetPos.x + GameC.Camera.MAX_X_FRONT_OFFSET;
         Vector3 cameraPosition = ComponentsMapper.camera.get(camera).getCamera().position;
         int coef = ComponentsMapper.characters.get(target).getMovementState() == MovementState.ACCELERATING ? 1 : -1;
-        return MathUtils.clamp(cameraPosition.x + coef * targetDir.x * linearSpeed * deltaTime, minX, maxX);
+        return MathUtils.clamp(cameraPosition.x + coef * targetDir.x * Math.min(linearSpeed, cameraComponent.getManipulationSpeed()) * deltaTime, minX, maxX);
     }
 
     private float calculateNewZForTargetFollowing(float deltaTime, Entity target, Vector3 targetPos, Vector3 targetDir) {
+        CameraComponent cameraComponent = ComponentsMapper.camera.get(camera);
         float linearSpeed = ComponentsMapper.physics.get(target).getBody().getLinearVelocity().len2();
         float minZ = targetPos.z + GameC.Camera.MIN_Z_FRONT_OFFSET;
         float maxZ = targetPos.z + GameC.Camera.MAX_Z_FRONT_OFFSET;
         Vector3 cameraPosition = ComponentsMapper.camera.get(camera).getCamera().position;
         int coef = ComponentsMapper.characters.get(target).getMovementState() == MovementState.ACCELERATING ? 1 : -1;
-        return MathUtils.clamp(cameraPosition.z + coef * targetDir.z * linearSpeed * deltaTime, minZ, maxZ);
+        return MathUtils.clamp(cameraPosition.z + coef * targetDir.z * Math.min(linearSpeed, cameraComponent.getManipulationSpeed()) * deltaTime, minZ, maxZ);
     }
 
     private void handleCameraManOnIdle(float deltaTime) {
         Vector3 targetPos = auxMatrix.getTranslation(auxVector2);
         Vector3 cameraPosition = ComponentsMapper.camera.get(this.camera).getCamera().position;
         if (auxVector.set(cameraPosition).dst2(targetPos) > GameC.Camera.MIN_ZOOM_DISTANCE) {
+            ComponentsMapper.camera.get(camera).setManipulationSpeed(0);
             Vector3 directionFromTarget = auxVector3.set(auxVector.set(targetPos.x,
                     targetPos.y + Camera.TARGET_Y_MIN_OFFSET, targetPos.z + Camera.TARGET_Z_MIN_OFFSET))
                     .sub(cameraPosition).nor();

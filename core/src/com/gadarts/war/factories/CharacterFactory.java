@@ -52,7 +52,7 @@ public class CharacterFactory {
         player.add(modelInstanceComponent);
         PhysicsComponent physicsComponent = createPhysicsComponent(modelFileName, player, modelInstanceComponent.getModelInstance(), 400);
         physicsComponent.getBody().setActivationState(Collision.DISABLE_DEACTIVATION);
-        physicsComponent.getBody().setAnisotropicFriction(auxVector.set(1, 0, 1));
+        physicsComponent.getBody().setAnisotropicFriction(auxVector.set(2, 0, 2));
         btCompoundShape collisionShape = (btCompoundShape) physicsComponent.getBody().getCollisionShape();
         float halfWidth = auxBoundBox.getWidth() / 2;
         float halfHeight = auxBoundBox.getHeight() / 4;

@@ -103,16 +103,16 @@ class CharacterSystem extends EntitySystem {
     private boolean checkIfCharacterOnGround(Entity character) {
         initializeRayForTest(character);
         getEngine().getSystem(PhysicsSystem.class).getCollisionWorld().rayTest(rayFrom, rayTo, callback);
-        return callback.hasHit();
+        boolean result = callback.hasHit();
+        return result;
     }
 
     private void initializeRayForTest(Entity character) {
-        ComponentsMapper.physics.get(character).getBody().getMotionState().getWorldTransform(auxMat);
-        auxMat.getTranslation(rayFrom);
-        auxVector32.set(0, 1, 0).rot(auxMat);
-        rayFrom.add(auxVector32.scl(0.5f));
-        auxVector32.set(0, -1, 0).rot(auxMat);
-        rayTo.set(auxVector32).scl(0.6f).add(rayFrom);
+        Matrix4 characterTransform = auxMat;
+        ComponentsMapper.physics.get(character).getBody().getMotionState().getWorldTransform(characterTransform);
+        characterTransform.getTranslation(rayFrom);
+        auxVector32.set(0, -1, 0).rot(characterTransform);
+        rayTo.set(auxVector32).scl(0.1f).add(rayFrom);
         callback.setCollisionObject(null);
         callback.setClosestHitFraction(1);
     }
