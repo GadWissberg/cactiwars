@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.StringBuilder;
-import com.gadarts.shared.SharedC;
 import com.gadarts.war.systems.RenderSystem;
 
 public class Profiler {
@@ -26,7 +25,7 @@ public class Profiler {
         stringBuilder = new StringBuilder();
         Label.LabelStyle style = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
         label = new Label(stringBuilder, style);
-        label.setPosition(0, SharedC.Resolution.UI_WORLD_HEIGHT - 70);
+        label.setPosition(0, Gdx.graphics.getHeight() - 90);
         stage.addActor(label);
         setGlProfiler();
     }

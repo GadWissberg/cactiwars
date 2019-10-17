@@ -1,9 +1,7 @@
 package com.gadarts.war;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.gadarts.shared.SharedC.Resolution;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gadarts.war.systems.RenderSystem;
 
 public class Hud {
@@ -11,21 +9,19 @@ public class Hud {
     private Profiler profiler;
 
     public Hud(RenderSystem renderSystem) {
-        OrthographicCamera camera = new OrthographicCamera(Resolution.UI_WORLD_WIDTH, Resolution.UI_WORLD_HEIGHT);
-        stage = new Stage(new StretchViewport(Resolution.UI_WORLD_WIDTH, Resolution.UI_WORLD_HEIGHT, camera));
+        stage = new Stage();
+        ScreenViewport viewport = new ScreenViewport(stage.getCamera());
+        stage.setViewport(viewport);
         profiler = new Profiler(stage, renderSystem);
-        camera.position.set(Resolution.UI_WORLD_WIDTH / 2f, Resolution.UI_WORLD_HEIGHT / 2f, 0);
     }
 
     public void render(float delta) {
         profiler.update();
         stage.act(delta);
-        stage.getBatch().setProjectionMatrix(stage.getCamera().combined);
-        stage.getCamera().update();
         stage.draw();
     }
 
-    public Stage getStage() {
-        return stage;
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height);
     }
 }

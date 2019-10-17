@@ -81,7 +81,7 @@ class BattleScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
+        ui.resize(width,height);
     }
 
     @Override
