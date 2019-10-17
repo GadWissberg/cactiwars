@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
-import com.badlogic.gdx.physics.bullet.collision.Collision;
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
 import com.badlogic.gdx.physics.bullet.collision.btBroadphaseProxy.CollisionFilterGroups;
 import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
@@ -56,7 +55,6 @@ public class CharacterFactory {
         player.add(modelInstanceComponent);
         PhysicsComponent physicsComponent = createPhysicsComponent(modelFileName, player, modelInstanceComponent.getModelInstance(), 400);
         btRigidBody body = physicsComponent.getBody();
-        body.setActivationState(Collision.DISABLE_DEACTIVATION);
         body.setAnisotropicFriction(auxVector.set(2, 0, 2));
         btCompoundShape collisionShape = (btCompoundShape) body.getCollisionShape();
         float halfWidth = auxBoundBox.getWidth() / 2;
@@ -83,6 +81,8 @@ public class CharacterFactory {
         }
         btRigidBody body = physicsComponent.getBody();
         body.userData = player;
+        body.setSleepingThresholds(1,1);
+        body.setDeactivationTime(5);
         return physicsComponent;
     }
 
