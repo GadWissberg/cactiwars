@@ -20,18 +20,23 @@ public class GameContactListener extends ContactListener {
         this.soundPlayer = soundPlayer;
     }
 
-    public void onContactStarted(btCollisionObject colObj0, btCollisionObject colObj1) {
-        boolean result = checkCollision(colObj0, colObj1);
-        if (!result) checkCollision(colObj1, colObj0);
+    @Override
+    public void onContactStarted(btCollisionObject colObj0, boolean match0, btCollisionObject colObj1, boolean match1) {
+        if (match0) {
+            checkCollision(colObj0, colObj1);
+        }
+        if (match1) {
+            checkCollision(colObj1, colObj0);
+        }
     }
 
-    private boolean checkCollision(btCollisionObject colObj0, btCollisionObject colObj1) {
+    private boolean checkCollision(btCollisionObject filterMatched, btCollisionObject match) {
         boolean result = false;
-        Entity entity0 = (Entity) colObj0.userData;
-        Entity entity1 = (Entity) colObj1.userData;
+        Entity entity0 = (Entity) filterMatched.userData;
+        Entity entity1 = (Entity) match.userData;
         if (entity0 == null || entity1 == null) return false;
         if (ComponentsMapper.characters.has(entity0)) {
-            if (colObj1.userData != null) {
+            if (match.userData != null) {
                 if (ComponentsMapper.ground.has(entity1)) {
                     onCharacterWithGround(entity0, entity1);
                     result = true;
@@ -40,9 +45,9 @@ public class GameContactListener extends ContactListener {
                     result = true;
                 }
             }
-        } else if (ComponentsMapper.ground.has(entity0)) {
-            if (ComponentsMapper.environmentObject.has(entity1)) {
-                onEnvironmentObjectWithGround(entity0, entity1);
+        } else if (ComponentsMapper.environmentObject.has(entity0)) {
+            if (ComponentsMapper.ground.has(entity1)) {
+                onEnvironmentObjectWithGround(entity1, entity0);
                 result = true;
             }
         }
@@ -50,7 +55,8 @@ public class GameContactListener extends ContactListener {
     }
 
     private void onEnvironmentObjectWithGround(Entity groundEntity, Entity envObjectEntity) {
-        if (ComponentsMapper.physics.get(envObjectEntity).getBody().getLinearVelocity().len2() > 5) {
+        float linearSpeed = ComponentsMapper.physics.get(envObjectEntity).getBody().getLinearVelocity().len2();
+        if (linearSpeed > 5) {
             soundPlayer.playRandomByDefinitions(SFX.LIGHT_METAL_CRASH_1, SFX.LIGHT_METAL_CRASH_2);
         }
     }

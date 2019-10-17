@@ -61,6 +61,7 @@ public class LevelCreator extends LevelModeler {
         entity.add(physicsComponent);
         btRigidBody body = physicsComponent.getBody();
         body.userData = entity;
+        body.setContactCallbackFlag(btBroadphaseProxy.CollisionFilterGroups.KinematicFilter);
         engine.getSystem(PhysicsSystem.class).getCollisionWorld().addRigidBody(body);
     }
 
