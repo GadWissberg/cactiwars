@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ArrowDownUp implements InputEvent {
     @Override
-    public boolean run(Entity entity, List<PlayerSystemEventsSubscriber> subscribers) {
+    public boolean execute(Entity entity, List<PlayerSystemEventsSubscriber> subscribers) {
         CharacterComponent characterComponent = ComponentsMapper.characters.get(entity);
         if (characterComponent.getMovementState() == MovementState.REVERSE) {
             characterComponent.setMovementState(MovementState.IDLE);

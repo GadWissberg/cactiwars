@@ -5,7 +5,7 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.gadarts.war.factories.CharacterFactory;
-import com.gadarts.war.level.Level;
+import com.gadarts.war.level.LevelCreator;
 import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.systems.CameraSystem;
 import com.gadarts.war.systems.RenderSystem;
@@ -16,7 +16,6 @@ import com.gadarts.war.systems.player.input.InputHandler;
 
 class BattleScreen implements Screen {
     private PooledEngine entitiesEngine;
-    private Level level;
     private SystemsHandler systemsHandler;
     private CharacterFactory characterFactory;
     private Hud ui;
@@ -68,8 +67,8 @@ class BattleScreen implements Screen {
     }
 
     private void createLevel() {
-        level = new Level();
-        level.init(entitiesEngine);
+        LevelCreator levelCreator = new LevelCreator();
+        levelCreator.createLevelIntoEngine(entitiesEngine);
     }
 
 
@@ -81,7 +80,7 @@ class BattleScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        ui.resize(width,height);
+        ui.resize(width, height);
     }
 
     @Override

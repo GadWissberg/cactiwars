@@ -6,5 +6,5 @@ import com.gadarts.war.systems.player.PlayerSystemEventsSubscriber;
 import java.util.List;
 
 public interface InputEvent {
-    boolean run(Entity entity, List<PlayerSystemEventsSubscriber> subscribers);
+    boolean execute(Entity entity, List<PlayerSystemEventsSubscriber> subscribers);
 }

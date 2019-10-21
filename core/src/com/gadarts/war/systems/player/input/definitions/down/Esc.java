@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Esc implements InputEvent {
     @Override
-    public boolean run(Entity entity, List<PlayerSystemEventsSubscriber> subscribers) {
+    public boolean execute(Entity entity, List<PlayerSystemEventsSubscriber> subscribers) {
         Gdx.app.exit();
         return true;
     }

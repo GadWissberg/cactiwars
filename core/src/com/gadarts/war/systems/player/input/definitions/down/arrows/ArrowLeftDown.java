@@ -9,8 +9,8 @@ import java.util.List;
 
 public class ArrowLeftDown extends ArrowPressedEvent{
     @Override
-    public boolean run(Entity entity, List<PlayerSystemEventsSubscriber> subscribers) {
-        super.run(entity, subscribers);
+    public boolean execute(Entity entity, List<PlayerSystemEventsSubscriber> subscribers) {
+        super.execute(entity, subscribers);
         CharacterComponent characterComponent = ComponentsMapper.characters.get(entity);
         characterComponent.setRotation(characterComponent.getRotationDefinition());
         return true;

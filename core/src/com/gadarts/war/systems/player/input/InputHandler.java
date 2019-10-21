@@ -14,7 +14,7 @@ public class InputHandler implements InputProcessor {
         for (PlayerInputProcessor sub : subscribers) {
             KeyMap keyMapByKeyCode = KeyMap.findKeyMapByKeyCode(keycode);
             if (keyMapByKeyCode != null) {
-                sub.keyDown(keyMapByKeyCode);
+                sub.onKeyDown(keyMapByKeyCode);
             }
         }
         return true;
@@ -25,7 +25,7 @@ public class InputHandler implements InputProcessor {
         for (PlayerInputProcessor sub : subscribers) {
             KeyMap keyMapByKeyCode = KeyMap.findKeyMapByKeyCode(keycode);
             if (keyMapByKeyCode != null) {
-                sub.keyUp(KeyMap.findKeyMapByKeyCode(keycode));
+                sub.onKeyUp(KeyMap.findKeyMapByKeyCode(keycode));
             }
         }
         return true;

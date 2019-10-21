@@ -43,16 +43,16 @@ public class PlayerSystem extends EntitySystem implements PlayerInputProcessor, 
     }
 
     @Override
-    public boolean keyDown(KeyMap keyMap) {
-        keyMap.getKeyDown().run(player, subscribers);
+    public boolean onKeyDown(KeyMap keyMap) {
+        keyMap.getKeyDown().execute(player, subscribers);
         return true;
     }
 
     @Override
-    public boolean keyUp(KeyMap keyMap) {
+    public boolean onKeyUp(KeyMap keyMap) {
         InputEvent keyUp = keyMap.getKeyUp();
         if (keyUp != null) {
-            keyUp.run(player, subscribers);
+            keyUp.execute(player, subscribers);
         }
         return true;
     }

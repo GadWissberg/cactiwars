@@ -10,7 +10,7 @@ import java.util.List;
 
 public abstract class ArrowPressedEvent implements InputEvent {
     @Override
-    public boolean run(Entity entity, List<PlayerSystemEventsSubscriber> subscribers) {
+    public boolean execute(Entity entity, List<PlayerSystemEventsSubscriber> subscribers) {
         btRigidBody body = ComponentsMapper.physics.get(entity).getBody();
         if (!body.isActive()) {
             body.activate();

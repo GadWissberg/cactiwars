@@ -1,8 +1,8 @@
 package com.gadarts.war.systems.player.input;
 
 public interface PlayerInputProcessor {
-    boolean keyDown(KeyMap keyMap);
+    boolean onKeyDown(KeyMap keyMap);
 
-    boolean keyUp(KeyMap keyMap);
+    boolean onKeyUp(KeyMap keyMap);
 
 }

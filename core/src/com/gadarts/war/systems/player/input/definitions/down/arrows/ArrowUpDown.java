@@ -9,8 +9,8 @@ import java.util.List;
 
 public class ArrowUpDown extends ArrowPressedEvent {
     @Override
-    public boolean run(Entity entity, List<PlayerSystemEventsSubscriber> subscribers) {
-        super.run(entity, subscribers);
+    public boolean execute(Entity entity, List<PlayerSystemEventsSubscriber> subscribers) {
+        super.execute(entity, subscribers);
         ComponentsMapper.characters.get(entity).setMovementState(MovementState.ACCELERATING);
         for (PlayerSystemEventsSubscriber subscriber : subscribers) {
             subscriber.onMovementAccelerationBegan();

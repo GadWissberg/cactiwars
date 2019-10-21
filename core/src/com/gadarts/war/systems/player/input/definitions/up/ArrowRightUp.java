@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ArrowRightUp implements InputEvent {
     @Override
-    public boolean run(Entity entity, List<PlayerSystemEventsSubscriber> subscribers) {
+    public boolean execute(Entity entity, List<PlayerSystemEventsSubscriber> subscribers) {
         ComponentsMapper.characters.get(entity).setRotation(0);
         return true;
     }
