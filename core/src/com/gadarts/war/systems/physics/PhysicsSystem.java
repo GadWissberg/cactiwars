@@ -43,17 +43,29 @@ public class PhysicsSystem extends EntitySystem implements EntityListener, GameC
     @Override
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
+        initializePhysics(engine);
+    }
+
+    private void initializePhysics(Engine engine) {
         Bullet.init();
         engine.addEntityListener(this);
+        initializeCollisionsWorld();
+        physicals = engine.getEntitiesFor(Family.all(PhysicsComponent.class).get());
+        initializeContactListener();
+    }
+
+    private void initializeCollisionsWorld() {
         collisionConfiguration = new btDefaultCollisionConfiguration();
         dispatcher = new btCollisionDispatcher(collisionConfiguration);
         broadPhase = new btAxisSweep3(new Vector3(-100, -100, -100), new Vector3(100, 100, 100));
         solver = new btSequentialImpulseConstraintSolver();
         collisionWorld = new btDiscreteDynamicsWorld(dispatcher, broadPhase, solver, collisionConfiguration);
+        collisionWorld.setGravity(new Vector3(0, -20, 0));
         ghostPairCallback = new btGhostPairCallback();
         broadPhase.getOverlappingPairCache().setInternalGhostPairCallback(ghostPairCallback);
-        collisionWorld.setGravity(new Vector3(0, -20, 0));
-        physicals = engine.getEntitiesFor(Family.all(PhysicsComponent.class).get());
+    }
+
+    private void initializeContactListener() {
         contactListener = new GameContactListener(soundPlayer);
         contactListener.subscribe(this);
     }
