@@ -63,7 +63,7 @@ public class RenderSystem extends EntitySystem {
         if (!GameSettings.DRAWING_SKIPPING_MODE) return false;
         boolean groundCheck = GameSettings.SKIP_GROUND_DRAWING && ComponentsMapper.ground.has(entity);
         boolean characterCheck = GameSettings.SKIP_CHARACTER_DRAWING && ComponentsMapper.characters.has(entity);
-        boolean envCheck = GameSettings.SKIP_ENV_OBJECT_DRAWING && !ComponentsMapper.environmentObject.has(entity);
+        boolean envCheck = GameSettings.SKIP_ENV_OBJECT_DRAWING && ComponentsMapper.environmentObject.has(entity);
         return groundCheck || characterCheck || envCheck;
     }
 

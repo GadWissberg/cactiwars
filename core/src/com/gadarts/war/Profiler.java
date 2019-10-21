@@ -55,7 +55,8 @@ public class Profiler {
         displayLine(GameC.Profiler.GL_CALL_STRING, glProfiler.getCalls());
         displayLine(GameC.Profiler.GL_DRAW_CALL_STRING, glProfiler.getDrawCalls());
         displayLine(GameC.Profiler.GL_SHADER_SWITCHES_STRING, glProfiler.getShaderSwitches());
-        displayLine(GameC.Profiler.GL_TEXTURE_BINDINGS_STRING, glProfiler.getTextureBindings());
+        int valueWithoutText = glProfiler.getTextureBindings() - 1;
+        displayLine(GameC.Profiler.GL_TEXTURE_BINDINGS_STRING, valueWithoutText);
         displayLine(GameC.Profiler.GL_VERTEX_COUNT_STRING, glProfiler.getVertexCount().total);
         displayLine(GameC.Profiler.VISIBLE_OBJECTS_STRING, renderSystem.getNumberOfVisible());
         glProfiler.reset();
