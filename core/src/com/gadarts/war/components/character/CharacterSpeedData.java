@@ -1,20 +1,18 @@
 package com.gadarts.war.components.character;
 
 class CharacterSpeedData {
-    private float maxFrontSpeed;
-    private float maxReverseSpeed;
+    private SpeedData frontSpeedData = new SpeedData();
+    private SpeedData reverseSpeedData = new SpeedData();
     private MovementState movementState = MovementState.IDLE;
-    private float acceleration;
-    private float reverseAcceleration;
     private float deceleration;
     private float speed;
 
     public void setMaxFrontSpeed(float maxFrontSpeed) {
-        this.maxFrontSpeed = maxFrontSpeed;
+        frontSpeedData.setMaxSpeed(maxFrontSpeed);
     }
 
     public void setMaxReverseSpeed(float maxReverseSpeed) {
-        this.maxReverseSpeed = maxReverseSpeed;
+        reverseSpeedData.setMaxSpeed(maxReverseSpeed);
     }
 
     public void setMovementState(MovementState movementState) {
@@ -22,11 +20,11 @@ class CharacterSpeedData {
     }
 
     public void setAcceleration(float acceleration) {
-        this.acceleration = acceleration;
+        frontSpeedData.setAcceleration(acceleration);
     }
 
     public void setReverseAcceleration(float reverseAcceleration) {
-        this.reverseAcceleration = reverseAcceleration;
+        reverseSpeedData.setAcceleration(reverseAcceleration);
     }
 
     public void setDeceleration(float deceleration) {
@@ -38,11 +36,11 @@ class CharacterSpeedData {
     }
 
     public float getMaxFrontSpeed() {
-        return maxFrontSpeed;
+        return frontSpeedData.getMaxSpeed();
     }
 
     public float getMaxReverseSpeed() {
-        return maxReverseSpeed;
+        return reverseSpeedData.getMaxSpeed();
     }
 
     public MovementState getMovementState() {
@@ -50,11 +48,11 @@ class CharacterSpeedData {
     }
 
     public float getAcceleration() {
-        return acceleration;
+        return frontSpeedData.getAcceleration();
     }
 
     public float getReverseAcceleration() {
-        return reverseAcceleration;
+        return reverseSpeedData.getAcceleration();
     }
 
     public float getDeceleration() {
