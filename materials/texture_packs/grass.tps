@@ -4,7 +4,7 @@
         <key>fileFormatVersion</key>
         <int>4</int>
         <key>texturePackerVersion</key>
-        <string>5.1.0</string>
+        <string>5.2.0</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -88,9 +88,9 @@
         <key>maxTextureSize</key>
         <QSize>
             <key>width</key>
-            <int>2048</int>
+            <int>1024</int>
             <key>height</key>
-            <int>2048</int>
+            <int>1024</int>
         </QSize>
         <key>fixedTextureSize</key>
         <QSize>
@@ -108,7 +108,7 @@
             <key>sizeConstraints</key>
             <enum type="AlgorithmSettings::SizeConstraints">AnySize</enum>
             <key>forceSquared</key>
-            <true/>
+            <false/>
             <key>maxRects</key>
             <struct type="AlgorithmMaxRectsSettings">
                 <key>heuristic</key>
@@ -182,11 +182,14 @@
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
             <key type="filename">../images/grass.png</key>
+            <key type="filename">../images/grass_2.png</key>
+            <key type="filename">../images/grass_3.png</key>
             <key type="filename">../images/grass_corner_bottom_left.png</key>
             <key type="filename">../images/grass_corner_bottom_right.png</key>
             <key type="filename">../images/grass_corner_top_left.png</key>
             <key type="filename">../images/grass_corner_top_right.png</key>
             <key type="filename">../images/grass_corners.png</key>
+            <key type="filename">../images/grass_dec_1.png</key>
             <key type="filename">../images/grass_gulf_bottom.png</key>
             <key type="filename">../images/grass_gulf_bottom_edge.png</key>
             <key type="filename">../images/grass_gulf_bottom_left.png</key>
@@ -232,6 +235,8 @@
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
@@ -292,6 +297,9 @@
             <filename>../images/grass_vertical_left.png</filename>
             <filename>../images/grass_vertical_right.png</filename>
             <filename>../images/path.png</filename>
+            <filename>../images/grass_2.png</filename>
+            <filename>../images/grass_3.png</filename>
+            <filename>../images/grass_dec_1.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
