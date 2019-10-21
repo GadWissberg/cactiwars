@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
+import com.gadarts.war.GameSettings;
 import com.gadarts.war.GameShaderProvider;
 import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
@@ -50,11 +51,20 @@ public class RenderSystem extends EntitySystem {
     private void renderAllInstances() {
         for (Entity entity : modelInstanceEntities) {
             ModelInstance modelInstance = ComponentsMapper.modelInstance.get(entity).getModelInstance();
-            if (isVisible(camera, entity)) {
-                modelBatch.render(modelInstance);
-                numberOfVisible++;
-            }
+            if (isVisible(camera, entity))
+                if (!shouldSkipRender(entity)) {
+                    modelBatch.render(modelInstance);
+                    numberOfVisible++;
+                }
         }
+    }
+
+    private boolean shouldSkipRender(Entity entity) {
+        if (!GameSettings.DRAWING_SKIPPING_MODE) return false;
+        boolean groundCheck = GameSettings.SKIP_GROUND_DRAWING && ComponentsMapper.ground.has(entity);
+        boolean characterCheck = GameSettings.SKIP_CHARACTER_DRAWING && ComponentsMapper.characters.has(entity);
+        boolean envCheck = GameSettings.SKIP_ENV_OBJECT_DRAWING && !ComponentsMapper.environmentObject.has(entity);
+        return groundCheck || characterCheck || envCheck;
     }
 
     private boolean isVisible(PerspectiveCamera camera, Entity entity) {
