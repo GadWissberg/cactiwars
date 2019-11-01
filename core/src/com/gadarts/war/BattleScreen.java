@@ -23,7 +23,6 @@ class BattleScreen implements Screen {
 
     @Override
     public void show() {
-        GameAssetManager.getInstance().loadAssets();
         soundPlayer = new SoundPlayer();
         entitiesEngine = new PooledEngine();
         createSystemsHandler();

@@ -136,3 +136,5 @@ Thumbs.db
 /desktop/out
 /core/assetsgrass.txt.lck
 *.ini
+*.par
+*.tlm

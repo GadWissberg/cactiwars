@@ -8,6 +8,7 @@ public final class GameC {
         public static final String MODELS_FOLDER_NAME = ASSETS_PATH + "models";
         public static final String SOUNDS_FOLDER_NAME = ASSETS_PATH + "sounds";
         public static final String SOUND_FORMAT = "wav";
+        public static final String MAIN_PAR_FILE = "core/assets/terralust.par";
     }
 
     public final class Camera {
