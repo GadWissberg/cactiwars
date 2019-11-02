@@ -1,18 +1,18 @@
 package com.gadarts.war;
 
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.ModelLoader;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.gadarts.shared.SharedC;
+import com.gadarts.shared.par.AssetManagerWrapper;
 import com.gadarts.shared.par.MainParLoadingFailureException;
 import com.gadarts.shared.par.ParReader;
 
 import java.io.File;
 import java.io.IOException;
 
-public class GameAssetManager extends AssetManager {
+public class GameAssetManager extends AssetManagerWrapper {
     private static final GameAssetManager instance = new GameAssetManager();
 
     public static GameAssetManager getInstance() {
@@ -21,7 +21,7 @@ public class GameAssetManager extends AssetManager {
 
     void loadAssets() throws IOException, MainParLoadingFailureException {
         ParReader reader = new ParReader();
-        reader.loadMainParData(GameC.Files.MAIN_PAR_FILE);
+        reader.loadMainParData(GameC.Files.MAIN_PAR_FILE, this);
         GameAssetManager gameAssetManager = GameAssetManager.getInstance();
         gameAssetManager.load(GameC.Files.TEXTURES_FOLDER_NAME + "/" + SharedC.TILE_FILE_NAME, TextureAtlas.class);
         loadModels(gameAssetManager);
