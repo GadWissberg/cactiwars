@@ -9,8 +9,9 @@ public final class GameSettings {
     public static final boolean SHOW_GL_PROFILING = true;
     public static final boolean SHOW_AXIS = false;
     public static final boolean ALLOW_SOUND = false;
-    public static final boolean DRAWING_SKIPPING_MODE = false;
-    public static final boolean SKIP_GROUND_DRAWING = true;
+    public static final boolean DRAWING_SKIPPING_MODE = true;
+    public static final boolean SKIP_GROUND_DRAWING = false;
     public static final boolean SKIP_CHARACTER_DRAWING = false;
-    public static final boolean SKIP_ENV_OBJECT_DRAWING = true;
+    public static final boolean SKIP_ENV_OBJECT_DRAWING = false;
+    public static final boolean SKIP_DRAWING_SURROUNDING_TERRAIN = true;
 }

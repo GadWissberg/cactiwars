@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.gadarts.shared.level.Map;
 import com.gadarts.war.factories.CharacterFactory;
 import com.gadarts.war.level.LevelCreator;
 import com.gadarts.war.sound.SoundPlayer;
@@ -67,7 +68,7 @@ class BattleScreen implements Screen {
 
     private void createLevel() {
         LevelCreator levelCreator = new LevelCreator();
-        levelCreator.createLevelIntoEngine(entitiesEngine);
+        levelCreator.createLevelIntoEngine(entitiesEngine, GameAssetManager.getInstance().get("test", Map.class));
     }
 
 
