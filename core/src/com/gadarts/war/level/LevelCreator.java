@@ -33,7 +33,6 @@ import com.gadarts.war.components.GroundComponent;
 import com.gadarts.war.components.model.ModelInstanceComponent;
 import com.gadarts.war.components.physics.PhysicsComponent;
 import com.gadarts.war.systems.physics.PhysicsSystem;
-
 import java.util.HashMap;
 
 public class LevelCreator extends LevelModeler {
@@ -41,15 +40,16 @@ public class LevelCreator extends LevelModeler {
     private static Matrix4 auxMatrix = new Matrix4();
     private HashMap<String, Material> materials = new HashMap<>();
 
-    public LevelCreator() {
-        super(new ModelBuilder());
+    public LevelCreator(PooledEngine entitiesEngine) {
+        super(new ModelBuilder(), entitiesEngine);
     }
 
-    private void createGroundBody(PooledEngine engine) {
-        ImmutableArray<Entity> groundRegions = engine.getEntitiesFor(Family.all(GroundComponent.class).get());
+    private void createGroundBody() {
+        PooledEngine entitiesEngine = getEntitiesEngine();
+        ImmutableArray<Entity> groundRegions = entitiesEngine.getEntitiesFor(Family.all(GroundComponent.class).get());
         for (Entity entity : groundRegions) {
             if (ComponentsMapper.ground.get(entity).isPhysical()) {
-                createGroundRegionBody(entity, engine);
+                createGroundRegionBody(entity, entitiesEngine);
             }
         }
     }
@@ -73,10 +73,11 @@ public class LevelCreator extends LevelModeler {
         engine.getSystem(PhysicsSystem.class).getCollisionWorld().addRigidBody(body);
     }
 
-    private GroundBody createBoundaryPhysics(Vector3 planeNormal, float distanceFromOrigin, PooledEngine engine) {
+    private GroundBody createBoundaryPhysics(Vector3 planeNormal, float distanceFromOrigin) {
         GroundBody boundaryBody = new GroundBody();
         btRigidBody btRigidBody = createBoundaryRigidBody(planeNormal, boundaryBody, distanceFromOrigin);
         boundaryBody.setBody(btRigidBody);
+        PooledEngine engine = getEntitiesEngine();
         engine.getSystem(PhysicsSystem.class).getCollisionWorld().addRigidBody((btRigidBody) boundaryBody.getBody());
         return boundaryBody;
     }
@@ -90,27 +91,27 @@ public class LevelCreator extends LevelModeler {
     }
 
 
-    public void createLevelPhysics(PooledEngine engine) {
-        createGroundBody(engine);
+    public void createLevelPhysics() {
+        createGroundBody();
         int distanceFromOrigin = Level.REGION_SIZE_UNIT * Level.LEVEL_SIZE;
-        createBoundaryPhysics(auxVector31.set(0, 0, 1), 0, engine);
-        createBoundaryPhysics(auxVector31.set(1, 0, 0), 0, engine);
-        createBoundaryPhysics(auxVector31.set(0, 0, -1), -distanceFromOrigin, engine);
-        createBoundaryPhysics(auxVector31.set(-1, 0, 0), -distanceFromOrigin, engine);
+        createBoundaryPhysics(auxVector31.set(0, 0, 1), 0);
+        createBoundaryPhysics(auxVector31.set(1, 0, 0), 0);
+        createBoundaryPhysics(auxVector31.set(0, 0, -1), -distanceFromOrigin);
+        createBoundaryPhysics(auxVector31.set(-1, 0, 0), -distanceFromOrigin);
     }
 
-    public void modelLevelGround(PooledEngine engine, Map map, TextureAtlas tilesAtlas) {
+    public void modelLevelGround(Map map, TextureAtlas tilesAtlas) {
         for (int row = 0; row < Level.LEVEL_SIZE; row++) {
             for (int col = 0; col < Level.LEVEL_SIZE; col++) {
-                modelGroundRegion(engine, map, tilesAtlas, row, col);
+                modelGroundRegion(map, tilesAtlas, row, col);
             }
         }
         if (!GameSettings.DRAWING_SKIPPING_MODE || !GameSettings.SKIP_DRAWING_SURROUNDING_TERRAIN) {
-            modelSurroundingGround(engine);
+            modelSurroundingGround();
         }
     }
 
-    private void modelGroundRegion(PooledEngine engine, Map map, TextureAtlas tilesAtlas, int originRow, int originCol) {
+    private void modelGroundRegion(Map map, TextureAtlas tilesAtlas, int originRow, int originCol) {
         builder.begin();
         int originRowUnits = originRow * Level.REGION_SIZE_UNIT;
         int originColUnits = originCol * Level.REGION_SIZE_UNIT;
@@ -128,6 +129,7 @@ public class LevelCreator extends LevelModeler {
         }
         Model groundModel = builder.end();
         Entity ground = new Entity();
+        PooledEngine engine = getEntitiesEngine();
         ModelInstanceComponent modelInstanceComponent = engine.createComponent(ModelInstanceComponent.class);
         ModelInstance modelInstance = new ModelInstance(groundModel);
         modelInstance.transform.setToTranslation(auxVector31.set(originColUnits, 0, originRowUnits));
@@ -150,44 +152,45 @@ public class LevelCreator extends LevelModeler {
         }
     }
 
-    private void modelSurroundingGround(PooledEngine engine) {
+    private void modelSurroundingGround() {
         modelHorizontalSurroundingGroundModel(Level.LEVEL_SIZE + 2,
-                -1 * Level.REGION_SIZE_UNIT * 2, engine);
+                -1 * Level.REGION_SIZE_UNIT * 2);
         modelHorizontalSurroundingGroundModel(Level.LEVEL_SIZE + 2,
-                Level.LEVEL_SIZE * Level.REGION_SIZE_UNIT, engine);
-        modelVerticalSurroundingGroundModel(-1, engine);
-        modelVerticalSurroundingGroundModel(1, engine);
+                Level.LEVEL_SIZE * Level.REGION_SIZE_UNIT);
+        modelVerticalSurroundingGroundModel(-1);
+        modelVerticalSurroundingGroundModel(1);
     }
 
-    private void modelVerticalSurroundingGroundModel(int x, PooledEngine engine) {
+    private void modelVerticalSurroundingGroundModel(int x) {
         for (int i = 0; i < Level.LEVEL_SIZE; i++) {
             int regionSize = Level.REGION_SIZE_UNIT * 2;
-            modelGroundRegion(i * regionSize, x, regionSize, engine, true);
+            modelGroundRegion(i * regionSize, x, regionSize,  true);
         }
     }
 
-    private void modelHorizontalSurroundingGroundModel(int numberOfRegions, int z, PooledEngine engine) {
+    private void modelHorizontalSurroundingGroundModel(int numberOfRegions, int z) {
         for (int i = 0; i < numberOfRegions; i++) {
             int regionSize = Level.REGION_SIZE_UNIT * 2;
-            modelGroundRegion(z, i - 1, regionSize, engine, true);
+            modelGroundRegion(z, i - 1, regionSize, true);
         }
     }
 
-    private void modelGroundRegion(int z, int x, int regionSize, PooledEngine engine) {
-        modelGroundRegion(z, x, regionSize, engine, false);
+    private void modelGroundRegion(int z, int x, int regionSize) {
+        modelGroundRegion(z, x, regionSize, false);
     }
 
-    private void modelGroundRegion(int z, int x, int regionSize, PooledEngine engine, boolean isSurrounding) {
+    private void modelGroundRegion(int z, int x, int regionSize, boolean isSurrounding) {
         Entity ground = new Entity();
         String grass = GameC.Files.TEXTURES_FOLDER_NAME + "/" + SharedC.TILE_FILE_NAME;
         TextureAtlas tiles = GameAssetManager.getInstance().get(grass, TextureAtlas.class);
         boolean modelAxis = Gdx.app.getLogLevel() == Gdx.app.LOG_DEBUG && GameSettings.SHOW_AXIS && z == 0 && x == 0;
         Model region = modelGroundRegion(modelAxis, tiles, regionSize);
-        ground.add(createGroundRegionModelInstanceComponent(z, x, region, regionSize, engine));
-        GroundComponent groundComponent = engine.createComponent(GroundComponent.class);
+        PooledEngine entitiesEngine = getEntitiesEngine();
+        ground.add(createGroundRegionModelInstanceComponent(z, x, region, regionSize, entitiesEngine));
+        GroundComponent groundComponent = entitiesEngine.createComponent(GroundComponent.class);
         groundComponent.init(!isSurrounding);
         ground.add(groundComponent);
-        engine.addEntity(ground);
+        entitiesEngine.addEntity(ground);
     }
 
     private ModelInstanceComponent createGroundRegionModelInstanceComponent(int z, int x, Model regionModel,
@@ -201,9 +204,10 @@ public class LevelCreator extends LevelModeler {
         return modelInstanceComponent;
     }
 
-    public void createLevelIntoEngine(PooledEngine entitiesEngine, Map map) {
+    public void createLevelIntoEngine(Map map) {
         TextureAtlas tilesAtlas = GameAssetManager.getInstance().get(GameC.Files.TEXTURES_FOLDER_NAME + "/" + "grass.txt", TextureAtlas.class);
-        modelLevelGround(entitiesEngine, map, tilesAtlas);
-        createLevelPhysics(entitiesEngine);
+        modelLevelGround(map, tilesAtlas);
+        createLevelPhysics();
     }
+
 }

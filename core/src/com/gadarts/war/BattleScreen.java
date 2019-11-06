@@ -67,8 +67,8 @@ class BattleScreen implements Screen {
     }
 
     private void createLevel() {
-        LevelCreator levelCreator = new LevelCreator();
-        levelCreator.createLevelIntoEngine(entitiesEngine, GameAssetManager.getInstance().get("test", Map.class));
+        LevelCreator levelCreator = new LevelCreator(entitiesEngine);
+        levelCreator.createLevelIntoEngine(GameAssetManager.getInstance().get("test", Map.class));
     }
 
 
