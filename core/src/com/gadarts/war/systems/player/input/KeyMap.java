@@ -22,6 +22,16 @@ public enum KeyMap {
     private final InputEvent keyDown;
     private final InputEvent keyUp;
 
+    KeyMap(int keyCode, InputEvent keyDown) {
+        this(keyCode, keyDown, null);
+    }
+
+    KeyMap(int keyCode, InputEvent keyDown, InputEvent keyUp) {
+        this.keyCode = keyCode;
+        this.keyDown = keyDown;
+        this.keyUp = keyUp;
+    }
+
     public static KeyMap findKeyMapByKeyCode(int keycode) {
         KeyMap result = null;
         for (KeyMap keyMap : KeyMap.values()) {
@@ -31,16 +41,6 @@ public enum KeyMap {
             }
         }
         return result;
-    }
-
-    KeyMap(int keyCode, InputEvent keyDown) {
-        this(keyCode, keyDown, null);
-    }
-
-    KeyMap(int keyCode, InputEvent keyDown, InputEvent keyUp) {
-        this.keyCode = keyCode;
-        this.keyDown = keyDown;
-        this.keyUp = keyUp;
     }
 
     public int getKeyCode() {

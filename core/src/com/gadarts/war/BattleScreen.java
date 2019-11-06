@@ -19,7 +19,7 @@ class BattleScreen implements Screen {
     private PooledEngine entitiesEngine;
     private SystemsHandler systemsHandler;
     private CharacterFactory characterFactory;
-    private Hud ui;
+    private Hud hud;
     private SoundPlayer soundPlayer;
 
     @Override
@@ -30,7 +30,7 @@ class BattleScreen implements Screen {
         characterFactory = new CharacterFactory(entitiesEngine, soundPlayer);
         createWorld();
         initializeInput();
-        ui = new Hud(entitiesEngine.getSystem(RenderSystem.class));
+        hud = new Hud(entitiesEngine.getSystem(RenderSystem.class));
     }
 
     private void createSystemsHandler() {
@@ -75,12 +75,12 @@ class BattleScreen implements Screen {
     @Override
     public void render(float delta) {
         entitiesEngine.update(delta);
-        ui.render(delta);
+        hud.render(delta);
     }
 
     @Override
     public void resize(int width, int height) {
-        ui.resize(width, height);
+        hud.resize(width, height);
     }
 
     @Override
