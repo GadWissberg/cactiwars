@@ -68,4 +68,7 @@ public class Profiler {
         stringBuilder.append('\n');
     }
 
+    public void reset() {
+        glProfiler.reset();
+    }
 }

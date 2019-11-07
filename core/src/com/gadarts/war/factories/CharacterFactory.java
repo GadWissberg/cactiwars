@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
 import com.badlogic.gdx.physics.bullet.collision.btBroadphaseProxy.CollisionFilterGroups;
 import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
 import com.badlogic.gdx.physics.bullet.collision.btCylinderShape;
+import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.utils.Pools;
 import com.gadarts.war.GameAssetManager;
@@ -24,6 +25,7 @@ import com.gadarts.war.components.physics.PhysicsComponent;
 import com.gadarts.war.components.physics.shapes.btBoxShapeWrapper;
 import com.gadarts.war.components.physics.shapes.btCapsuleShapeXWrapper;
 import com.gadarts.war.components.physics.shapes.btCylinderShapeWrapper;
+import com.gadarts.war.components.physics.shapes.btSphereShapeWrapper;
 import com.gadarts.war.factories.recycle.CollisionShapesPool;
 import com.gadarts.war.factories.recycle.ModelInstancesPool;
 import com.gadarts.war.sound.SFX;
@@ -55,7 +57,7 @@ public class CharacterFactory {
         player.add(modelInstanceComponent);
         PhysicsComponent physicsComponent = createPhysicsComponent(modelFileName, player, modelInstanceComponent.getModelInstance(), 400);
         btRigidBody body = physicsComponent.getBody();
-        body.setSpinningFriction(1.5f);
+        body.setSpinningFriction(2);
         btCompoundShape collisionShape = (btCompoundShape) body.getCollisionShape();
         float halfWidth = auxBoundBox.getWidth() / 2;
         float halfHeight = auxBoundBox.getHeight() / 4;
@@ -78,7 +80,6 @@ public class CharacterFactory {
         physicsComponent.init(mass, collisionShape, modelInstance.transform);
         for (int i = collisionShape.getNumChildShapes() - 1; i >= 0; i--) {
             collisionShape.removeChildShapeByIndex(i);
-
         }
         btRigidBody body = physicsComponent.getBody();
         body.userData = player;
@@ -91,7 +92,7 @@ public class CharacterFactory {
         return (btCompoundShape) collisionShapePool.obtain(modelFileName);
     }
 
-    private ModelInstanceComponent createModelInstanceComponent(String modelFileName, float x, float z, float y) {
+    private ModelInstanceComponent createModelInstanceComponent(String modelFileName, float x, float y, float z) {
         Model model = GameAssetManager.getInstance().get(modelFileName, Model.class);
         ModelInstance modelInstance = modelInstancePool.obtain(modelFileName, model);
         modelInstance.transform.setToTranslation(x, y, z);
@@ -119,22 +120,28 @@ public class CharacterFactory {
         characterSoundData.setEngineSoundId(soundPlayer.play(characterSoundData.getEngineSound(), true));
     }
 
-    public Entity createEnvironmentObject(String modelFileName, int x, int y, int z) {
+    public Entity createEnvironmentObject(String modelFileName, Vector3 position, boolean isStatic) {
         Entity env = engine.createEntity();
-        ModelInstanceComponent modelInstanceComponent = createModelInstanceComponent(modelFileName, x, z, y);
+        ModelInstanceComponent modelInstanceComponent = createModelInstanceComponent(modelFileName, position.x, position.y, position.z);
         env.add(engine.createComponent(EnvironmentObjectComponent.class));
         env.add(modelInstanceComponent);
-        PhysicsComponent physicsComponent = createPhysicsComponent(modelFileName, env, modelInstanceComponent.getModelInstance(), 10);
+        PhysicsComponent physicsComponent = createPhysicsComponent(modelFileName, env, modelInstanceComponent.getModelInstance(), isStatic ? 0 : 10);
         physicsComponent.setStatic(true);
         btRigidBody body = physicsComponent.getBody();
         btCompoundShape collisionShape = (btCompoundShape) body.getCollisionShape();
-        btCylinderShape modelBody = Pools.obtain(btCylinderShapeWrapper.class);
-        btCapsuleShapeXWrapper head = Pools.obtain(btCapsuleShapeXWrapper.class);
+        if (isStatic) {
+            btSphereShape modelBody = Pools.obtain(btSphereShapeWrapper.class);
+            collisionShape.addChildShape(auxMatrix.idt().translate(0, 0, 0), modelBody);
+        } else {
+            btCylinderShape modelBody = Pools.obtain(btCylinderShapeWrapper.class);
+            btCapsuleShapeXWrapper head = Pools.obtain(btCapsuleShapeXWrapper.class);
+            modelBody.setImplicitShapeDimensions(auxVector.set(0.1f, 2, 0.1f));
+            head.setImplicitShapeDimensions(auxVector.set(0.1f, 0.2f, 0.1f));
+            collisionShape.addChildShape(auxMatrix.idt().translate(0, 0, 0), modelBody);
+            collisionShape.addChildShape(auxMatrix.idt().translate(0.3f, 2.2f, 0), head);
+
+        }
         body.setAngularFactor(0);
-        modelBody.setImplicitShapeDimensions(auxVector.set(0.1f, 2, 0.1f));
-        head.setImplicitShapeDimensions(auxVector.set(0.1f, 0.2f, 0.1f));
-        collisionShape.addChildShape(auxMatrix.idt().translate(0, 0, 0), modelBody);
-        collisionShape.addChildShape(auxMatrix.idt().translate(0.3f, 2.2f, 0), head);
         physicsComponent.recalculateLocalInertia();
         body.setContactCallbackFlag(CollisionFilterGroups.CharacterFilter);
         body.setContactCallbackFilter(CollisionFilterGroups.KinematicFilter);

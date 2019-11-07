@@ -19,6 +19,7 @@ public class Hud {
         profiler.update();
         stage.act(delta);
         stage.draw();
+        profiler.reset();
     }
 
     public void resize(int width, int height) {

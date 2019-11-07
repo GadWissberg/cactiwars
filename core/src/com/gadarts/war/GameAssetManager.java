@@ -34,6 +34,9 @@ public class GameAssetManager extends AssetManagerWrapper {
         param.textureParameter.genMipMaps = true;
         gameAssetManager.load(GameC.Files.MODELS_FOLDER_NAME + "/" + "artillery.g3dj", Model.class, param);
         gameAssetManager.load(GameC.Files.MODELS_FOLDER_NAME + "/" + "street_lamp.g3dj", Model.class, param);
+        gameAssetManager.load(GameC.Files.MODELS_FOLDER_NAME + "/" + "rock_1.g3dj", Model.class, param);
+        gameAssetManager.load(GameC.Files.MODELS_FOLDER_NAME + "/" + "rock_2.g3dj", Model.class, param);
+        gameAssetManager.load(GameC.Files.MODELS_FOLDER_NAME + "/" + "rock_3.g3dj", Model.class, param);
     }
 
     private void loadSounds(GameAssetManager gameAssetManager) {
