@@ -102,13 +102,17 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
     }
 
     private float calculateNewXForTargetFollowing(float deltaTime, Entity target, Vector3 targetPos, Vector3 targetDir) {
-        CameraComponent cameraComponent = ComponentsMapper.camera.get(camera);
         float linearSpeed = ComponentsMapper.physics.get(target).getBody().getLinearVelocity().len2();
         float minX = targetPos.x - GameC.Camera.MAX_X_FRONT_OFFSET;
         float maxX = targetPos.x + GameC.Camera.MAX_X_FRONT_OFFSET;
-        Vector3 cameraPosition = ComponentsMapper.camera.get(camera).getCamera().position;
-        int coef = ComponentsMapper.characters.get(target).getMovementState() == MovementState.ACCELERATING ? 1 : -1;
-        return MathUtils.clamp(cameraPosition.x + coef * targetDir.x * Math.min(linearSpeed, cameraComponent.getManipulationSpeed()) * deltaTime, minX, maxX);
+        MovementState movementState = ComponentsMapper.characters.get(target).getMovementState();
+        boolean isAccelerating = movementState == MovementState.ACCELERATING && linearSpeed > 1f;
+        int coef = isAccelerating ? 1 : -1;
+        CameraComponent cameraComponent = ComponentsMapper.camera.get(camera);
+        float manipulationSpeed = cameraComponent.getManipulationSpeed();
+        Vector3 cameraPosition = cameraComponent.getCamera().position;
+        float newX = cameraPosition.x + coef * targetDir.x * Math.min(linearSpeed, manipulationSpeed) * deltaTime;
+        return MathUtils.clamp(newX, minX, maxX);
     }
 
     private float calculateNewZForTargetFollowing(float deltaTime, Entity target, Vector3 targetPos, Vector3 targetDir) {
@@ -116,9 +120,13 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
         float linearSpeed = ComponentsMapper.physics.get(target).getBody().getLinearVelocity().len2();
         float minZ = targetPos.z + GameC.Camera.MIN_Z_FRONT_OFFSET;
         float maxZ = targetPos.z + GameC.Camera.MAX_Z_FRONT_OFFSET;
+        MovementState movementState = ComponentsMapper.characters.get(target).getMovementState();
+        boolean isAccelerating = movementState == MovementState.ACCELERATING && linearSpeed > 1f;
         Vector3 cameraPosition = ComponentsMapper.camera.get(camera).getCamera().position;
-        int coef = ComponentsMapper.characters.get(target).getMovementState() == MovementState.ACCELERATING ? 1 : -1;
-        return MathUtils.clamp(cameraPosition.z + coef * targetDir.z * Math.min(linearSpeed, cameraComponent.getManipulationSpeed()) * deltaTime, minZ, maxZ);
+        int coef = isAccelerating ? 1 : -1;
+        float manipulationSpeed = cameraComponent.getManipulationSpeed();
+        float newX = cameraPosition.z + coef * targetDir.z * Math.min(linearSpeed, manipulationSpeed) * deltaTime;
+        return MathUtils.clamp(newX, minZ, maxZ);
     }
 
     private void handleCameraManOnIdle(float deltaTime) {
