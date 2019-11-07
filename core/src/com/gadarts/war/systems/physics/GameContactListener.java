@@ -1,11 +1,14 @@
 package com.gadarts.war.systems.physics;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.bullet.collision.ContactListener;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
+import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.physics.PhysicsComponent;
+import com.gadarts.war.level.GroundChildShape;
 import com.gadarts.war.sound.SFX;
 import com.gadarts.war.sound.SoundPlayer;
 
@@ -23,14 +26,47 @@ public class GameContactListener extends ContactListener {
     @Override
     public void onContactStarted(btCollisionObject colObj0, boolean match0, btCollisionObject colObj1, boolean match1) {
         if (match0) {
-            checkCollision(colObj0, colObj1);
+            checkCollisionOnContactStarted(colObj0, colObj1);
         }
         if (match1) {
-            checkCollision(colObj1, colObj0);
+            checkCollisionOnContactStarted(colObj1, colObj0);
         }
     }
 
-    private boolean checkCollision(btCollisionObject filterMatched, btCollisionObject match) {
+//    @Override
+//    public boolean onContactAdded(btCollisionObject colObj0, int partId0, int index0, boolean match0,
+//                                  btCollisionObject colObj1, int partId1, int index1, boolean match1) {
+//        if (match0) {
+//            checkCollisionOnContactAdded(colObj0, colObj1, index0, index1);
+//        }
+//        if (match1) {
+//            checkCollisionOnContactAdded(colObj1, colObj0, index1, index0);
+//        }
+//        return match0 || match1;
+//    }
+
+    private void checkCollisionOnContactAdded(btCollisionObject colObj0, btCollisionObject colObj1, int id0, int id1) {
+        Entity entity0 = (Entity) colObj0.userData;
+        Entity entity1 = (Entity) colObj1.userData;
+        if (entity0 == null || entity1 == null) return;
+        if (ComponentsMapper.characters.has(entity0)) {
+            if (colObj1.userData != null) {
+                if (ComponentsMapper.ground.has(entity1)) {
+                    onContactAddedForCharacterWithGround(entity0, entity1, id1);
+                }
+            }
+        }
+    }
+
+    private void onContactAddedForCharacterWithGround(Entity character, Entity ground, int childShapeIndex) {
+        ComponentsMapper.characters.get(character);
+        btCompoundShape compound = (btCompoundShape) ComponentsMapper.physics.get(ground).getBody().getCollisionShape();
+        GroundChildShape child = (GroundChildShape) compound.getChildShape(childShapeIndex);
+        Gdx.app.log("!", ""+child.getTest());
+        ComponentsMapper.ground.get(ground).getFrictionMapping();
+    }
+
+    private boolean checkCollisionOnContactStarted(btCollisionObject filterMatched, btCollisionObject match) {
         boolean result = false;
         Entity entity0 = (Entity) filterMatched.userData;
         Entity entity1 = (Entity) match.userData;
@@ -38,7 +74,7 @@ public class GameContactListener extends ContactListener {
         if (ComponentsMapper.characters.has(entity0)) {
             if (match.userData != null) {
                 if (ComponentsMapper.ground.has(entity1)) {
-                    onCharacterWithGround(entity0, entity1);
+                    onContactStartedForCharacterWithGround(entity0, entity1);
                     result = true;
                 } else if (ComponentsMapper.environmentObject.has(entity1)) {
                     onCharacterWithEnvironmentObject(entity0, entity1);
@@ -61,7 +97,7 @@ public class GameContactListener extends ContactListener {
         }
     }
 
-    private void onCharacterWithGround(Entity characterEntity, Entity groundEntity) {
+    private void onContactStartedForCharacterWithGround(Entity characterEntity, Entity groundEntity) {
         PhysicsComponent characterPhysicsComponent = ComponentsMapper.physics.get(characterEntity);
         float linearV = characterPhysicsComponent.getBody().getLinearVelocity().len2();
         if (linearV > ComponentsMapper.characters.get(characterEntity).getGroundCrashThreshold())

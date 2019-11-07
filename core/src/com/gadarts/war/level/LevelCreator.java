@@ -15,7 +15,6 @@ import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
 import com.badlogic.gdx.physics.bullet.collision.btBroadphaseProxy;
 import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
 import com.badlogic.gdx.physics.bullet.collision.btStaticPlaneShape;
@@ -33,6 +32,7 @@ import com.gadarts.war.components.GroundComponent;
 import com.gadarts.war.components.model.ModelInstanceComponent;
 import com.gadarts.war.components.physics.PhysicsComponent;
 import com.gadarts.war.systems.physics.PhysicsSystem;
+
 import java.util.HashMap;
 
 public class LevelCreator extends LevelModeler {
@@ -44,30 +44,35 @@ public class LevelCreator extends LevelModeler {
         super(new ModelBuilder(), entitiesEngine);
     }
 
-    private void createGroundBody() {
+    private void createGroundBody(Map map) {
         PooledEngine entitiesEngine = getEntitiesEngine();
         ImmutableArray<Entity> groundRegions = entitiesEngine.getEntitiesFor(Family.all(GroundComponent.class).get());
         for (Entity entity : groundRegions) {
             if (ComponentsMapper.ground.get(entity).isPhysical()) {
-                createGroundRegionBody(entity, entitiesEngine);
+                createGroundRegionBody(entity, entitiesEngine, map);
             }
         }
     }
 
-    private void createGroundRegionBody(Entity entity, PooledEngine engine) {
+    private void createGroundRegionBody(Entity entity, PooledEngine engine, Map map) {
+        GroundComponent groundComponent = ComponentsMapper.ground.get(entity);
         PhysicsComponent physicsComponent = engine.createComponent(PhysicsComponent.class);
         ModelInstanceComponent modelInstanceComponent = ComponentsMapper.modelInstance.get(entity);
         ModelInstance modelInstance = modelInstanceComponent.getModelInstance();
         int halfWidth = Level.REGION_SIZE_UNIT;
         btCompoundShape compoundShape = new btCompoundShape(true);
-        for (int i = 0; i < Level.REGION_SIZE_UNIT; i++) {
-            for (int j = 0; j < Level.REGION_SIZE_UNIT; j++) {
-                compoundShape.addChildShape(auxMatrix.idt().trn(j + 0.5f, 0, i + 0.5f), new btBoxShape(auxVector31.set(0.5f, 0.1f, 0.5f)));
+        Matrix4 transform = modelInstance.transform;
+        physicsComponent.init(0, compoundShape, transform);
+        btRigidBody body = physicsComponent.getBody();
+        for (int row = 0; row < Level.REGION_SIZE_UNIT; row++) {
+            for (int col = 0; col < Level.REGION_SIZE_UNIT; col++) {
+                int originX = (int) transform.val[Matrix4.M03];
+                int originZ = (int) transform.val[Matrix4.M23];
+                compoundShape.addChildShape(auxMatrix.idt().trn(col + 0.5f, 0, row + 0.5f), new GroundChildShape(auxVector31.set(0.5f, 0.1f, 0.5f),map.getPath()[originZ + row][originX + col]));
+                groundComponent.getFrictionMapping()[row][col] = map.getPath()[originZ + row][originX + col];
             }
         }
-        physicsComponent.init(0, compoundShape, modelInstance.transform);
         entity.add(physicsComponent);
-        btRigidBody body = physicsComponent.getBody();
         body.userData = entity;
         body.setContactCallbackFlag(btBroadphaseProxy.CollisionFilterGroups.KinematicFilter);
         engine.getSystem(PhysicsSystem.class).getCollisionWorld().addRigidBody(body);
@@ -91,8 +96,8 @@ public class LevelCreator extends LevelModeler {
     }
 
 
-    public void createLevelPhysics() {
-        createGroundBody();
+    public void createLevelPhysics(Map map) {
+        createGroundBody(map);
         int distanceFromOrigin = Level.REGION_SIZE_UNIT * Level.LEVEL_SIZE;
         createBoundaryPhysics(auxVector31.set(0, 0, 1), 0);
         createBoundaryPhysics(auxVector31.set(1, 0, 0), 0);
@@ -164,7 +169,7 @@ public class LevelCreator extends LevelModeler {
     private void modelVerticalSurroundingGroundModel(int x) {
         for (int i = 0; i < Level.LEVEL_SIZE; i++) {
             int regionSize = Level.REGION_SIZE_UNIT * 2;
-            modelGroundRegion(i * regionSize, x, regionSize,  true);
+            modelGroundRegion(i * regionSize, x, regionSize, true);
         }
     }
 
@@ -207,7 +212,7 @@ public class LevelCreator extends LevelModeler {
     public void createLevelIntoEngine(Map map) {
         TextureAtlas tilesAtlas = GameAssetManager.getInstance().get(GameC.Files.TEXTURES_FOLDER_NAME + "/" + "grass.txt", TextureAtlas.class);
         modelLevelGround(map, tilesAtlas);
-        createLevelPhysics();
+        createLevelPhysics(map);
     }
 
 }

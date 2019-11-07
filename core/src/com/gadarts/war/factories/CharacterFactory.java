@@ -55,7 +55,7 @@ public class CharacterFactory {
         player.add(modelInstanceComponent);
         PhysicsComponent physicsComponent = createPhysicsComponent(modelFileName, player, modelInstanceComponent.getModelInstance(), 400);
         btRigidBody body = physicsComponent.getBody();
-        body.setAnisotropicFriction(auxVector.set(2, 0, 2));
+        body.setSpinningFriction(1.5f);
         btCompoundShape collisionShape = (btCompoundShape) body.getCollisionShape();
         float halfWidth = auxBoundBox.getWidth() / 2;
         float halfHeight = auxBoundBox.getHeight() / 4;
@@ -68,6 +68,7 @@ public class CharacterFactory {
         player.add(physicsComponent);
         body.setContactCallbackFlag(CollisionFilterGroups.CharacterFilter);
         body.setContactCallbackFilter(CollisionFilterGroups.CharacterFilter | CollisionFilterGroups.KinematicFilter);
+//        body.setCollisionFlags(body.getCollisionFlags() | CF_CUSTOM_MATERIAL_CALLBACK);
         return player;
     }
 
@@ -81,7 +82,7 @@ public class CharacterFactory {
         }
         btRigidBody body = physicsComponent.getBody();
         body.userData = player;
-        body.setSleepingThresholds(1,1);
+        body.setSleepingThresholds(1, 1);
         body.setDeactivationTime(5);
         return physicsComponent;
     }
