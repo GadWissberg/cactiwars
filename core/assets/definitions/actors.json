@@ -1,20 +1,31 @@
-[
-  {
-    "type": "character",
-    "entries": [
-      {
-        "name": "artillery",
-        "collision_shapes": []
-      }
-    ]
-  },
-  {
-    "type": "environment_object",
-    "entries": [
-      {
-        "name": "street_lamp",
-        "collision_shapes": []
-      }
-    ]
-  }
-]
+{
+  "character": [
+    {
+      "name": "artillery",
+      "collision_shapes": [],
+      "model": "artillery"
+    }
+  ],
+  "environment": [
+    {
+      "name": "street_lamp",
+      "collision_shapes": [],
+      "model": "street_lamp"
+    },
+    {
+      "name": "rock_1",
+      "collision_shapes": [],
+      "model": "rock_1"
+    },
+    {
+      "name": "rock_2",
+      "collision_shapes": [],
+      "model": "rock_2"
+    },
+    {
+      "name": "rock_3",
+      "collision_shapes": [],
+      "model": "rock_3"
+    }
+  ]
+}
