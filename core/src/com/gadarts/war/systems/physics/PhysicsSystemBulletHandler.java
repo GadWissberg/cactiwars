@@ -1,12 +1,16 @@
 package com.gadarts.war.systems.physics;
 
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.DebugDrawer;
 import com.badlogic.gdx.physics.bullet.collision.btAxisSweep3;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionDispatcher;
 import com.badlogic.gdx.physics.bullet.collision.btDefaultCollisionConfiguration;
 import com.badlogic.gdx.physics.bullet.collision.btGhostPairCallback;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
+import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
+import com.gadarts.war.GameSettings;
 
 public class PhysicsSystemBulletHandler {
     private btDiscreteDynamicsWorld collisionWorld;
@@ -15,6 +19,15 @@ public class PhysicsSystemBulletHandler {
     private btAxisSweep3 broadPhase;
     private btSequentialImpulseConstraintSolver solver;
     private btGhostPairCallback ghostPairCallback;
+    private DebugDrawer debugDrawer;
+    private CollisionShapesDebugDrawing collisionShapesDebugDrawingMethod = new CollisionShapesDebugDrawing() {
+        @Override
+        public void drawCollisionShapes(PerspectiveCamera camera) {
+            debugDrawer.begin(camera);
+            collisionWorld.debugDrawWorld();
+            debugDrawer.end();
+        }
+    };
 
     public btDiscreteDynamicsWorld getCollisionWorld() {
         return collisionWorld;
@@ -45,10 +58,21 @@ public class PhysicsSystemBulletHandler {
         dispatcher = new btCollisionDispatcher(collisionConfiguration);
         broadPhase = new btAxisSweep3(new Vector3(-100, -100, -100), new Vector3(100, 100, 100));
         solver = new btSequentialImpulseConstraintSolver();
-        collisionWorld = new btDiscreteDynamicsWorld(dispatcher, broadPhase, solver, collisionConfiguration);
-        collisionWorld.setGravity(new Vector3(0, -20, 0));
+        initializeCollisionWorld();
         ghostPairCallback = new btGhostPairCallback();
         broadPhase.getOverlappingPairCache().setInternalGhostPairCallback(ghostPairCallback);
+    }
+
+    void initializeDebugDrawer() {
+        if (!GameSettings.DRAW_COLLISION_SHAPES) return;
+        debugDrawer = new DebugDrawer();
+        debugDrawer.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_MAX_DEBUG_DRAW_MODE);
+        collisionWorld.setDebugDrawer(debugDrawer);
+    }
+
+    private void initializeCollisionWorld() {
+        collisionWorld = new btDiscreteDynamicsWorld(dispatcher, broadPhase, solver, collisionConfiguration);
+        collisionWorld.setGravity(new Vector3(0, -20, 0));
     }
 
     public void dispose() {
@@ -59,4 +83,13 @@ public class PhysicsSystemBulletHandler {
         if (collisionConfiguration != null) collisionConfiguration.dispose();
         ghostPairCallback.dispose();
     }
+
+    public DebugDrawer getDebugDrawer() {
+        return debugDrawer;
+    }
+
+    public CollisionShapesDebugDrawing getCollisionShapesDebugDrawingMethod() {
+        return collisionShapesDebugDrawingMethod;
+    }
+
 }

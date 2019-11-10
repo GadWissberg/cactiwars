@@ -15,13 +15,26 @@ public class SystemsHandler {
     }
 
     public void init() {
-        CameraSystem cameraSystem = new CameraSystem();
-        engine.addSystem(cameraSystem);
-        engine.addSystem(new RenderSystem());
-        engine.addSystem(new PhysicsSystem(soundPlayer));
+        CameraSystem cameraSystem = createCameraSystem();
+        RenderSystem renderSystem = createRenderSystem();
+        PhysicsSystem physicsSystem = new PhysicsSystem(soundPlayer);
+        physicsSystem.subscribeForEvents(renderSystem);
         PlayerSystem playerSystem = new PlayerSystem(soundPlayer);
         playerSystem.subscribeForEvents(cameraSystem);
+        engine.addSystem(physicsSystem);
         engine.addSystem(playerSystem);
         engine.addSystem(new CharacterSystem(soundPlayer));
+    }
+
+    private RenderSystem createRenderSystem() {
+        RenderSystem renderSystem = new RenderSystem();
+        engine.addSystem(renderSystem);
+        return renderSystem;
+    }
+
+    private CameraSystem createCameraSystem() {
+        CameraSystem cameraSystem = new CameraSystem();
+        engine.addSystem(cameraSystem);
+        return cameraSystem;
     }
 }

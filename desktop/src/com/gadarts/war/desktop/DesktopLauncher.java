@@ -3,7 +3,7 @@ package com.gadarts.war.desktop;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.gadarts.shared.*;
+import com.gadarts.shared.SharedC;
 import com.gadarts.war.GameSettings;
 import com.gadarts.war.WarGame;
 

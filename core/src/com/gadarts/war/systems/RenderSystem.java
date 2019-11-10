@@ -17,8 +17,10 @@ import com.gadarts.war.GameShaderProvider;
 import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.model.ModelInstanceComponent;
+import com.gadarts.war.systems.physics.CollisionShapesDebugDrawing;
+import com.gadarts.war.systems.physics.PhysicsSystemEventsSubscriber;
 
-public class RenderSystem extends EntitySystem {
+public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSubscriber {
     private static Vector3 auxVector31 = new Vector3();
     private static Vector3 auxVector32 = new Vector3();
     private static BoundingBox auxBoundingBox1 = new BoundingBox();
@@ -28,6 +30,7 @@ public class RenderSystem extends EntitySystem {
     private PerspectiveCamera camera;
     private ImmutableArray<Entity> modelInstanceEntities;
     private int numberOfVisible;
+    private CollisionShapesDebugDrawing collisionShapesDebugDrawingMethod;
 
     @Override
     public void addedToEngine(Engine engine) {
@@ -46,6 +49,7 @@ public class RenderSystem extends EntitySystem {
         modelBatch.begin(camera);
         renderAllInstances();
         modelBatch.end();
+        if (collisionShapesDebugDrawingMethod != null) collisionShapesDebugDrawingMethod.drawCollisionShapes(camera);
     }
 
     private void renderAllInstances() {
@@ -90,4 +94,8 @@ public class RenderSystem extends EntitySystem {
         return numberOfVisible;
     }
 
+    @Override
+    public void collisionShapesDrawingInitialized(CollisionShapesDebugDrawing collisionShapesDebugDrawingMethod) {
+        this.collisionShapesDebugDrawingMethod = collisionShapesDebugDrawingMethod;
+    }
 }
