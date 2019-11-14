@@ -10,7 +10,10 @@
     {
       "name": "street_lamp",
       "collision_shapes": [],
-      "model": "street_lamp"
+      "model": "street_lamp",
+      "origin": {
+        "y": -1
+      }
     },
     {
       "name": "rock_1",
