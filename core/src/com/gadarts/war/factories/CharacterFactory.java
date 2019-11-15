@@ -57,7 +57,7 @@ public class CharacterFactory {
         player.add(modelInstanceComponent);
         PhysicsComponent physicsComponent = createPhysicsComponent(modelFileName, player, modelInstanceComponent.getModelInstance(), 400);
         btRigidBody body = physicsComponent.getBody();
-        body.setSpinningFriction(2);
+        body.setDamping(0,0.1f);
         btCompoundShape collisionShape = (btCompoundShape) body.getCollisionShape();
         float halfWidth = auxBoundBox.getWidth() / 2;
         float halfHeight = auxBoundBox.getHeight() / 4;
