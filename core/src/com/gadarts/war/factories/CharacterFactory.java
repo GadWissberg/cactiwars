@@ -49,15 +49,16 @@ public class CharacterFactory {
         this.soundPlayer = soundPlayer;
     }
 
-    public Entity createPlayer(String modelFileName, float x, float y, float z) {
+    public Entity createPlayer(String modelFileName, float x, float y, float z, float rotation) {
         Entity player = engine.createEntity();
         player.add(engine.createComponent(PlayerComponent.class));
         player.add(createCharacterComponent());
-        ModelInstanceComponent modelInstanceComponent = createModelInstanceComponent(modelFileName, x, z, y);
+        ModelInstanceComponent modelInstanceComponent = createModelInstanceComponent(modelFileName, x, y, z);
         player.add(modelInstanceComponent);
-        PhysicsComponent physicsComponent = createPhysicsComponent(modelFileName, player, modelInstanceComponent.getModelInstance(), 400);
+        ModelInstance modelInstance = modelInstanceComponent.getModelInstance();
+        PhysicsComponent physicsComponent = createPhysicsComponent(modelFileName, player, modelInstance, 400);
         btRigidBody body = physicsComponent.getBody();
-        body.setDamping(0,0.1f);
+        body.setDamping(0, 0.1f);
         btCompoundShape collisionShape = (btCompoundShape) body.getCollisionShape();
         float halfWidth = auxBoundBox.getWidth() / 2;
         float halfHeight = auxBoundBox.getHeight() / 4;

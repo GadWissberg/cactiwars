@@ -18,17 +18,20 @@
     {
       "name": "rock_1",
       "collision_shapes": [],
-      "model": "rock_1"
+      "model": "rock_1",
+      "static": true
     },
     {
       "name": "rock_2",
       "collision_shapes": [],
-      "model": "rock_2"
+      "model": "rock_2",
+      "static": true
     },
     {
       "name": "rock_3",
       "collision_shapes": [],
-      "model": "rock_3"
+      "model": "rock_3",
+      "static": true
     }
   ]
 }

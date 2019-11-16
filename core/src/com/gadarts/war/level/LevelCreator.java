@@ -21,9 +21,13 @@ import com.badlogic.gdx.physics.bullet.collision.btStaticPlaneShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.gadarts.shared.SharedC;
 import com.gadarts.shared.SharedC.Level;
+import com.gadarts.shared.definitions.ActorDefinition;
+import com.gadarts.shared.definitions.Definitions;
+import com.gadarts.shared.level.Actor;
 import com.gadarts.shared.level.LevelModeler;
 import com.gadarts.shared.level.Map;
 import com.gadarts.shared.level.TilePathSignature;
+import com.gadarts.shared.par.SectionType;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
 import com.gadarts.war.GameSettings;
@@ -31,8 +35,12 @@ import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.GroundComponent;
 import com.gadarts.war.components.model.ModelInstanceComponent;
 import com.gadarts.war.components.physics.PhysicsComponent;
+import com.gadarts.war.factories.CharacterFactory;
+import com.gadarts.war.systems.CameraSystem;
 import com.gadarts.war.systems.physics.PhysicsSystem;
+import com.gadarts.war.systems.player.PlayerSystem;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class LevelCreator extends LevelModeler {
@@ -68,7 +76,7 @@ public class LevelCreator extends LevelModeler {
             for (int col = 0; col < Level.REGION_SIZE_UNIT; col++) {
                 int originX = (int) transform.val[Matrix4.M03];
                 int originZ = (int) transform.val[Matrix4.M23];
-                compoundShape.addChildShape(auxMatrix.idt().trn(col + 0.5f, 0, row + 0.5f), new GroundChildShape(auxVector31.set(0.5f, 0.1f, 0.5f),map.getPath()[originZ + row][originX + col]));
+                compoundShape.addChildShape(auxMatrix.idt().trn(col + 0.5f, 0, row + 0.5f), new GroundChildShape(auxVector31.set(0.5f, 0.1f, 0.5f), map.getPath()[originZ + row][originX + col]));
                 groundComponent.getFrictionMapping()[row][col] = map.getPath()[originZ + row][originX + col];
             }
         }
@@ -209,10 +217,32 @@ public class LevelCreator extends LevelModeler {
         return modelInstanceComponent;
     }
 
-    public void createLevelIntoEngine(Map map) {
-        TextureAtlas tilesAtlas = GameAssetManager.getInstance().get(GameC.Files.TEXTURES_FOLDER_NAME + "/" + "grass.txt", TextureAtlas.class);
+    public void createLevelIntoEngine(Map map, CharacterFactory characterFactory) {
+        GameAssetManager assetManager = GameAssetManager.getInstance();
+        TextureAtlas tilesAtlas = assetManager.get(GameC.Files.TEXTURES_FOLDER_NAME + "/" + "grass.txt", TextureAtlas.class);
         modelLevelGround(map, tilesAtlas);
         createLevelPhysics(map);
+        ArrayList<Actor> actors = map.getActors();
+        Definitions<ActorDefinition> actorsDefs = assetManager.get(SectionType.DEF + "/" + SharedC.Par.Actors.ACTORS_DEF_NAME, Definitions.class);
+        PooledEngine entitiesEngine = getEntitiesEngine();
+        for (Actor actor : actors) {
+            String actorDefinitionId = actor.getActorDefinitionId();
+            ActorDefinition actorDefinition = actorsDefs.getDefinitions().get(actorDefinitionId);
+            Vector3 position = actor.getPosition();
+            Vector3 origin = actorDefinition.getOrigin();
+            String modelFileName = GameC.Files.MODELS_FOLDER_NAME + "/" + actorDefinition.getModel() + ".g3dj";
+            if (actorDefinitionId.equals("artillery")) {
+                Entity player = characterFactory.createPlayer(modelFileName, position.x - origin.x, position.y - origin.y, position.z - origin.z, actor.getRotation());
+                entitiesEngine.addEntity(player);
+                entitiesEngine.getSystem(CameraSystem.class).lockToTarget(player);
+                entitiesEngine.getSystem(PlayerSystem.class).setPlayer(player);
+            } else {
+                Entity lamp = characterFactory.createEnvironmentObject(modelFileName,
+                        auxVector31.set(position.x - origin.x, position.y - origin.y, position.z - origin.z), actorDefinition.isStatic());
+                entitiesEngine.addEntity(lamp);
+            }
+
+        }
     }
 
 }

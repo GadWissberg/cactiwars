@@ -10,7 +10,6 @@ import com.gadarts.shared.par.SectionType;
 import com.gadarts.war.factories.CharacterFactory;
 import com.gadarts.war.level.LevelCreator;
 import com.gadarts.war.sound.SoundPlayer;
-import com.gadarts.war.systems.CameraSystem;
 import com.gadarts.war.systems.RenderSystem;
 import com.gadarts.war.systems.SystemsHandler;
 import com.gadarts.war.systems.physics.PhysicsSystem;
@@ -51,9 +50,9 @@ class BattleScreen implements Screen {
 
     private void createWorld() {
         createLevel();
-        createPlayer();
-        createStreetLamp();
-        createRocks();
+//        createPlayer();
+//        createStreetLamp();
+//        createRocks();
     }
 
     private void createRocks() {
@@ -69,23 +68,12 @@ class BattleScreen implements Screen {
     }
 
     private void createStreetLamp() {
-        String modelFileName = GameC.Files.MODELS_FOLDER_NAME + "/" + "street_lamp.g3dj";
-        Entity lamp = characterFactory.createEnvironmentObject(modelFileName, auxVector.set(1, 2, 1), false);
-        entitiesEngine.addEntity(lamp);
-    }
-
-    private void createPlayer() {
-        String modelFileName = GameC.Files.MODELS_FOLDER_NAME + "/" + "artillery.g3dj";
-        Entity player = characterFactory.createPlayer(modelFileName, 2, 10, 4);
-        entitiesEngine.addEntity(player);
-        entitiesEngine.getSystem(CameraSystem.class).lockToTarget(player);
-        entitiesEngine.getSystem(PlayerSystem.class).setPlayer(player);
     }
 
     private void createLevel() {
         LevelCreator levelCreator = new LevelCreator(entitiesEngine);
         String fileName = SectionType.MAP + "/" + "test";
-        levelCreator.createLevelIntoEngine(GameAssetManager.getInstance().get(fileName, Map.class));
+        levelCreator.createLevelIntoEngine(GameAssetManager.getInstance().get(fileName, Map.class), characterFactory);
     }
 
 
