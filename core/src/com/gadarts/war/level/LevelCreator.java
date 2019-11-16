@@ -238,7 +238,7 @@ public class LevelCreator extends LevelModeler {
                 entitiesEngine.getSystem(PlayerSystem.class).setPlayer(player);
             } else {
                 Entity lamp = characterFactory.createEnvironmentObject(modelFileName,
-                        auxVector31.set(position.x - origin.x, position.y - origin.y, position.z - origin.z), actorDefinition.isStatic());
+                        auxVector31.set(position.x - origin.x, position.y - origin.y, position.z - origin.z), actorDefinition.isStatic(), actor.getRotation());
                 entitiesEngine.addEntity(lamp);
             }
 

@@ -71,6 +71,8 @@ public class CharacterFactory {
         player.add(physicsComponent);
         body.setContactCallbackFlag(CollisionFilterGroups.CharacterFilter);
         body.setContactCallbackFilter(CollisionFilterGroups.CharacterFilter | CollisionFilterGroups.KinematicFilter);
+        body.getMotionState().getWorldTransform(auxMatrix);
+        body.setCenterOfMassTransform(auxMatrix.rotate(Vector3.Y,rotation));
 //        body.setCollisionFlags(body.getCollisionFlags() | CF_CUSTOM_MATERIAL_CALLBACK);
         return player;
     }
@@ -121,7 +123,7 @@ public class CharacterFactory {
         characterSoundData.setEngineSoundId(soundPlayer.play(characterSoundData.getEngineSound(), true));
     }
 
-    public Entity createEnvironmentObject(String modelFileName, Vector3 position, boolean isStatic) {
+    public Entity createEnvironmentObject(String modelFileName, Vector3 position, boolean isStatic, float rotation) {
         Entity env = engine.createEntity();
         ModelInstanceComponent modelInstanceComponent = createModelInstanceComponent(modelFileName, position.x, position.y, position.z);
         env.add(engine.createComponent(EnvironmentObjectComponent.class));
@@ -146,6 +148,9 @@ public class CharacterFactory {
         physicsComponent.recalculateLocalInertia();
         body.setContactCallbackFlag(CollisionFilterGroups.CharacterFilter);
         body.setContactCallbackFilter(CollisionFilterGroups.KinematicFilter);
+        body.getMotionState().getWorldTransform(auxMatrix);
+        body.setCenterOfMassTransform(auxMatrix.rotate(Vector3.Y,rotation));
+        modelInstanceComponent.getModelInstance().transform.rotate(Vector3.Y,rotation);
         env.add(physicsComponent);
         return env;
     }
