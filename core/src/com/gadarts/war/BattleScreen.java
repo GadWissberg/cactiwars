@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.gadarts.shared.level.Map;
 import com.gadarts.shared.par.SectionType;
 import com.gadarts.war.factories.CharacterFactory;
-import com.gadarts.war.level.LevelCreator;
+import com.gadarts.war.level.MapCreator;
 import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.systems.RenderSystem;
 import com.gadarts.war.systems.SystemsHandler;
@@ -70,9 +70,9 @@ class BattleScreen implements Screen {
     }
 
     private void createLevel() {
-        LevelCreator levelCreator = new LevelCreator(entitiesEngine);
+        MapCreator mapCreator = new MapCreator(entitiesEngine);
         String fileName = SectionType.MAP + "/" + "test";
-        levelCreator.createLevelIntoEngine(GameAssetManager.getInstance().get(fileName, Map.class), characterFactory);
+        mapCreator.createLevelIntoEngine(GameAssetManager.getInstance().get(fileName, Map.class), characterFactory);
     }
 
 

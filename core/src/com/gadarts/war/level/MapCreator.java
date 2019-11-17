@@ -20,12 +20,11 @@ import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
 import com.badlogic.gdx.physics.bullet.collision.btStaticPlaneShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.gadarts.shared.SharedC;
-import com.gadarts.shared.SharedC.Level;
 import com.gadarts.shared.definitions.ActorDefinition;
 import com.gadarts.shared.definitions.Definitions;
 import com.gadarts.shared.level.Actor;
-import com.gadarts.shared.level.LevelModeler;
 import com.gadarts.shared.level.Map;
+import com.gadarts.shared.level.MapModeler;
 import com.gadarts.shared.level.TilePathSignature;
 import com.gadarts.shared.par.SectionType;
 import com.gadarts.war.GameAssetManager;
@@ -43,12 +42,12 @@ import com.gadarts.war.systems.player.PlayerSystem;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class LevelCreator extends LevelModeler {
+public class MapCreator extends MapModeler {
     private static Vector3 auxVector31 = new Vector3();
     private static Matrix4 auxMatrix = new Matrix4();
     private HashMap<String, Material> materials = new HashMap<>();
 
-    public LevelCreator(PooledEngine entitiesEngine) {
+    public MapCreator(PooledEngine entitiesEngine) {
         super(new ModelBuilder(), entitiesEngine);
     }
 
@@ -67,13 +66,13 @@ public class LevelCreator extends LevelModeler {
         PhysicsComponent physicsComponent = engine.createComponent(PhysicsComponent.class);
         ModelInstanceComponent modelInstanceComponent = ComponentsMapper.modelInstance.get(entity);
         ModelInstance modelInstance = modelInstanceComponent.getModelInstance();
-        int halfWidth = Level.REGION_SIZE_UNIT;
+        int halfWidth = SharedC.Map.REGION_SIZE_UNIT;
         btCompoundShape compoundShape = new btCompoundShape(true);
         Matrix4 transform = modelInstance.transform;
         physicsComponent.init(0, compoundShape, transform);
         btRigidBody body = physicsComponent.getBody();
-        for (int row = 0; row < Level.REGION_SIZE_UNIT; row++) {
-            for (int col = 0; col < Level.REGION_SIZE_UNIT; col++) {
+        for (int row = 0; row < SharedC.Map.REGION_SIZE_UNIT; row++) {
+            for (int col = 0; col < SharedC.Map.REGION_SIZE_UNIT; col++) {
                 int originX = (int) transform.val[Matrix4.M03];
                 int originZ = (int) transform.val[Matrix4.M23];
                 compoundShape.addChildShape(auxMatrix.idt().trn(col + 0.5f, 0, row + 0.5f), new GroundChildShape(auxVector31.set(0.5f, 0.1f, 0.5f), map.getPath()[originZ + row][originX + col]));
@@ -106,7 +105,7 @@ public class LevelCreator extends LevelModeler {
 
     public void createLevelPhysics(Map map) {
         createGroundBody(map);
-        int distanceFromOrigin = Level.REGION_SIZE_UNIT * Level.LEVEL_SIZE;
+        int distanceFromOrigin = SharedC.Map.REGION_SIZE_UNIT * SharedC.Map.LEVEL_SIZE;
         createBoundaryPhysics(auxVector31.set(0, 0, 1), 0);
         createBoundaryPhysics(auxVector31.set(1, 0, 0), 0);
         createBoundaryPhysics(auxVector31.set(0, 0, -1), -distanceFromOrigin);
@@ -114,8 +113,8 @@ public class LevelCreator extends LevelModeler {
     }
 
     public void modelLevelGround(Map map, TextureAtlas tilesAtlas) {
-        for (int row = 0; row < Level.LEVEL_SIZE; row++) {
-            for (int col = 0; col < Level.LEVEL_SIZE; col++) {
+        for (int row = 0; row < SharedC.Map.LEVEL_SIZE; row++) {
+            for (int col = 0; col < SharedC.Map.LEVEL_SIZE; col++) {
                 modelGroundRegion(map, tilesAtlas, row, col);
             }
         }
@@ -126,10 +125,10 @@ public class LevelCreator extends LevelModeler {
 
     private void modelGroundRegion(Map map, TextureAtlas tilesAtlas, int originRow, int originCol) {
         builder.begin();
-        int originRowUnits = originRow * Level.REGION_SIZE_UNIT;
-        int originColUnits = originCol * Level.REGION_SIZE_UNIT;
-        for (int row = 0; row < Level.REGION_SIZE_UNIT; row++) {
-            for (int col = 0; col < Level.REGION_SIZE_UNIT; col++) {
+        int originRowUnits = originRow * SharedC.Map.REGION_SIZE_UNIT;
+        int originColUnits = originCol * SharedC.Map.REGION_SIZE_UNIT;
+        for (int row = 0; row < SharedC.Map.REGION_SIZE_UNIT; row++) {
+            for (int col = 0; col < SharedC.Map.REGION_SIZE_UNIT; col++) {
                 Material material = getMaterial(map, originRowUnits + row, originColUnits + col, tilesAtlas);
                 MeshPartBuilder meshBuilder = builder.part("ground", GL20.GL_TRIANGLES,
                         VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal |
@@ -166,24 +165,24 @@ public class LevelCreator extends LevelModeler {
     }
 
     private void modelSurroundingGround() {
-        modelHorizontalSurroundingGroundModel(Level.LEVEL_SIZE + 2,
-                -1 * Level.REGION_SIZE_UNIT * 2);
-        modelHorizontalSurroundingGroundModel(Level.LEVEL_SIZE + 2,
-                Level.LEVEL_SIZE * Level.REGION_SIZE_UNIT);
+        modelHorizontalSurroundingGroundModel(SharedC.Map.LEVEL_SIZE + 2,
+                -1 * SharedC.Map.REGION_SIZE_UNIT * 2);
+        modelHorizontalSurroundingGroundModel(SharedC.Map.LEVEL_SIZE + 2,
+                SharedC.Map.LEVEL_SIZE * SharedC.Map.REGION_SIZE_UNIT);
         modelVerticalSurroundingGroundModel(-1);
         modelVerticalSurroundingGroundModel(1);
     }
 
     private void modelVerticalSurroundingGroundModel(int x) {
-        for (int i = 0; i < Level.LEVEL_SIZE; i++) {
-            int regionSize = Level.REGION_SIZE_UNIT * 2;
+        for (int i = 0; i < SharedC.Map.LEVEL_SIZE; i++) {
+            int regionSize = SharedC.Map.REGION_SIZE_UNIT * 2;
             modelGroundRegion(i * regionSize, x, regionSize, true);
         }
     }
 
     private void modelHorizontalSurroundingGroundModel(int numberOfRegions, int z) {
         for (int i = 0; i < numberOfRegions; i++) {
-            int regionSize = Level.REGION_SIZE_UNIT * 2;
+            int regionSize = SharedC.Map.REGION_SIZE_UNIT * 2;
             modelGroundRegion(z, i - 1, regionSize, true);
         }
     }

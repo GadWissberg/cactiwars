@@ -66,13 +66,13 @@ public class CharacterFactory {
         Vector3 halfExtents = auxVector.set(halfWidth, halfHeight, halfDepth);
         btBoxShape box = Pools.obtain(btBoxShapeWrapper.class);
         box.setImplicitShapeDimensions(halfExtents);
-        collisionShape.addChildShape(auxMatrix.translate(0, halfExtents.y, 0), box);
+        collisionShape.addChildShape(auxMatrix.setToTranslation(0, halfExtents.y, 0), box);
         physicsComponent.recalculateLocalInertia();
         player.add(physicsComponent);
         body.setContactCallbackFlag(CollisionFilterGroups.CharacterFilter);
         body.setContactCallbackFilter(CollisionFilterGroups.CharacterFilter | CollisionFilterGroups.KinematicFilter);
-        body.getMotionState().getWorldTransform(auxMatrix);
-        body.setCenterOfMassTransform(auxMatrix.rotate(Vector3.Y,rotation));
+//        body.getMotionState().getWorldTransform(auxMatrix);
+//        body.setCenterOfMassTransform(auxMatrix.rotate(Vector3.Y,rotation));
 //        body.setCollisionFlags(body.getCollisionFlags() | CF_CUSTOM_MATERIAL_CALLBACK);
         return player;
     }
