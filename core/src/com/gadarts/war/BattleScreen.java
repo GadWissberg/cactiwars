@@ -49,24 +49,6 @@ class BattleScreen implements Screen {
 
     private void createWorld() {
         createLevel();
-//        createPlayer();
-//        createStreetLamp();
-//        createRocks();
-    }
-
-//    private void createRocks() {
-//        String modelFileName = GameC.Files.MODELS_FOLDER_NAME + "/" + "rock_1.g3dj";
-//        Entity rock = characterFactory.createEnvironmentObject(modelFileName, auxVector.set(4, 0, 1), true, actor.getRotation());
-//        entitiesEngine.addEntity(rock);
-//        modelFileName = GameC.Files.MODELS_FOLDER_NAME + "/" + "rock_2.g3dj";
-//        rock = characterFactory.createEnvironmentObject(modelFileName, auxVector.set(4, 0, 3), true, actor.getRotation());
-//        entitiesEngine.addEntity(rock);
-//        modelFileName = GameC.Files.MODELS_FOLDER_NAME + "/" + "rock_3.g3dj";
-//        rock = characterFactory.createEnvironmentObject(modelFileName, auxVector.set(3, 0, 5), true, actor.getRotation());
-//        entitiesEngine.addEntity(rock);
-//    }
-
-    private void createStreetLamp() {
     }
 
     private void createLevel() {

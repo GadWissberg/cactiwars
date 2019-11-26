@@ -8,12 +8,14 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.gadarts.war.GameSettings;
-import com.gadarts.war.GameShaderProvider;
 import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.model.ModelInstanceComponent;
@@ -26,11 +28,11 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     private static BoundingBox auxBoundingBox1 = new BoundingBox();
 
     private ModelBatch modelBatch;
-    private GameShaderProvider shaderProvider;
     private PerspectiveCamera camera;
     private ImmutableArray<Entity> modelInstanceEntities;
     private int numberOfVisible;
     private CollisionShapesDebugDrawing collisionShapesDebugDrawingMethod;
+    private Environment environment;
 
     @Override
     public void addedToEngine(Engine engine) {
@@ -39,6 +41,9 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
         Entity cameraEntity = engine.getEntitiesFor(Family.all(CameraComponent.class).get()).get(0);
         camera = ComponentsMapper.camera.get(cameraEntity).getCamera();
         modelInstanceEntities = engine.getEntitiesFor(Family.all(ModelInstanceComponent.class).get());
+        environment = new Environment();
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+        environment.add(new DirectionalLight().set(0.8f,0.8f,0.8f,-1,-0.7f,-1));
     }
 
     @Override
@@ -57,7 +62,7 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
             ModelInstance modelInstance = ComponentsMapper.modelInstance.get(entity).getModelInstance();
             if (isVisible(camera, entity))
                 if (!shouldSkipRender(entity)) {
-                    modelBatch.render(modelInstance);
+                    modelBatch.render(modelInstance, environment);
                     numberOfVisible++;
                 }
         }
