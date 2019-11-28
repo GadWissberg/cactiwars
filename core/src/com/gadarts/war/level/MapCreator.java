@@ -230,7 +230,7 @@ public class MapCreator extends MapModeler {
             Vector3 position = actor.getPosition();
             Vector3 origin = actorDefinition.getOrigin();
             String modelFileName = GameC.Files.MODELS_FOLDER_NAME + "/" + actorDefinition.getModel() + ".g3dj";
-            if (actorDefinitionId.equals("artillery")) {
+            if (actorDefinitionId.equals("tank")) {
                 Entity player = characterFactory.createPlayer(modelFileName, position.x - origin.x, position.y - origin.y, position.z - origin.z, actor.getRotation());
                 entitiesEngine.addEntity(player);
                 entitiesEngine.getSystem(CameraSystem.class).lockToTarget(player);

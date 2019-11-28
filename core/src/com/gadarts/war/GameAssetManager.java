@@ -32,7 +32,7 @@ public class GameAssetManager extends AssetManagerWrapper {
     private void loadModels(GameAssetManager gameAssetManager) {
         ModelLoader.ModelParameters param = new ModelLoader.ModelParameters();
         param.textureParameter.genMipMaps = true;
-        gameAssetManager.load(GameC.Files.MODELS_FOLDER_NAME + "/" + "artillery.g3dj", Model.class, param);
+        gameAssetManager.load(GameC.Files.MODELS_FOLDER_NAME + "/" + "tank.g3dj", Model.class, param);
         gameAssetManager.load(GameC.Files.MODELS_FOLDER_NAME + "/" + "street_lamp.g3dj", Model.class, param);
         gameAssetManager.load(GameC.Files.MODELS_FOLDER_NAME + "/" + "rock_1.g3dj", Model.class, param);
         gameAssetManager.load(GameC.Files.MODELS_FOLDER_NAME + "/" + "rock_2.g3dj", Model.class, param);

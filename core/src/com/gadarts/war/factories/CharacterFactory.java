@@ -15,7 +15,7 @@ import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.utils.Pools;
 import com.gadarts.war.GameAssetManager;
-import com.gadarts.war.GameC.Artillery;
+import com.gadarts.war.GameC.Tank;
 import com.gadarts.war.components.EnvironmentObjectComponent;
 import com.gadarts.war.components.PlayerComponent;
 import com.gadarts.war.components.character.CharacterComponent;
@@ -107,11 +107,11 @@ public class CharacterFactory {
 
     private CharacterComponent createCharacterComponent() {
         CharacterComponent characterComponent = engine.createComponent(CharacterComponent.class);
-        characterComponent.init(Artillery.MAX_FRONT_SPEED, Artillery.ACCELERATION,
-                Artillery.MAX_REVERSE_SPEED, Artillery.REVERSE_ACCELERATION);
+        characterComponent.init(Tank.MAX_FRONT_SPEED, Tank.ACCELERATION,
+                Tank.MAX_REVERSE_SPEED, Tank.REVERSE_ACCELERATION);
         characterComponent.setGroundCrashThreshold(7.5f);
-        characterComponent.setDeceleration(Artillery.DECELERATION);
-        characterComponent.setRotationDefinition(Artillery.ROTATION);
+        characterComponent.setDeceleration(Tank.DECELERATION);
+        characterComponent.setRotationDefinition(Tank.ROTATION);
         initializeCharacterSoundData(characterComponent);
         return characterComponent;
     }

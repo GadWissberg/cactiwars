@@ -32,7 +32,7 @@ public final class GameC {
 
     }
 
-    public final class Artillery {
+    public final class Tank {
         public static final float MAX_FRONT_SPEED = 2;
         public static final float MAX_REVERSE_SPEED = 1;
         public static final float REVERSE_ACCELERATION = 0.1f;

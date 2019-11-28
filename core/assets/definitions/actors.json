@@ -1,9 +1,9 @@
 {
   "character": [
     {
-      "name": "artillery",
+      "name": "tank",
       "collision_shapes": [],
-      "model": "artillery"
+      "model": "tank"
     }
   ],
   "environment": [
