@@ -3,7 +3,17 @@
     {
       "name": "tank",
       "collision_shapes": [],
-      "model": "tank"
+      "model": "tank",
+      "additional": {
+        "offset_x": "center",
+        "offset_y": "top",
+        "offset_z": "center",
+        "model": "tank_head",
+        "additional": {
+          "offset_y": "top",
+          "model:": "tank_aux"
+        }
+      }
     }
   ],
   "environment": [

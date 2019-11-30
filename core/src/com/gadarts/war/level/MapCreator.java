@@ -21,6 +21,7 @@ import com.badlogic.gdx.physics.bullet.collision.btStaticPlaneShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.gadarts.shared.SharedC;
 import com.gadarts.shared.definitions.ActorDefinition;
+import com.gadarts.shared.definitions.CharacterAdditionalDefinition;
 import com.gadarts.shared.definitions.Definitions;
 import com.gadarts.shared.level.Actor;
 import com.gadarts.shared.level.Map;
@@ -229,9 +230,10 @@ public class MapCreator extends MapModeler {
             ActorDefinition actorDefinition = actorsDefs.getDefinitions().get(actorDefinitionId);
             Vector3 position = actor.getPosition();
             Vector3 origin = actorDefinition.getOrigin();
+            CharacterAdditionalDefinition additional = actorDefinition.getAdditional();
             String modelFileName = GameC.Files.MODELS_FOLDER_NAME + "/" + actorDefinition.getModel() + ".g3dj";
             if (actorDefinitionId.equals("tank")) {
-                Entity player = characterFactory.createPlayer(modelFileName, position.x - origin.x, position.y - origin.y, position.z - origin.z, actor.getRotation());
+                Entity player = characterFactory.createPlayer(modelFileName, position.x - origin.x, position.y - origin.y, position.z - origin.z, actor.getRotation(), additional);
                 entitiesEngine.addEntity(player);
                 entitiesEngine.getSystem(CameraSystem.class).lockToTarget(player);
                 entitiesEngine.getSystem(PlayerSystem.class).setPlayer(player);
