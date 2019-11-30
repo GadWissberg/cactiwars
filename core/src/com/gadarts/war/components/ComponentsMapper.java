@@ -10,6 +10,7 @@ public class ComponentsMapper {
     public static final ComponentMapper<ModelInstanceComponent> modelInstance = ComponentMapper.getFor(ModelInstanceComponent.class);
     public static final ComponentMapper<PhysicsComponent> physics = ComponentMapper.getFor(PhysicsComponent.class);
     public static final ComponentMapper<CharacterComponent> characters = ComponentMapper.getFor(CharacterComponent.class);
+    public static final ComponentMapper<CharacterAdditionalComponent> characterAdditional = ComponentMapper.getFor(CharacterAdditionalComponent.class);
     public static final ComponentMapper<GroundComponent> ground = ComponentMapper.getFor(GroundComponent.class);
     public static final ComponentMapper<EnvironmentObjectComponent> environmentObject = ComponentMapper.getFor(EnvironmentObjectComponent.class);
 

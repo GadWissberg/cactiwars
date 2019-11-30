@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.bullet.collision.btBroadphaseProxy.CollisionFilt
 import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
 import com.badlogic.gdx.physics.bullet.collision.btCylinderShape;
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
+import com.badlogic.gdx.physics.bullet.dynamics.btPoint2PointConstraint;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.utils.Pools;
 import com.gadarts.shared.definitions.CharacterAdditionalDefinition;
@@ -20,6 +21,7 @@ import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
 import com.gadarts.war.GameC.Tank;
 import com.gadarts.war.components.CharacterAdditionalComponent;
+import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.EnvironmentObjectComponent;
 import com.gadarts.war.components.PlayerComponent;
 import com.gadarts.war.components.character.CharacterComponent;
@@ -34,11 +36,13 @@ import com.gadarts.war.factories.recycle.CollisionShapesPool;
 import com.gadarts.war.factories.recycle.ModelInstancesPool;
 import com.gadarts.war.sound.SFX;
 import com.gadarts.war.sound.SoundPlayer;
+import com.gadarts.war.systems.physics.PhysicsSystem;
 
 import static com.gadarts.war.systems.physics.PhysicsSystem.auxMatrix;
 
 public class CharacterFactory {
     public static Vector3 auxVector = new Vector3();
+    public static Vector3 auxVector2 = new Vector3();
 
     private final PooledEngine engine;
     private final ModelInstancesPool modelInstancePool;
@@ -56,7 +60,8 @@ public class CharacterFactory {
     public Entity createPlayer(String modelFileName, float x, float y, float z, float rotation, CharacterAdditionalDefinition additional) {
         Entity player = engine.createEntity();
         player.add(engine.createComponent(PlayerComponent.class));
-        player.add(createCharacterComponent());
+        CharacterComponent characterComponent = createCharacterComponent();
+        player.add(characterComponent);
         ModelInstanceComponent modelInstanceComponent = createModelInstanceComponent(modelFileName, x, y, z);
         player.add(modelInstanceComponent);
         ModelInstance modelInstance = modelInstanceComponent.getModelInstance();
@@ -72,42 +77,94 @@ public class CharacterFactory {
         box.setImplicitShapeDimensions(halfExtents);
         collisionShape.addChildShape(auxMatrix.setToTranslation(0, halfExtents.y, 0), box);
         physicsComponent.recalculateLocalInertia();
-        player.add(physicsComponent);
         body.setContactCallbackFlag(CollisionFilterGroups.CharacterFilter);
         body.setContactCallbackFilter(CollisionFilterGroups.CharacterFilter | CollisionFilterGroups.KinematicFilter);
+        player.add(physicsComponent);
 //        body.getMotionState().getWorldTransform(auxMatrix);
 //        body.setCenterOfMassTransform(auxMatrix.rotate(Vector3.Y,rotation));
 //        body.setCollisionFlags(body.getCollisionFlags() | CF_CUSTOM_MATERIAL_CALLBACK);
         if (additional != null) {
-            createCharacterAdditional(additional, x, y, z);
+            Entity characterAdditionalEntity = createCharacterAdditional(additional, x, y, z, player);
+            characterComponent.setAdditional(characterAdditionalEntity);
+            engine.addEntity(characterAdditionalEntity);
         }
         return player;
     }
 
-    private void createCharacterAdditional(CharacterAdditionalDefinition additional,
-                                           float parentX,
-                                           float parentY,
-                                           float parentZ) {
-        Entity characterAdditional = engine.createEntity();
-        CharacterAdditionalComponent cac = engine.createComponent(CharacterAdditionalComponent.class);
+    private Entity createCharacterAdditional(CharacterAdditionalDefinition additional,
+                                             float parentX,
+                                             float parentY,
+                                             float parentZ, Entity parent) {
+        Entity charAdditional = engine.createEntity();
         String modelFileName = GameC.Files.MODELS_FOLDER_NAME + "/" + additional.getModel() + ".g3dj";
-        ModelInstanceComponent modelInstanceComponent = createModelInstanceComponent(modelFileName, parentX,
-                parentY, parentZ);
-        modelInstanceComponent.getBoundingBox(auxBoundBox);
-        calculateCharacterAdditionalOffsets(additional, modelInstanceComponent);
-        characterAdditional.add(cac);
+        ModelInstanceComponent miComponent = createCharacterAdditionalModelInstance(additional, parentX, parentY, parentZ,
+                modelFileName);
+        charAdditional.add(miComponent);
+
+        charAdditional.add(createCharacterAdditionalPhysicsComponent(charAdditional, modelFileName, miComponent, parent));
+
+        charAdditional.add(createCharacterAdditionalComponent(parent));
+        return charAdditional;
+    }
+
+    private PhysicsComponent createCharacterAdditionalPhysicsComponent(Entity characterAdditional,
+                                                                       String modelFileName,
+                                                                       ModelInstanceComponent miComponent, Entity parent) {
+        PhysicsComponent physicsComponent = createPhysicsComponent(modelFileName, characterAdditional,
+                miComponent.getModelInstance(), 200);
+        Vector3 halfExtents = auxVector.set(auxBoundBox.getWidth() / 2, auxBoundBox.getHeight() / 4,
+                auxBoundBox.getDepth() / 2);
+        btBoxShape box = Pools.obtain(btBoxShapeWrapper.class);
+        box.setImplicitShapeDimensions(halfExtents);
+        btRigidBody body = physicsComponent.getBody();
+        ((btCompoundShape) body.getCollisionShape()).addChildShape(auxMatrix.setToTranslation(0, halfExtents.y, 0), box);
+        physicsComponent.recalculateLocalInertia();
+        body.setContactCallbackFlag(CollisionFilterGroups.CharacterFilter);
+        body.setContactCallbackFilter(CollisionFilterGroups.CharacterFilter | CollisionFilterGroups.KinematicFilter);
+        btPoint2PointConstraint constraint = new btPoint2PointConstraint((btRigidBody) body, (btRigidBody) ComponentsMapper.physics.get(parent).getBody(),
+                auxVector.set(0, 0, 0), auxVector2.set(0, 0, 0));
+        engine.getSystem(PhysicsSystem.class).getCollisionWorld().addConstraint(constraint, true);
+        return physicsComponent;
+    }
+
+    private CharacterAdditionalComponent createCharacterAdditionalComponent(Entity parent) {
+        CharacterAdditionalComponent cac = engine.createComponent(CharacterAdditionalComponent.class);
+        cac.setParent(parent);
+        return cac;
+    }
+
+    private ModelInstanceComponent createCharacterAdditionalModelInstance(CharacterAdditionalDefinition additional, float parentX, float parentY, float parentZ, String modelFileName) {
+        ModelInstanceComponent miComponent = createModelInstanceComponent(modelFileName, parentX, parentY, parentZ);
+        calculateCharacterAdditionalOffsets(additional, miComponent);
+        return miComponent;
     }
 
     private void calculateCharacterAdditionalOffsets(CharacterAdditionalDefinition additional,
                                                      ModelInstanceComponent modelInstanceComponent) {
+        modelInstanceComponent.getBoundingBox(auxBoundBox);
         OffsetCoord offsetX = additional.getOffsetCoords().getOffsetX();
+        OffsetCoord offsetY = additional.getOffsetCoords().getOffsetY();
+        OffsetCoord offsetZ = additional.getOffsetCoords().getOffsetZ();
+        float offsetXValue = 0;
+        float offsetYValue = 0;
+        float offsetZValue = 0;
         if (offsetX.isDynamicValue()) {
-            OffsetCoord.OffsetValue offsetXValue = offsetX.getDynamicValue();
-            if (offsetXValue == OffsetCoord.OffsetValue.CENTER) {
-                modelInstanceComponent.getModelInstance().transform.setTranslation(auxBoundBox.getCenterX(),
-                        auxBoundBox.getCenterY(), auxBoundBox.getCenterZ());
-            }
+            if (offsetX.getDynamicValue() == OffsetCoord.OffsetValue.CENTER) offsetXValue = auxBoundBox.getCenterX();
         }
+        if (offsetY.isDynamicValue()) {
+            if (offsetY.getDynamicValue() == OffsetCoord.OffsetValue.CENTER) offsetYValue = auxBoundBox.getCenterY();
+        }
+        if (offsetZ.isDynamicValue()) {
+            if (offsetZ.getDynamicValue() == OffsetCoord.OffsetValue.CENTER) offsetZValue = auxBoundBox.getCenterZ();
+        }
+        if (offsetX.getDynamicValue() == OffsetCoord.OffsetValue.CENTER) offsetXValue = auxBoundBox.getCenterX();
+        if (offsetY.getDynamicValue() == OffsetCoord.OffsetValue.TOP) {
+            offsetYValue = auxBoundBox.getHeight() + 3;
+        } else {
+            offsetYValue = auxBoundBox.getCenterY();
+        }
+        if (offsetZ.getDynamicValue() == OffsetCoord.OffsetValue.CENTER) offsetZValue = auxBoundBox.getCenterZ();
+        modelInstanceComponent.getModelInstance().transform.translate(offsetXValue, offsetYValue, offsetZValue);
     }
 
     private PhysicsComponent createPhysicsComponent(String modelFileName, Entity player, ModelInstance modelInstance, int mass) {
