@@ -5,12 +5,9 @@
       "collision_shapes": [],
       "model": "tank",
       "additional": {
-        "offset_x": "center",
-        "offset_y": "top",
-        "offset_z": "center",
+        "offset_parent_y": -1,
         "model": "tank_head",
         "additional": {
-          "offset_y": "top",
           "model:": "tank_aux"
         }
       }
