@@ -125,7 +125,7 @@ public class CharacterComponent implements Component, Pool.Poolable {
         this.characterSoundData = characterSoundData;
     }
 
-    public void setAdditional(CharacterAdditional additional) {
+    public void addAdditional(CharacterAdditional additional) {
         this.additional = additional;
     }
 

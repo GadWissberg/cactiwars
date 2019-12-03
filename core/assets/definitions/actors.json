@@ -4,13 +4,16 @@
       "name": "tank",
       "collision_shapes": [],
       "model": "tank",
-      "additional": {
-        "offset_parent_y": 1,
-        "model": "tank_head",
-        "additional": {
-          "model:": "tank_aux"
+      "additional": [
+        {
+          "offset_parent_y": 1,
+          "model": "tank_head"
+        },
+        {
+          "model": "tank_aux",
+          "offset_parent_y": 1.1
         }
-      }
+      ]
     }
   ],
   "environment": [

@@ -42,6 +42,7 @@ import com.gadarts.war.systems.player.PlayerSystem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MapCreator extends MapModeler {
     private static Vector3 auxVector31 = new Vector3();
@@ -230,10 +231,10 @@ public class MapCreator extends MapModeler {
             ActorDefinition actorDefinition = actorsDefs.getDefinitions().get(actorDefinitionId);
             Vector3 position = actor.getPosition();
             Vector3 origin = actorDefinition.getOrigin();
-            CharacterAdditionalDefinition additional = actorDefinition.getAdditional();
             String modelFileName = GameC.Files.MODELS_FOLDER_NAME + "/" + actorDefinition.getModel() + ".g3dj";
             if (actorDefinitionId.equals("tank")) {
-                Entity player = characterFactory.createPlayer(modelFileName, position.x - origin.x, position.y - origin.y, position.z - origin.z, actor.getRotation(), additional);
+                List<CharacterAdditionalDefinition> additionals = actorDefinition.getAdditionals();
+                Entity player = characterFactory.createPlayer(modelFileName, position.x - origin.x, position.y - origin.y, position.z - origin.z, actor.getRotation(), additionals);
                 entitiesEngine.addEntity(player);
                 entitiesEngine.getSystem(CameraSystem.class).lockToTarget(player);
                 entitiesEngine.getSystem(PlayerSystem.class).setPlayer(player);

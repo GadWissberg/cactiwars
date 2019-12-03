@@ -35,6 +35,8 @@ import com.gadarts.war.factories.recycle.ModelInstancesPool;
 import com.gadarts.war.sound.SFX;
 import com.gadarts.war.sound.SoundPlayer;
 
+import java.util.List;
+
 import static com.gadarts.war.systems.physics.PhysicsSystem.auxMatrix;
 
 public class CharacterFactory {
@@ -54,7 +56,7 @@ public class CharacterFactory {
         this.soundPlayer = soundPlayer;
     }
 
-    public Entity createPlayer(String modelFileName, float x, float y, float z, float rotation, CharacterAdditionalDefinition additional) {
+    public Entity createPlayer(String modelFileName, float x, float y, float z, float rotation, List<CharacterAdditionalDefinition> additionals) {
         Entity player = engine.createEntity();
         player.add(engine.createComponent(PlayerComponent.class));
         CharacterComponent characterComponent = createCharacterComponent();
@@ -80,9 +82,11 @@ public class CharacterFactory {
 //        body.getMotionState().getWorldTransform(auxMatrix);
 //        body.setCenterOfMassTransform(auxMatrix.rotate(Vector3.Y,rotation));
 //        body.setCollisionFlags(body.getCollisionFlags() | CF_CUSTOM_MATERIAL_CALLBACK);
-        if (additional != null) {
-            CharacterAdditional characterAdditional = createCharacterAdditional(additional, x, y, z, player, modelInstance);
-            characterComponent.setAdditional(characterAdditional);
+        if (additionals != null) {
+            for (CharacterAdditionalDefinition definition : additionals) {
+                CharacterAdditional characterAdditional = createCharacterAdditional(definition, x, y, z, player, modelInstance);
+                characterComponent.addAdditional(characterAdditional);
+            }
         }
         return player;
     }
@@ -95,21 +99,16 @@ public class CharacterFactory {
         Model model = GameAssetManager.getInstance().get(modelFileName, Model.class);
         ModelInstance additionalModelInstance = modelInstancePool.obtain(modelFileName, model);
         CharacterAdditional characterAdditional = Pools.obtain(CharacterAdditional.class);
-        Node head = new Node();
-        head.addChildren(additionalModelInstance.nodes);
+        Node additionalNode = new Node();
+        additionalNode.addChildren(additionalModelInstance.nodes);
         Vector3 offsetCoords = additionalDefinition.getOffsetCoords(auxVector);
-        head.translation.add(offsetCoords.x, offsetCoords.y, offsetCoords.z);
-        parentModelInstance.nodes.add(head);
+        additionalNode.translation.add(offsetCoords.x, offsetCoords.y, offsetCoords.z);
+        parentModelInstance.nodes.add(additionalNode);
         parentModelInstance.calculateTransforms();
         characterAdditional.init(additionalDefinition);
         return characterAdditional;
     }
 
-
-    private ModelInstanceComponent createCharacterAdditionalModelInstance(CharacterAdditionalDefinition additional, float parentX, float parentY, float parentZ, String modelFileName) {
-        ModelInstanceComponent miComponent = createModelInstanceComponent(modelFileName, parentX, parentY, parentZ);
-        return miComponent;
-    }
 
     private PhysicsComponent createPhysicsComponent(String modelFileName, Entity player, ModelInstance modelInstance, int mass) {
         PhysicsComponent physicsComponent = engine.createComponent(PhysicsComponent.class);
