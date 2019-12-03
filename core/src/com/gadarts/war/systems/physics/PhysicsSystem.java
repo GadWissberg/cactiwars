@@ -3,6 +3,7 @@ package com.gadarts.war.systems.physics;
 import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
@@ -16,6 +17,8 @@ import java.util.List;
 
 public class PhysicsSystem extends EntitySystem implements EntityListener, GameContactListenerEventsSubscriber {
     public static Matrix4 auxMatrix = new Matrix4();
+    public static Vector3 auxVector = new Vector3();
+    public static Vector3 auxVector2 = new Vector3();
 
     private final SoundPlayer soundPlayer;
     private PhysicsSystemBulletHandler bulletHandler = new PhysicsSystemBulletHandler();
@@ -30,7 +33,8 @@ public class PhysicsSystem extends EntitySystem implements EntityListener, GameC
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
-        bulletHandler.getCollisionWorld().stepSimulation(deltaTime);
+        btDiscreteDynamicsWorld collisionWorld = bulletHandler.getCollisionWorld();
+        collisionWorld.stepSimulation(deltaTime,5);
     }
 
 

@@ -19,7 +19,6 @@ import com.gadarts.shared.definitions.CharacterAdditionalDefinition;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
 import com.gadarts.war.GameC.Tank;
-import com.gadarts.war.components.CharacterAdditionalComponent;
 import com.gadarts.war.components.EnvironmentObjectComponent;
 import com.gadarts.war.components.PlayerComponent;
 import com.gadarts.war.components.character.CharacterAdditional;
@@ -96,8 +95,12 @@ public class CharacterFactory {
         Model model = GameAssetManager.getInstance().get(modelFileName, Model.class);
         ModelInstance additionalModelInstance = modelInstancePool.obtain(modelFileName, model);
         CharacterAdditional characterAdditional = Pools.obtain(CharacterAdditional.class);
-        Node head = additionalModelInstance.getNode("Head");
-        head.attachTo(parentModelInstance.getNode("Body"));
+        Node head = new Node();
+        head.addChildren(additionalModelInstance.nodes);
+        Vector3 offsetCoords = additionalDefinition.getOffsetCoords(auxVector);
+        head.translation.add(offsetCoords.x, offsetCoords.y, offsetCoords.z);
+        parentModelInstance.nodes.add(head);
+        parentModelInstance.calculateTransforms();
         characterAdditional.init(additionalDefinition);
         return characterAdditional;
     }

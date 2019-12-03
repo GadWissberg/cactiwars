@@ -5,7 +5,7 @@
       "collision_shapes": [],
       "model": "tank",
       "additional": {
-        "offset_parent_y": -1,
+        "offset_parent_y": 1,
         "model": "tank_head",
         "additional": {
           "model:": "tank_aux"

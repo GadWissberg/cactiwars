@@ -2,6 +2,7 @@ package com.gadarts.war.systems.player.input;
 
 import com.badlogic.gdx.Input;
 import com.gadarts.war.systems.player.input.definitions.down.Esc;
+import com.gadarts.war.systems.player.input.definitions.down.Space;
 import com.gadarts.war.systems.player.input.definitions.down.arrows.ArrowDownDown;
 import com.gadarts.war.systems.player.input.definitions.down.arrows.ArrowLeftDown;
 import com.gadarts.war.systems.player.input.definitions.down.arrows.ArrowRightDown;
@@ -16,6 +17,7 @@ public enum KeyMap {
     ARROW_DOWN(Input.Keys.DOWN, new ArrowDownDown(), new ArrowDownUp()),
     ARROW_LEFT(Input.Keys.LEFT, new ArrowLeftDown(), new ArrowLeftUp()),
     ARROW_RIGHT(Input.Keys.RIGHT, new ArrowRightDown(), new ArrowRightUp()),
+    SPACE(Input.Keys.SPACE, new Space()),
     ESC(Input.Keys.ESCAPE, new Esc());
 
     private final int keyCode;
