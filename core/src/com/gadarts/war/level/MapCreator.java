@@ -23,6 +23,7 @@ import com.gadarts.shared.SharedC;
 import com.gadarts.shared.definitions.ActorDefinition;
 import com.gadarts.shared.definitions.CharacterAdditionalDefinition;
 import com.gadarts.shared.definitions.Definitions;
+import com.gadarts.shared.definitions.EnvironmentObjectDefinition;
 import com.gadarts.shared.level.Actor;
 import com.gadarts.shared.level.Map;
 import com.gadarts.shared.level.MapModeler;
@@ -39,7 +40,6 @@ import com.gadarts.war.factories.CharacterFactory;
 import com.gadarts.war.systems.CameraSystem;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 import com.gadarts.war.systems.player.PlayerSystem;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -240,7 +240,7 @@ public class MapCreator extends MapModeler {
                 entitiesEngine.getSystem(PlayerSystem.class).setPlayer(player);
             } else {
                 Entity lamp = characterFactory.createEnvironmentObject(modelFileName,
-                        auxVector31.set(position.x - origin.x, position.y - origin.y, position.z - origin.z), actorDefinition.isStatic(), actor.getRotation());
+                        auxVector31.set(position.x - origin.x, position.y - origin.y, position.z - origin.z), ((EnvironmentObjectDefinition)actorDefinition).isStatic(), actor.getRotation());
                 entitiesEngine.addEntity(lamp);
             }
 

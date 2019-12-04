@@ -4,6 +4,14 @@
       "name": "tank",
       "collision_shapes": [],
       "model": "tank",
+      "animate_wheels": [
+        "Big Wheel Left",
+        "Middle Wheel Left",
+        "Small Wheel Left",
+        "Big Wheel Right",
+        "Middle Wheel Right",
+        "Small Wheel Right"
+      ],
       "additional": [
         {
           "offset_parent_y": 1,
