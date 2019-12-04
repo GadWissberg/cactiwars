@@ -13,9 +13,11 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.gadarts.war.GameSettings;
+import com.gadarts.war.GameShaderProvider;
 import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.model.ModelInstanceComponent;
@@ -33,17 +35,23 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     private int numberOfVisible;
     private CollisionShapesDebugDrawing collisionShapesDebugDrawingMethod;
     private Environment environment;
+    private GameShaderProvider shaderProvider;
 
     @Override
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
-        modelBatch = new ModelBatch();
+        shaderProvider = new GameShaderProvider();
+        modelBatch = new ModelBatch(shaderProvider);
         Entity cameraEntity = engine.getEntitiesFor(Family.all(CameraComponent.class).get()).get(0);
         camera = ComponentsMapper.camera.get(cameraEntity).getCamera();
         modelInstanceEntities = engine.getEntitiesFor(Family.all(ModelInstanceComponent.class).get());
         environment = new Environment();
-        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
-        environment.add(new DirectionalLight().set(0.8f,0.8f,0.8f,-1,-0.7f,-1));
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0, 0, 0, 1f));
+        environment.add(new DirectionalLight().set(0.3f,0.3f,0.3f,-1,-0.7f,-1));
+        environment.add(new PointLight().set(0.8f,0.8f,0.8f,4,2,1,3));
+        environment.add(new PointLight().set(0.8f,0.8f,0.8f,6,2,1,3));
+        environment.add(new PointLight().set(0.8f,0.8f,0.8f,8,2,1,3));
+        environment.add(new PointLight().set(0.8f,0.8f,0.8f,10,2,1,3));
     }
 
     @Override
