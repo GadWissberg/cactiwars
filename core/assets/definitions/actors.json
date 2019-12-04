@@ -19,7 +19,7 @@
         },
         {
           "model": "tank_aux",
-          "offset_parent_y": 1.1
+          "offset_parent_y": 1.2
         }
       ]
     }
