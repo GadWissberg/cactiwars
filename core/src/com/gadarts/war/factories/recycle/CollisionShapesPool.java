@@ -1,14 +1,20 @@
 package com.gadarts.war.factories.recycle;
 
-import com.badlogic.gdx.*;
-import com.badlogic.gdx.physics.bullet.collision.*;
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
+import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
 import com.badlogic.gdx.utils.Queue;
-import java.util.*;
+
+import java.util.HashMap;
 
 public class CollisionShapesPool {
     private String DEBUG_MODEL_INSTANCE_POOL = "Collision Shape Pool";
+    @SuppressWarnings("FieldCanBeLocal")
     private String DEBUG_OBTAINED = "Obtained a new collision shape:%s, left free: %d.";
+    @SuppressWarnings("FieldCanBeLocal")
     private String DEBUG_FREED = "Freed a new model instance: %s, left free: %d.";
+    @SuppressWarnings("FieldCanBeLocal")
     private String DEBUG_CREATING = "Creating a new collision shape: %s";
 
     private HashMap<String, Queue<btCollisionShape>> instancesMap = new HashMap<>();
