@@ -23,7 +23,13 @@
       "model": "street_lamp",
       "origin": {
         "y": -1
-      }
+      },
+      "point_lights": [
+        {
+          "intensity": 5,
+          "offset_parent_y": 2
+        }
+      ]
     },
     {
       "name": "rock_1",

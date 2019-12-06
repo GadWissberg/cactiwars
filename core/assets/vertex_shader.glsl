@@ -333,7 +333,7 @@ void main() {
 		float dist2 = dot(lightDir, lightDir);
 		lightDir *= inversesqrt(dist2);
 		float NdotL = clamp(dot(normal, lightDir), 0.0, 1.0);
-		vec3 value = u_pointLights[i].color * (NdotL / (1.0 + dist2));
+		vec3 value = u_pointLights[i].color * (NdotL * 32.0 / (1.0 + dist2 * dist2));
 		v_lightDiffuse += value;
 		#ifdef specularFlag
 		float halfDotView = max(0.0, dot(normal, normalize(lightDir + viewVec)));

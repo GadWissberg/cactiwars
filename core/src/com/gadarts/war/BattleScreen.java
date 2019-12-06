@@ -6,7 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.math.Vector3;
 import com.gadarts.shared.level.Map;
 import com.gadarts.shared.par.SectionType;
-import com.gadarts.war.factories.CharacterFactory;
+import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.level.MapCreator;
 import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.systems.RenderSystem;
@@ -18,7 +18,7 @@ import com.gadarts.war.systems.player.input.InputHandler;
 class BattleScreen implements Screen {
     private PooledEngine entitiesEngine;
     private SystemsHandler systemsHandler;
-    private CharacterFactory characterFactory;
+    private ActorFactory actorFactory;
     private Hud hud;
     private SoundPlayer soundPlayer;
     private Vector3 auxVector = new Vector3();
@@ -28,7 +28,7 @@ class BattleScreen implements Screen {
         soundPlayer = new SoundPlayer();
         entitiesEngine = new PooledEngine();
         createSystemsHandler();
-        characterFactory = new CharacterFactory(entitiesEngine, soundPlayer);
+        actorFactory = new ActorFactory(entitiesEngine, soundPlayer);
         createWorld();
         initializeInput();
         hud = new Hud(entitiesEngine.getSystem(RenderSystem.class));
@@ -54,7 +54,7 @@ class BattleScreen implements Screen {
     private void createLevel() {
         MapCreator mapCreator = new MapCreator(entitiesEngine);
         String fileName = SectionType.MAP + "/" + "test";
-        mapCreator.createLevelIntoEngine(GameAssetManager.getInstance().get(fileName, Map.class), characterFactory);
+        mapCreator.createLevelIntoEngine(GameAssetManager.getInstance().get(fileName, Map.class), actorFactory);
     }
 
 

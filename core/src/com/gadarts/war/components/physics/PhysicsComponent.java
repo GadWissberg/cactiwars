@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.utils.Pool;
-import com.gadarts.war.factories.CharacterFactory;
+import com.gadarts.war.factories.ActorFactory;
 
 public class PhysicsComponent implements Component, Pool.Poolable {
     public static Vector3 localInertia = new Vector3();
@@ -19,7 +19,7 @@ public class PhysicsComponent implements Component, Pool.Poolable {
     public void init(int mass, btCollisionShape collisionShape, Matrix4 transform) {
         this.mass = mass;
         this.collisionShape = collisionShape;
-        Vector3 translation = transform.getTranslation(CharacterFactory.auxVector);
+        Vector3 translation = transform.getTranslation(ActorFactory.auxVector);
         motionState.setTransformationObject(transform.setToTranslation(translation));
         if (mass == 0) localInertia.setZero();
         else collisionShape.calculateLocalInertia(mass, localInertia);

@@ -1,9 +1,6 @@
 package com.gadarts.war.systems;
 
-import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntitySystem;
-import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -16,15 +13,18 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
+import com.gadarts.shared.definitions.PointLightDefinition;
 import com.gadarts.war.GameSettings;
 import com.gadarts.war.GameShaderProvider;
 import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
+import com.gadarts.war.components.PointLightComponent;
 import com.gadarts.war.components.model.ModelInstanceComponent;
+import com.gadarts.war.components.physics.PhysicsComponent;
 import com.gadarts.war.systems.physics.CollisionShapesDebugDrawing;
 import com.gadarts.war.systems.physics.PhysicsSystemEventsSubscriber;
 
-public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSubscriber {
+public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSubscriber, EntityListener {
     private static Vector3 auxVector31 = new Vector3();
     private static Vector3 auxVector32 = new Vector3();
     private static BoundingBox auxBoundingBox1 = new BoundingBox();
@@ -47,11 +47,8 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
         modelInstanceEntities = engine.getEntitiesFor(Family.all(ModelInstanceComponent.class).get());
         environment = new Environment();
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0, 0, 0, 1f));
-        environment.add(new DirectionalLight().set(0.3f,0.3f,0.3f,-1,-0.7f,-1));
-        environment.add(new PointLight().set(0.8f,0.8f,0.8f,4,2,1,3));
-        environment.add(new PointLight().set(0.8f,0.8f,0.8f,6,2,1,3));
-        environment.add(new PointLight().set(0.8f,0.8f,0.8f,8,2,1,3));
-        environment.add(new PointLight().set(0.8f,0.8f,0.8f,10,2,1,3));
+        environment.add(new DirectionalLight().set(0.3f, 0.3f, 0.3f, -1, -0.7f, -1));
+        engine.addEntityListener(this);
     }
 
     @Override
@@ -110,5 +107,22 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     @Override
     public void collisionShapesDrawingInitialized(CollisionShapesDebugDrawing collisionShapesDebugDrawingMethod) {
         this.collisionShapesDebugDrawingMethod = collisionShapesDebugDrawingMethod;
+    }
+
+    @Override
+    public void entityAdded(Entity entity) {
+        if (ComponentsMapper.pointLights.has(entity)) {
+            PointLightComponent pointLightComponent = ComponentsMapper.pointLights.get(entity);
+            PointLightDefinition definition = pointLightComponent.getDefinition();
+            PhysicsComponent parent = ComponentsMapper.physics.get(pointLightComponent.getParent());
+            Vector3 pos = parent.getMotionState().getWorldTranslation(auxVector31);
+            environment.add(new PointLight().set(0.8f, 0.8f, 0.8f, pos.x + definition.getOffsetX(),
+                    pos.y + 2, pos.z + definition.getOffsetZ(), 5));
+        }
+    }
+
+    @Override
+    public void entityRemoved(Entity entity) {
+
     }
 }

@@ -36,10 +36,11 @@ import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.GroundComponent;
 import com.gadarts.war.components.model.ModelInstanceComponent;
 import com.gadarts.war.components.physics.PhysicsComponent;
-import com.gadarts.war.factories.CharacterFactory;
+import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.systems.CameraSystem;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 import com.gadarts.war.systems.player.PlayerSystem;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -218,7 +219,7 @@ public class MapCreator extends MapModeler {
         return modelInstanceComponent;
     }
 
-    public void createLevelIntoEngine(Map map, CharacterFactory characterFactory) {
+    public void createLevelIntoEngine(Map map, ActorFactory actorFactory) {
         GameAssetManager assetManager = GameAssetManager.getInstance();
         TextureAtlas tilesAtlas = assetManager.get(GameC.Files.TEXTURES_FOLDER_NAME + "/" + "grass.txt", TextureAtlas.class);
         modelLevelGround(map, tilesAtlas);
@@ -234,13 +235,15 @@ public class MapCreator extends MapModeler {
             String modelFileName = GameC.Files.MODELS_FOLDER_NAME + "/" + actorDefinition.getModel() + ".g3dj";
             if (actorDefinitionId.equals("tank")) {
                 List<CharacterAdditionalDefinition> additionals = actorDefinition.getAdditionals();
-                Entity player = characterFactory.createPlayer(modelFileName, position.x - origin.x, position.y - origin.y, position.z - origin.z, actor.getRotation(), additionals);
+                Entity player = actorFactory.createPlayer(modelFileName, position.x - origin.x, position.y - origin.y, position.z - origin.z, actor.getRotation(), additionals);
                 entitiesEngine.addEntity(player);
                 entitiesEngine.getSystem(CameraSystem.class).lockToTarget(player);
                 entitiesEngine.getSystem(PlayerSystem.class).setPlayer(player);
             } else {
-                Entity lamp = characterFactory.createEnvironmentObject(modelFileName,
-                        auxVector31.set(position.x - origin.x, position.y - origin.y, position.z - origin.z), ((EnvironmentObjectDefinition)actorDefinition).isStatic(), actor.getRotation());
+                EnvironmentObjectDefinition environmentObjectDefinition = (EnvironmentObjectDefinition) actorDefinition;
+                Entity lamp = actorFactory.createEnvironmentObject(modelFileName,
+                        auxVector31.set(position.x - origin.x, position.y - origin.y, position.z - origin.z),
+                        environmentObjectDefinition.isStatic(), actor.getRotation(), environmentObjectDefinition.getPointLightsDefinitions());
                 entitiesEngine.addEntity(lamp);
             }
 

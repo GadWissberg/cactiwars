@@ -13,5 +13,6 @@ public class GameShader extends DefaultShader {
 		super.init();
 		if (program.getLog().length() != 0)
 			System.out.println(program.getLog());
+		config.numPointLights = 10;
 	}
 }

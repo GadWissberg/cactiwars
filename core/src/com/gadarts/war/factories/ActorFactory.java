@@ -1,6 +1,7 @@
 package com.gadarts.war.factories;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -16,11 +17,13 @@ import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.utils.Pools;
 import com.gadarts.shared.definitions.CharacterAdditionalDefinition;
+import com.gadarts.shared.definitions.PointLightDefinition;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
 import com.gadarts.war.GameC.Tank;
 import com.gadarts.war.components.EnvironmentObjectComponent;
 import com.gadarts.war.components.PlayerComponent;
+import com.gadarts.war.components.PointLightComponent;
 import com.gadarts.war.components.character.CharacterAdditional;
 import com.gadarts.war.components.character.CharacterComponent;
 import com.gadarts.war.components.character.CharacterSoundData;
@@ -39,7 +42,7 @@ import java.util.List;
 
 import static com.gadarts.war.systems.physics.PhysicsSystem.auxMatrix;
 
-public class CharacterFactory {
+public class ActorFactory {
     public static Vector3 auxVector = new Vector3();
     public static Vector3 auxVector2 = new Vector3();
 
@@ -49,7 +52,7 @@ public class CharacterFactory {
     private final SoundPlayer soundPlayer;
     private BoundingBox auxBoundBox = new BoundingBox();
 
-    public CharacterFactory(PooledEngine engine, SoundPlayer soundPlayer) {
+    public ActorFactory(PooledEngine engine, SoundPlayer soundPlayer) {
         this.engine = engine;
         this.modelInstancePool = new ModelInstancesPool();
         this.collisionShapePool = new CollisionShapesPool();
@@ -156,7 +159,7 @@ public class CharacterFactory {
         characterSoundData.setEngineSoundId(soundPlayer.play(characterSoundData.getEngineSound(), true));
     }
 
-    public Entity createEnvironmentObject(String modelFileName, Vector3 position, boolean isStatic, float rotation) {
+    public Entity createEnvironmentObject(String modelFileName, Vector3 position, boolean isStatic, float rotation, List<PointLightDefinition> pointLightsDefinitions) {
         Entity env = engine.createEntity();
         ModelInstanceComponent modelInstanceComponent = createModelInstanceComponent(modelFileName, position.x, position.y, position.z);
         env.add(engine.createComponent(EnvironmentObjectComponent.class));
@@ -185,6 +188,18 @@ public class CharacterFactory {
         body.setCenterOfMassTransform(auxMatrix.rotate(Vector3.Y, rotation));
         modelInstanceComponent.getModelInstance().transform.rotate(Vector3.Y, rotation);
         env.add(physicsComponent);
+        if (pointLightsDefinitions != null && pointLightsDefinitions.size() > 0) {
+            if (engine.getEntitiesFor(Family.all(PointLightComponent.class).get()).size() < 5) {
+
+            for (PointLightDefinition pointLightDefinition : pointLightsDefinitions) {
+                Entity pointLight = engine.createEntity();
+                PointLightComponent component = engine.createComponent(PointLightComponent.class);
+                pointLight.add(component);
+                component.init(pointLightDefinition, env);
+                engine.addEntity(pointLight);
+            }
+            }
+        }
         return env;
     }
 }
