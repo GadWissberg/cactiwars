@@ -1,7 +1,6 @@
 package com.gadarts.war.factories;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -21,6 +20,7 @@ import com.gadarts.shared.definitions.PointLightDefinition;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
 import com.gadarts.war.GameC.Tank;
+import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.EnvironmentObjectComponent;
 import com.gadarts.war.components.PlayerComponent;
 import com.gadarts.war.components.PointLightComponent;
@@ -189,15 +189,13 @@ public class ActorFactory {
         modelInstanceComponent.getModelInstance().transform.rotate(Vector3.Y, rotation);
         env.add(physicsComponent);
         if (pointLightsDefinitions != null && pointLightsDefinitions.size() > 0) {
-            if (engine.getEntitiesFor(Family.all(PointLightComponent.class).get()).size() < 5) {
-
             for (PointLightDefinition pointLightDefinition : pointLightsDefinitions) {
                 Entity pointLight = engine.createEntity();
                 PointLightComponent component = engine.createComponent(PointLightComponent.class);
                 pointLight.add(component);
                 component.init(pointLightDefinition, env);
                 engine.addEntity(pointLight);
-            }
+                ComponentsMapper.environmentObject.get(env).addSourceLight(pointLight);
             }
         }
         return env;

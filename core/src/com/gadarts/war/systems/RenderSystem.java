@@ -18,11 +18,13 @@ import com.gadarts.war.GameSettings;
 import com.gadarts.war.GameShaderProvider;
 import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
+import com.gadarts.war.components.EnvironmentObjectComponent;
 import com.gadarts.war.components.PointLightComponent;
 import com.gadarts.war.components.model.ModelInstanceComponent;
-import com.gadarts.war.components.physics.PhysicsComponent;
 import com.gadarts.war.systems.physics.CollisionShapesDebugDrawing;
 import com.gadarts.war.systems.physics.PhysicsSystemEventsSubscriber;
+
+import java.util.List;
 
 public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSubscriber, EntityListener {
     private static Vector3 auxVector31 = new Vector3();
@@ -110,19 +112,39 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     }
 
     @Override
+    public void onEnvironmentObjectStaticValueChange(boolean newValue, Entity entity) {
+        EnvironmentObjectComponent environmentObjectComponent = ComponentsMapper.environmentObject.get(entity);
+        List<Entity> sourceLights = environmentObjectComponent.getSourceLights();
+        for (Entity sourceLight : sourceLights) {
+            Environment environment = getEngine().getSystem(RenderSystem.class).getEnvironment();
+            environment.remove(ComponentsMapper.pointLights.get(sourceLight).getPointLightObject());
+            getEngine().removeEntity(sourceLight);
+        }
+    }
+
+    @Override
     public void entityAdded(Entity entity) {
         if (ComponentsMapper.pointLights.has(entity)) {
-            PointLightComponent pointLightComponent = ComponentsMapper.pointLights.get(entity);
-            PointLightDefinition definition = pointLightComponent.getDefinition();
-            PhysicsComponent parent = ComponentsMapper.physics.get(pointLightComponent.getParent());
-            Vector3 pos = parent.getMotionState().getWorldTranslation(auxVector31);
-            environment.add(new PointLight().set(0.8f, 0.8f, 0.8f, pos.x + definition.getOffsetX(),
-                    pos.y + 2, pos.z + definition.getOffsetZ(), 5));
+            addPointLight(entity);
         }
+    }
+
+    private void addPointLight(Entity entity) {
+        PointLightComponent plc = ComponentsMapper.pointLights.get(entity);
+        PointLightDefinition definition = plc.getDefinition();
+        Vector3 pos = ComponentsMapper.physics.get(plc.getParent()).getMotionState().getWorldTranslation(auxVector31);
+        PointLight pointLight = new PointLight().set(0.8f, 0.8f, 0.8f, pos.x + definition.getOffsetX(),
+                pos.y + definition.getOffsetY(), pos.z + definition.getOffsetZ(), definition.getIntensity());
+        plc.setPointLightObject(pointLight);
+        environment.add(pointLight);
     }
 
     @Override
     public void entityRemoved(Entity entity) {
 
+    }
+
+    public Environment getEnvironment() {
+        return environment;
     }
 }

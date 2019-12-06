@@ -34,7 +34,7 @@ public class PhysicsSystem extends EntitySystem implements EntityListener, GameC
     public void update(float deltaTime) {
         super.update(deltaTime);
         btDiscreteDynamicsWorld collisionWorld = bulletHandler.getCollisionWorld();
-        collisionWorld.stepSimulation(deltaTime,5);
+        collisionWorld.stepSimulation(deltaTime, 5);
     }
 
 
@@ -103,9 +103,18 @@ public class PhysicsSystem extends EntitySystem implements EntityListener, GameC
     public void onStaticEnvironmentObjectHardCollision(Entity entity) {
         PhysicsComponent envPhysicsComponent = ComponentsMapper.physics.get(entity);
         envPhysicsComponent.getBody().setAngularFactor(1);
-        envPhysicsComponent.setStatic(false);
+        if (envPhysicsComponent.isStatic()) {
+            envPhysicsComponent.setStatic(false);
+            environmentObjectStaticValueChanged(entity, false);
+        }
         envPhysicsComponent.recalculateLocalInertia();
         getCollisionWorld().addRigidBody(envPhysicsComponent.getBody());
+    }
+
+    private void environmentObjectStaticValueChanged(Entity entity, boolean newValue) {
+        for (PhysicsSystemEventsSubscriber subscriber : subscribers) {
+            subscriber.onEnvironmentObjectStaticValueChange(newValue, entity);
+        }
     }
 
     public void subscribeForEvents(PhysicsSystemEventsSubscriber subscriber) {

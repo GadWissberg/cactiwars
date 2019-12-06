@@ -15,6 +15,7 @@ public class GameShaderProvider extends DefaultShaderProvider {
 
     @Override
     protected Shader createShader(Renderable renderable) {
+        config.numPointLights = 50;
         return new GameShader(renderable, config);
     }
 }

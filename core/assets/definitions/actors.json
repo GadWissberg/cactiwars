@@ -24,12 +24,15 @@
       "origin": {
         "y": -1
       },
-      "point_lights": [
-        {
-          "intensity": 5,
-          "offset_parent_y": 2
-        }
-      ]
+      "light_sources": {
+        "point_lights": [
+          {
+            "intensity": 5,
+            "offset_parent_y": 2
+          }
+        ],
+        "stop_on_move": true
+      }
     },
     {
       "name": "rock_1",
