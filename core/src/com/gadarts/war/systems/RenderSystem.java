@@ -112,10 +112,13 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
 
     private boolean isVisible(PerspectiveCamera camera, Entity entity) {
         ModelInstanceComponent modelInstanceComponent = ComponentsMapper.modelInstance.get(entity);
-        ModelInstance modelInstance = modelInstanceComponent.getModelInstance();
-        modelInstance.transform.getTranslation(auxVector31);
+        modelInstanceComponent.getModelInstance().transform.getTranslation(auxVector31);
         auxVector31.add(modelInstanceComponent.getBoundingBox(auxBoundingBox1).getCenter(auxVector32));
-        return camera.frustum.boundsInFrustum(auxVector31, auxBoundingBox1.getDimensions(auxVector32));
+        auxBoundingBox1.getDimensions(auxVector32);
+        auxVector32.x = Math.max(auxVector32.x, Math.max(auxVector32.y, auxVector32.z));
+        auxVector32.y = Math.max(auxVector32.x, Math.max(auxVector32.y, auxVector32.z));
+        auxVector32.z = Math.max(auxVector32.x, Math.max(auxVector32.y, auxVector32.z));
+        return camera.frustum.boundsInFrustum(auxVector31, auxVector32);
     }
 
     private void initializeDisplay() {
