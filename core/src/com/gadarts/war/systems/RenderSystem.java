@@ -3,17 +3,20 @@ package com.gadarts.war.systems;
 import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
+import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
+import com.gadarts.shared.SharedC;
 import com.gadarts.shared.definitions.PointLightDefinition;
+import com.gadarts.war.GameC.ShadowMap;
 import com.gadarts.war.GameSettings;
 import com.gadarts.war.GameShaderProvider;
 import com.gadarts.war.components.CameraComponent;
@@ -38,6 +41,8 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     private CollisionShapesDebugDrawing collisionShapesDebugDrawingMethod;
     private Environment environment;
     private GameShaderProvider shaderProvider;
+    private MgsxDirectionalShadowLight shadowLight;
+    private ModelBatch shadowBatch;
 
     @Override
     public void addedToEngine(Engine engine) {
@@ -48,31 +53,53 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
         camera = ComponentsMapper.camera.get(cameraEntity).getCamera();
         modelInstanceEntities = engine.getEntitiesFor(Family.all(ModelInstanceComponent.class).get());
         environment = new Environment();
-        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0, 0, 0, 1f));
-        environment.add(new DirectionalLight().set(0.3f, 0.3f, 0.3f, -1, -0.7f, -1));
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.1f, 0.1f, 0.1f, 1f));
+        shadowLight = new MgsxDirectionalShadowLight(ShadowMap.SIZE, ShadowMap.SIZE,
+                ShadowMap.VIEWPORT_SIZE, ShadowMap.VIEWPORT_SIZE, 1, SharedC.Camera.FAR);
+        shadowLight.set(ShadowMap.COLOR, auxVector31.set(-0.5f, -1, -0.5f), 1);
+        environment.add(shadowLight);
+        environment.shadowMap = shadowLight;
         engine.addEntityListener(this);
+        shadowBatch = new ModelBatch(new DepthShaderProvider());
     }
 
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
         initializeDisplay();
+        renderShadows();
         numberOfVisible = 0;
         modelBatch.begin(camera);
-        renderAllInstances();
+        renderInstances(modelBatch, true, environment);
         modelBatch.end();
         if (collisionShapesDebugDrawingMethod != null) collisionShapesDebugDrawingMethod.drawCollisionShapes(camera);
     }
 
-    private void renderAllInstances() {
+    private void renderShadows() {
+        shadowLight.begin();
+        shadowLight.center.set(camera.position);
+        Camera camera = shadowLight.getCamera();
+        shadowBatch.begin(camera);
+        renderInstances(shadowBatch, false, null);
+        shadowBatch.end();
+        shadowLight.end();
+    }
+
+    private void renderInstances(ModelBatch batch, boolean renderGround, Environment environment) {
         for (Entity entity : modelInstanceEntities) {
             ModelInstance modelInstance = ComponentsMapper.modelInstance.get(entity).getModelInstance();
             if (isVisible(camera, entity))
                 if (!shouldSkipRender(entity)) {
-                    modelBatch.render(modelInstance, environment);
-                    numberOfVisible++;
+                    if (renderGround || !ComponentsMapper.ground.has(entity))
+                        renderInstance(batch, environment, modelInstance);
                 }
         }
+    }
+
+    private void renderInstance(ModelBatch batch, Environment environment, ModelInstance modelInstance) {
+        if (environment != null) batch.render(modelInstance, environment);
+        else batch.render(modelInstance);
+        numberOfVisible++;
     }
 
     private boolean shouldSkipRender(Entity entity) {
@@ -100,6 +127,8 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
 
     public void dispose() {
         modelBatch.dispose();
+        shadowBatch.dispose();
+        shadowLight.dispose();
     }
 
     public int getNumberOfVisible() {

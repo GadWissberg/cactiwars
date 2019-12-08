@@ -1,6 +1,16 @@
 package com.gadarts.war;
 
+import com.badlogic.gdx.graphics.Color;
+
 public final class GameC {
+    public static final class ShadowMap {
+
+        public static final int SIZE = 2048;
+        public static final float VIEWPORT_SIZE = 30;
+
+        public static final Color COLOR = new Color(0.1f, 0.1f, 0.1f, 1f);
+    }
+
 
     public final class Files {
         public static final String ASSETS_PATH = "core/assets/";
