@@ -179,4 +179,8 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     public Environment getEnvironment() {
         return environment;
     }
+
+    public int getNumberOfModelInstances() {
+        return modelInstanceEntities.size();
+    }
 }

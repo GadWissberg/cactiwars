@@ -13,6 +13,7 @@ import com.gadarts.war.systems.RenderSystem;
 
 public class Profiler {
 
+    private static final char SEPARATOR = '/';
     private final Stage stage;
     private final RenderSystem renderSystem;
     private GLProfiler glProfiler;
@@ -58,8 +59,16 @@ public class Profiler {
         int valueWithoutText = glProfiler.getTextureBindings() - 1;
         displayLine(GameC.Profiler.GL_TEXTURE_BINDINGS_STRING, valueWithoutText);
         displayLine(GameC.Profiler.GL_VERTEX_COUNT_STRING, glProfiler.getVertexCount().total);
-        displayLine(GameC.Profiler.VISIBLE_OBJECTS_STRING, renderSystem.getNumberOfVisible());
+        displayNumberOfVisibleObjects();
         glProfiler.reset();
+    }
+
+    private void displayNumberOfVisibleObjects() {
+        stringBuilder.append(GameC.Profiler.VISIBLE_OBJECTS_STRING);
+        stringBuilder.append(renderSystem.getNumberOfVisible());
+        stringBuilder.append(SEPARATOR);
+        stringBuilder.append(renderSystem.getNumberOfModelInstances());
+        stringBuilder.append('\n');
     }
 
     private void displayLine(String label, Object value) {
