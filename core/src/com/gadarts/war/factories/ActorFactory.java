@@ -64,7 +64,7 @@ public class ActorFactory {
         player.add(engine.createComponent(PlayerComponent.class));
         CharacterComponent characterComponent = createCharacterComponent();
         player.add(characterComponent);
-        ModelInstanceComponent modelInstanceComponent = createModelInstanceComponent(modelFileName, x, y, z);
+        ModelInstanceComponent modelInstanceComponent = createModelInstanceComponent(modelFileName, x, y + 0.1f, z);
         player.add(modelInstanceComponent);
         ModelInstance modelInstance = modelInstanceComponent.getModelInstance();
         PhysicsComponent physicsComponent = createPhysicsComponent(modelFileName, player, modelInstance, 400);
@@ -72,7 +72,7 @@ public class ActorFactory {
         body.setDamping(0, 0.1f);
         btCompoundShape collisionShape = (btCompoundShape) body.getCollisionShape();
         float halfWidth = auxBoundBox.getWidth() / 2;
-        float halfHeight = auxBoundBox.getHeight() / 4;
+        float halfHeight = auxBoundBox.getHeight() / 2;
         float halfDepth = auxBoundBox.getDepth() / 2;
         Vector3 halfExtents = auxVector.set(halfWidth, halfHeight, halfDepth);
         btBoxShape box = Pools.obtain(btBoxShapeWrapper.class);
@@ -82,8 +82,8 @@ public class ActorFactory {
         body.setContactCallbackFlag(CollisionFilterGroups.CharacterFilter);
         body.setContactCallbackFilter(CollisionFilterGroups.CharacterFilter | CollisionFilterGroups.KinematicFilter);
         player.add(physicsComponent);
-//        body.getMotionState().getWorldTransform(auxMatrix);
-//        body.setCenterOfMassTransform(auxMatrix.rotate(Vector3.Y,rotation));
+        body.getMotionState().getWorldTransform(auxMatrix);
+        body.setCenterOfMassTransform(auxMatrix.rotate(Vector3.Y, rotation));
 //        body.setCollisionFlags(body.getCollisionFlags() | CF_CUSTOM_MATERIAL_CALLBACK);
         if (additionals != null) {
             for (CharacterAdditionalDefinition definition : additionals) {
