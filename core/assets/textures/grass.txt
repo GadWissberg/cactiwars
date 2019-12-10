@@ -3,27 +3,27 @@ size: 936, 288
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-grass
+grass_a
   rotate: false
   xy: 4, 4
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-grass
+grass_b
   rotate: false
   xy: 76, 4
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 2
-grass
+  index: -1
+grass_c
   rotate: false
   xy: 148, 4
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 3
+  index: -1
 grass_corner_bottom_left
   rotate: false
   xy: 220, 4

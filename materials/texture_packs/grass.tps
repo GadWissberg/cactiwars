@@ -181,9 +181,9 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">../images/grass.png</key>
-            <key type="filename">../images/grass_2.png</key>
-            <key type="filename">../images/grass_3.png</key>
+            <key type="filename">../images/grass_a.png</key>
+            <key type="filename">../images/grass_b.png</key>
+            <key type="filename">../images/grass_c.png</key>
             <key type="filename">../images/grass_corner_bottom_left.png</key>
             <key type="filename">../images/grass_corner_bottom_right.png</key>
             <key type="filename">../images/grass_corner_top_left.png</key>
@@ -249,7 +249,6 @@
         </map>
         <key>fileList</key>
         <array>
-            <filename>../images/grass.png</filename>
             <filename>../images/grass_corner_bottom_left.png</filename>
             <filename>../images/grass_corner_bottom_right.png</filename>
             <filename>../images/grass_corner_top_left.png</filename>
@@ -297,9 +296,10 @@
             <filename>../images/grass_vertical_left.png</filename>
             <filename>../images/grass_vertical_right.png</filename>
             <filename>../images/path.png</filename>
-            <filename>../images/grass_2.png</filename>
-            <filename>../images/grass_3.png</filename>
             <filename>../images/grass_dec_1.png</filename>
+            <filename>../images/grass_a.png</filename>
+            <filename>../images/grass_b.png</filename>
+            <filename>../images/grass_c.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

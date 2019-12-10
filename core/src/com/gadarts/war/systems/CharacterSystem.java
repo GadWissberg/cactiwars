@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
+import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.gadarts.war.GameSettings;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.character.CharacterComponent;
@@ -150,11 +151,11 @@ class CharacterSystem extends EntitySystem {
     private void takeStep(Entity character) {
         CharacterComponent characterComponent = ComponentsMapper.characters.get(character);
         if (characterComponent.getSpeed() != 0) {
-            PhysicsComponent physicsComponent = ComponentsMapper.physics.get(character);
-            float speed = characterComponent.getSpeed();
-            characterComponent.getDirection(auxVector21).scl(speed);
-            physicsComponent.getMotionState().getWorldTransform(auxMat);
-            physicsComponent.getBody().setLinearVelocity(auxVector31.set(1, 0, 0).rot(auxMat).scl(speed));
+            btRigidBody body = ComponentsMapper.physics.get(character).getBody();
+            characterComponent.getDirection(auxVector21).scl(characterComponent.getSpeed());
+            ComponentsMapper.physics.get(character).getMotionState().getWorldTransform(auxMat);
+            body.setLinearVelocity(auxVector31.set(1, 0, 0).rot(auxMat).scl(characterComponent.getSpeed()));
+            if (!body.isActive()) body.activate();
         }
     }
 

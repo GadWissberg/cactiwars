@@ -173,6 +173,7 @@ public class MapCreator extends MapModeler {
         modelHorizontalSurroundingGroundModel(SharedC.Map.LEVEL_SIZE + 2,
                 SharedC.Map.LEVEL_SIZE * SharedC.Map.REGION_SIZE_UNIT);
         modelVerticalSurroundingGroundModel(-1);
+        modelVerticalSurroundingGroundModel(-2);
         modelVerticalSurroundingGroundModel(1);
     }
 
@@ -186,7 +187,7 @@ public class MapCreator extends MapModeler {
     private void modelHorizontalSurroundingGroundModel(int numberOfRegions, int z) {
         for (int i = 0; i < numberOfRegions; i++) {
             int regionSize = SharedC.Map.REGION_SIZE_UNIT * 2;
-            modelGroundRegion(z, i - 1, regionSize, true);
+            modelGroundRegion(z, i - 2, regionSize, true);
         }
     }
 
