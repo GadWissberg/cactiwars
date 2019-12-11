@@ -110,7 +110,7 @@ public class MapCreator extends MapModeler {
         int distanceFromOrigin = SharedC.Map.REGION_SIZE_UNIT * SharedC.Map.LEVEL_SIZE;
         createBoundaryPhysics(auxVector31.set(0, 0, 1), 0);
         createBoundaryPhysics(auxVector31.set(1, 0, 0), 0);
-        createBoundaryPhysics(auxVector31.set(0, 1, 0), 0);
+        createBoundaryPhysics(auxVector31.set(0, 1, 0), -1f);
         createBoundaryPhysics(auxVector31.set(0, 0, -1), -distanceFromOrigin);
         createBoundaryPhysics(auxVector31.set(-1, 0, 0), -distanceFromOrigin);
     }

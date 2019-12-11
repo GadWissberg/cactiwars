@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.StringBuilder;
-import com.gadarts.war.systems.RenderSystem;
+import com.gadarts.war.systems.render.RenderSystem;
 
 public class Profiler {
 

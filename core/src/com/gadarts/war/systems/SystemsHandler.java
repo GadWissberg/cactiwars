@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 import com.gadarts.war.systems.player.PlayerSystem;
+import com.gadarts.war.systems.render.RenderSystem;
 
 public class SystemsHandler {
     private final PooledEngine engine;

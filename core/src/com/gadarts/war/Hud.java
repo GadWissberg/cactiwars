@@ -2,7 +2,7 @@ package com.gadarts.war;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.gadarts.war.systems.RenderSystem;
+import com.gadarts.war.systems.render.RenderSystem;
 
 public class Hud {
     private final Stage stage;

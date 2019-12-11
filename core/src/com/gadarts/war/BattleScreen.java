@@ -9,11 +9,11 @@ import com.gadarts.shared.par.SectionType;
 import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.level.MapCreator;
 import com.gadarts.war.sound.SoundPlayer;
-import com.gadarts.war.systems.RenderSystem;
 import com.gadarts.war.systems.SystemsHandler;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 import com.gadarts.war.systems.player.PlayerSystem;
 import com.gadarts.war.systems.player.input.InputHandler;
+import com.gadarts.war.systems.render.RenderSystem;
 
 class BattleScreen implements Screen {
     private PooledEngine entitiesEngine;

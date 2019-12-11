@@ -1,4 +1,4 @@
-package com.gadarts.war.systems;
+package com.gadarts.war.systems.render.shadow;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
