@@ -15,7 +15,7 @@ public class AnimationComponent implements Component, Pool.Poolable {
 
     public void init(ModelInstance modelInstance) {
         animationController = new AnimationController(modelInstance);
-        animationController.setAnimation("Armature|ArmatureAction", -1, 0.5f, new AnimationController.AnimationListener() {
+        animationController.setAnimation("body|shake", -1, 0.5f, new AnimationController.AnimationListener() {
             @Override
             public void onEnd(AnimationController.AnimationDesc animationDesc) {
 
