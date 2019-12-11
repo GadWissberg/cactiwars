@@ -1,10 +1,6 @@
 package com.gadarts.war.systems.render;
 
-import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntityListener;
-import com.badlogic.ashley.core.EntitySystem;
-import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -27,6 +23,7 @@ import com.gadarts.war.components.model.ModelInstanceComponent;
 import com.gadarts.war.systems.physics.CollisionShapesDebugDrawing;
 import com.gadarts.war.systems.physics.PhysicsSystemEventsSubscriber;
 import com.gadarts.war.systems.render.shadow.ShadowRenderer;
+
 import java.util.List;
 
 public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSubscriber, EntityListener {
@@ -63,26 +60,32 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
         renderShadows();
         renderingDebugHandler.resetCounter();
         modelBatch.begin(camera);
-        renderInstances(modelBatch, true, environment);
+        renderInstances(modelBatch, true, environment, deltaTime);
         modelBatch.end();
         renderingDebugHandler.renderCollisionShapes(camera);
     }
 
     private void renderShadows() {
         shadowRenderer.begin(camera);
-        renderInstances(shadowRenderer.getShadowBatch(), false, null);
+        renderInstances(shadowRenderer.getShadowBatch(), false, null, -1);
         shadowRenderer.end();
     }
 
 
-    private void renderInstances(ModelBatch batch, boolean renderGround, Environment environment) {
+    private void renderInstances(ModelBatch batch, boolean renderGround, Environment environment, float deltaTime) {
         for (Entity entity : modelInstanceEntities) {
             ModelInstance modelInstance = ComponentsMapper.modelInstance.get(entity).getModelInstance();
+            animate(deltaTime, entity);
             if (isVisible(camera, entity))
-                if (!shouldSkipRender(entity)) {
+                if (!shouldSkipRender(entity))
                     if (renderGround || !ComponentsMapper.ground.has(entity))
                         renderInstance(batch, environment, modelInstance);
-                }
+        }
+    }
+
+    private void animate(float deltaTime, Entity entity) {
+        if (ComponentsMapper.animations.has(entity)) {
+            ComponentsMapper.animations.get(entity).getController().update(deltaTime);
         }
     }
 

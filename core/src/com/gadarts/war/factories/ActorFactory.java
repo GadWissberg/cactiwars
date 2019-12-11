@@ -27,6 +27,7 @@ import com.gadarts.war.components.PointLightComponent;
 import com.gadarts.war.components.character.CharacterAdditional;
 import com.gadarts.war.components.character.CharacterComponent;
 import com.gadarts.war.components.character.CharacterSoundData;
+import com.gadarts.war.components.model.AnimationComponent;
 import com.gadarts.war.components.model.ModelInstanceComponent;
 import com.gadarts.war.components.physics.PhysicsComponent;
 import com.gadarts.war.components.physics.shapes.btBoxShapeWrapper;
@@ -84,7 +85,10 @@ public class ActorFactory {
         player.add(physicsComponent);
         body.getMotionState().getWorldTransform(auxMatrix);
         body.setCenterOfMassTransform(auxMatrix.rotate(Vector3.Y, rotation));
-//        body.setCollisionFlags(body.getCollisionFlags() | CF_CUSTOM_MATERIAL_CALLBACK);
+        AnimationComponent animationComponent = engine.createComponent(AnimationComponent.class);
+        animationComponent.init(modelInstance);
+        player.add(animationComponent);
+        //        body.setCollisionFlags(body.getCollisionFlags() | CF_CUSTOM_MATERIAL_CALLBACK);
         if (additionals != null) {
             for (CharacterAdditionalDefinition definition : additionals) {
                 CharacterAdditional characterAdditional = createCharacterAdditional(definition, x, y, z, player, modelInstance);

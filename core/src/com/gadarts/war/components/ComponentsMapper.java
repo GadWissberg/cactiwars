@@ -2,6 +2,7 @@ package com.gadarts.war.components;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.gadarts.war.components.character.CharacterComponent;
+import com.gadarts.war.components.model.AnimationComponent;
 import com.gadarts.war.components.model.ModelInstanceComponent;
 import com.gadarts.war.components.physics.PhysicsComponent;
 
@@ -14,5 +15,6 @@ public class ComponentsMapper {
     public static final ComponentMapper<GroundComponent> ground = ComponentMapper.getFor(GroundComponent.class);
     public static final ComponentMapper<EnvironmentObjectComponent> environmentObject = ComponentMapper.getFor(EnvironmentObjectComponent.class);
     public static final ComponentMapper<PointLightComponent> pointLights = ComponentMapper.getFor(PointLightComponent.class);
+    public static final ComponentMapper<AnimationComponent> animations = ComponentMapper.getFor(AnimationComponent.class);
 
 }
