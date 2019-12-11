@@ -40,7 +40,6 @@ import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.systems.CameraSystem;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 import com.gadarts.war.systems.player.PlayerSystem;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -111,6 +110,7 @@ public class MapCreator extends MapModeler {
         int distanceFromOrigin = SharedC.Map.REGION_SIZE_UNIT * SharedC.Map.LEVEL_SIZE;
         createBoundaryPhysics(auxVector31.set(0, 0, 1), 0);
         createBoundaryPhysics(auxVector31.set(1, 0, 0), 0);
+        createBoundaryPhysics(auxVector31.set(0, 1, 0), 0);
         createBoundaryPhysics(auxVector31.set(0, 0, -1), -distanceFromOrigin);
         createBoundaryPhysics(auxVector31.set(-1, 0, 0), -distanceFromOrigin);
     }
