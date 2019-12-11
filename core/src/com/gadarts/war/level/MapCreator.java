@@ -40,6 +40,7 @@ import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.systems.CameraSystem;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 import com.gadarts.war.systems.player.PlayerSystem;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -87,7 +88,7 @@ public class MapCreator extends MapModeler {
             for (int col = 0; col < SharedC.Map.REGION_SIZE_UNIT; col++) {
                 int originX = (int) transform.val[Matrix4.M03];
                 int originZ = (int) transform.val[Matrix4.M23];
-                GroundChildShape childShp = addChildShapeToRegionBody(map, originZ + row, originX + col, auxMatrix);
+                GroundChildShape childShp = addChildShapeToRegionBody(map, row, col, auxMatrix);
                 cmpShape.addChildShape(auxMatrix, childShp);
                 groundComponent.getFrictionMapping()[row][col] = map.getPath()[originZ + row][originX + col];
             }
