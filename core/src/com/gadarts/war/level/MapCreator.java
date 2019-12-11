@@ -64,27 +64,39 @@ public class MapCreator extends MapModeler {
     }
 
     private void createGroundRegionBody(Entity entity, PooledEngine engine, Map map) {
-        GroundComponent groundComponent = ComponentsMapper.ground.get(entity);
-        PhysicsComponent physicsComponent = engine.createComponent(PhysicsComponent.class);
-        ModelInstanceComponent modelInstanceComponent = ComponentsMapper.modelInstance.get(entity);
-        ModelInstance modelInstance = modelInstanceComponent.getModelInstance();
-        int halfWidth = SharedC.Map.REGION_SIZE_UNIT;
-        btCompoundShape compoundShape = new btCompoundShape(true);
-        Matrix4 transform = modelInstance.transform;
-        physicsComponent.init(0, compoundShape, transform);
-        btRigidBody body = physicsComponent.getBody();
-        for (int row = 0; row < SharedC.Map.REGION_SIZE_UNIT; row++) {
-            for (int col = 0; col < SharedC.Map.REGION_SIZE_UNIT; col++) {
-                int originX = (int) transform.val[Matrix4.M03];
-                int originZ = (int) transform.val[Matrix4.M23];
-                compoundShape.addChildShape(auxMatrix.idt().trn(col + 0.5f, 0, row + 0.5f), new GroundChildShape(auxVector31.set(0.5f, 0.1f, 0.5f), map.getPath()[originZ + row][originX + col]));
-                groundComponent.getFrictionMapping()[row][col] = map.getPath()[originZ + row][originX + col];
-            }
-        }
+        PhysicsComponent physicsComponent = createGroundRegionBodyPhysicsComponent(entity, engine, map);
         entity.add(physicsComponent);
+        btRigidBody body = physicsComponent.getBody();
         body.userData = entity;
         body.setContactCallbackFlag(btBroadphaseProxy.CollisionFilterGroups.KinematicFilter);
         engine.getSystem(PhysicsSystem.class).getCollisionWorld().addRigidBody(body);
+    }
+
+    private PhysicsComponent createGroundRegionBodyPhysicsComponent(Entity entity, PooledEngine engine, Map map) {
+        Matrix4 transform = ComponentsMapper.modelInstance.get(entity).getModelInstance().transform;
+        GroundComponent groundComponent = ComponentsMapper.ground.get(entity);
+        btCompoundShape compoundShape = new btCompoundShape(true);
+        PhysicsComponent physicsComponent = engine.createComponent(PhysicsComponent.class);
+        physicsComponent.init(0, compoundShape, transform);
+        createGroundRegionBodyChildShapes(map, transform, groundComponent, compoundShape);
+        return physicsComponent;
+    }
+
+    private void createGroundRegionBodyChildShapes(Map map, Matrix4 transform, GroundComponent groundComponent, btCompoundShape cmpShape) {
+        for (int row = 0; row < SharedC.Map.REGION_SIZE_UNIT; row++)
+            for (int col = 0; col < SharedC.Map.REGION_SIZE_UNIT; col++) {
+                int originX = (int) transform.val[Matrix4.M03];
+                int originZ = (int) transform.val[Matrix4.M23];
+                GroundChildShape childShp = addChildShapeToRegionBody(map, originZ + row, originX + col, auxMatrix);
+                cmpShape.addChildShape(auxMatrix, childShp);
+                groundComponent.getFrictionMapping()[row][col] = map.getPath()[originZ + row][originX + col];
+            }
+    }
+
+    private GroundChildShape addChildShapeToRegionBody(Map map, int row, int col, Matrix4 localTransform) {
+        Vector3 halfExtents = auxVector31.set(0.5f, 0.1f, 0.5f);
+        localTransform.idt().trn(col + 0.5f, 0, row + 0.5f);
+        return new GroundChildShape(halfExtents, map.getPath()[row][col]);
     }
 
     private GroundBody createBoundaryPhysics(Vector3 planeNormal, float distanceFromOrigin) {
