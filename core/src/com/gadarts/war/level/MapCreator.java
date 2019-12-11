@@ -214,18 +214,17 @@ public class MapCreator extends MapModeler {
         TextureAtlas tiles = GameAssetManager.getInstance().get(grass, TextureAtlas.class);
         boolean modelAxis = Gdx.app.getLogLevel() == Gdx.app.LOG_DEBUG && GameSettings.SHOW_AXIS && z == 0 && x == 0;
         Model region = modelGroundRegion(modelAxis, tiles, regionSize);
-        PooledEngine entitiesEngine = getEntitiesEngine();
-        ground.add(createGroundRegionModelInstanceComponent(z, x, region, regionSize, entitiesEngine));
-        GroundComponent groundComponent = entitiesEngine.createComponent(GroundComponent.class);
+        ground.add(createGroundRegionModelInstanceComponent(z, x, region, regionSize));
+        GroundComponent groundComponent = getEntitiesEngine().createComponent(GroundComponent.class);
         groundComponent.init(!isSurrounding);
         ground.add(groundComponent);
-        entitiesEngine.addEntity(ground);
+        getEntitiesEngine().addEntity(ground);
     }
 
-    private ModelInstanceComponent createGroundRegionModelInstanceComponent(int z, int x, Model regionModel,
-                                                                            int regionSize, PooledEngine engine) {
+    private ModelInstanceComponent createGroundRegionModelInstanceComponent(int z, int x, Model regModel, int regionSize) {
+        PooledEngine engine = getEntitiesEngine();
         ModelInstanceComponent modelInstanceComponent = engine.createComponent(ModelInstanceComponent.class);
-        ModelInstance modelInstance = new ModelInstance(regionModel);
+        ModelInstance modelInstance = new ModelInstance(regModel);
         x = x * regionSize;
         int y = 0;
         modelInstance.transform.setToTranslation(x, y, z);
