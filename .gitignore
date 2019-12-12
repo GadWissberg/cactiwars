@@ -138,4 +138,7 @@ Thumbs.db
 *.ini
 *.par
 *.tlm
-/materials/models/
+*.fbx
+/materials/models/rock_3
+/materials/models/rock_2
+/materials/models/rock_1
