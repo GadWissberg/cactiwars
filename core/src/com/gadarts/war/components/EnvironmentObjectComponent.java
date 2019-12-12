@@ -16,6 +16,7 @@ public class EnvironmentObjectComponent implements Component, Pool.Poolable {
 
     @Override
     public void reset() {
+        sourceLights.clear();
     }
 
     public List<Entity> getSourceLights() {
