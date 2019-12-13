@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.gadarts.shared.SharedC;
 import com.gadarts.shared.par.AssetManagerWrapper;
 import com.gadarts.shared.par.MainParLoadingFailureException;
-import com.gadarts.shared.par.ParReader;
+import com.gadarts.shared.par.ParInflater;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +20,8 @@ public class GameAssetManager extends AssetManagerWrapper {
     }
 
     void loadAssets() throws IOException, MainParLoadingFailureException {
-        ParReader reader = new ParReader();
-        reader.loadMainParData(GameC.Files.MAIN_PAR_FILE, this);
+        ParInflater inflater = new ParInflater();
+        inflater.inflatePar(inflater.readPar(GameC.Files.MAIN_PAR_FILE), this);
         GameAssetManager gameAssetManager = GameAssetManager.getInstance();
         gameAssetManager.load(GameC.Files.TEXTURES_FOLDER_NAME + "/" + SharedC.TILE_FILE_NAME, TextureAtlas.class);
         loadModels(gameAssetManager);
