@@ -2,6 +2,7 @@
   "character": [
     {
       "name": "tank",
+      "display_name": "Cactank",
       "collision_shapes": [],
       "model": "tank",
       "additional": [
@@ -19,6 +20,7 @@
   "environment": [
     {
       "name": "street_lamp",
+      "display_name": "Street Lamp",
       "collision_shapes": [],
       "model": "street_lamp",
       "origin": {
@@ -36,17 +38,20 @@
     },
     {
       "name": "rock_1",
+      "display_name": "Rock #1",
       "collision_shapes": [],
       "model": "rock_1",
       "static": true
     },
     {
+      "display_name": "Rock #2",
       "name": "rock_2",
       "collision_shapes": [],
       "model": "rock_2",
       "static": true
     },
     {
+      "display_name": "Rock #3",
       "name": "rock_3",
       "collision_shapes": [],
       "model": "rock_3",
