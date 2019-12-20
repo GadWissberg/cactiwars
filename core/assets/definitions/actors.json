@@ -7,12 +7,12 @@
       "model": "tank",
       "additional": [
         {
-          "offset_parent_y": 1,
+          "offset_parent_y": 0.9,
           "model": "tank_head"
         },
         {
           "model": "tank_aux",
-          "offset_parent_y": 1.2
+          "offset_parent_y": 1.15
         }
       ]
     }
