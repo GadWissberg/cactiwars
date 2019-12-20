@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.gadarts.shared.definitions.PointLightDefinition;
+import com.gadarts.war.BattleScreen;
 import com.gadarts.war.GameSettings;
 import com.gadarts.war.GameShaderProvider;
 import com.gadarts.war.components.CameraComponent;
@@ -56,6 +57,10 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
+        render(deltaTime);
+    }
+
+    private void render(float deltaTime) {
         initializeDisplay();
         renderShadows();
         renderingDebugHandler.resetCounter();
@@ -84,7 +89,7 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     }
 
     private void animate(float deltaTime, Entity entity) {
-        if (ComponentsMapper.animations.has(entity)) {
+        if (!BattleScreen.isPaused() && ComponentsMapper.animations.has(entity)) {
             ComponentsMapper.animations.get(entity).getController().update(deltaTime);
         }
     }

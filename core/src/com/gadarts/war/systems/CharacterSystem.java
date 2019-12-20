@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
+import com.gadarts.war.BattleScreen;
 import com.gadarts.war.GameSettings;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.character.CharacterComponent;
@@ -44,10 +45,12 @@ class CharacterSystem extends EntitySystem {
 
     @Override
     public void update(float deltaTime) {
-        super.update(deltaTime);
-        for (Entity character : characters) {
-            handleMovement(character);
-            if (GameSettings.ALLOW_SOUND) handleCharacterSound(character);
+        if (!BattleScreen.isPaused()) {
+            super.update(deltaTime);
+            for (Entity character : characters) {
+                handleMovement(character);
+                if (GameSettings.ALLOW_SOUND) handleCharacterSound(character);
+            }
         }
     }
 
