@@ -2,6 +2,7 @@ package com.gadarts.war;
 
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.gadarts.shared.level.Map;
 import com.gadarts.shared.par.SectionType;
@@ -12,7 +13,7 @@ import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.systems.SystemsHandler;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 import com.gadarts.war.systems.player.PlayerSystem;
-import com.gadarts.war.systems.player.input.InputHandler;
+import com.gadarts.war.systems.player.input.GamePlayInputHandler;
 import com.gadarts.war.systems.render.RenderSystem;
 
 public class BattleScreen implements Screen {
@@ -44,7 +45,7 @@ public class BattleScreen implements Screen {
         createWorld();
         initializeInput();
         hud = new Hud(entitiesEngine.getSystem(RenderSystem.class));
-        if (GameSettings.MENU_ON_START) paused = true;
+        if (GameSettings.MENU_ON_START) pauseGame();
     }
 
     private void createSystemsHandler() {
@@ -54,8 +55,10 @@ public class BattleScreen implements Screen {
 
     private void initializeInput() {
         if (!GameSettings.SPECTATOR) {
-            InputHandler processor = new InputHandler();
-            Gdx.input.setInputProcessor(processor);
+            InputMultiplexer multiplexer = new InputMultiplexer();
+            GamePlayInputHandler processor = new GamePlayInputHandler();
+            multiplexer.addProcessor(processor);
+            Gdx.input.setInputProcessor(multiplexer);
             processor.subscribeForInputEvents(entitiesEngine.getSystem(PlayerSystem.class));
         }
     }

@@ -5,7 +5,7 @@ import com.badlogic.gdx.InputProcessor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InputHandler implements InputProcessor {
+public class GamePlayInputHandler implements InputProcessor  {
 
     private List<PlayerInputProcessor> subscribers = new ArrayList<>();
 

@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.loaders.ModelLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -15,6 +16,7 @@ import com.gadarts.shared.SharedC;
 import com.gadarts.shared.par.AssetManagerWrapper;
 import com.gadarts.shared.par.MainParLoadingFailureException;
 import com.gadarts.shared.par.ParInflater;
+import com.gadarts.war.GameC.Files;
 import com.gadarts.war.GameC.Files.Font;
 
 import java.io.File;
@@ -29,34 +31,39 @@ public class GameAssetManager extends AssetManagerWrapper {
 
     void loadAssets() throws IOException, MainParLoadingFailureException {
         ParInflater inflater = new ParInflater();
-        inflater.inflatePar(inflater.readPar(GameC.Files.MAIN_PAR_FILE), this);
+        inflater.inflatePar(inflater.readPar(Files.MAIN_PAR_FILE), this);
         GameAssetManager gameAssetManager = GameAssetManager.getInstance();
-        gameAssetManager.load(GameC.Files.TEXTURES_FOLDER_NAME + "/" + SharedC.TILE_FILE_NAME, TextureAtlas.class);
+        loadTextures(gameAssetManager);
         loadModels(gameAssetManager);
         loadSounds(gameAssetManager);
         loadFonts(gameAssetManager);
         gameAssetManager.finishLoading();
     }
 
+    private void loadTextures(GameAssetManager gameAssetManager) {
+        gameAssetManager.load(Files.TEXTURES_FOLDER_NAME + "/" + SharedC.TILE_FILE_NAME, TextureAtlas.class);
+        gameAssetManager.load(Files.TEXTURES_FOLDER_NAME + "/cactus_icon.png", Texture.class);
+    }
+
     private void loadModels(GameAssetManager gameAssetManager) {
         ModelLoader.ModelParameters param = new ModelLoader.ModelParameters();
         param.textureParameter.genMipMaps = true;
-        gameAssetManager.load(GameC.Files.MODELS_FOLDER_NAME + "/" + "tank.g3dj", Model.class, param);
-        gameAssetManager.load(GameC.Files.MODELS_FOLDER_NAME + "/" + "tank_head.g3dj", Model.class, param);
-        gameAssetManager.load(GameC.Files.MODELS_FOLDER_NAME + "/" + "tank_aux.g3dj", Model.class, param);
-        gameAssetManager.load(GameC.Files.MODELS_FOLDER_NAME + "/" + "street_lamp.g3dj", Model.class, param);
-        gameAssetManager.load(GameC.Files.MODELS_FOLDER_NAME + "/" + "rock_1.g3dj", Model.class, param);
-        gameAssetManager.load(GameC.Files.MODELS_FOLDER_NAME + "/" + "rock_2.g3dj", Model.class, param);
-        gameAssetManager.load(GameC.Files.MODELS_FOLDER_NAME + "/" + "rock_3.g3dj", Model.class, param);
+        gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "tank.g3dj", Model.class, param);
+        gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "tank_head.g3dj", Model.class, param);
+        gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "tank_aux.g3dj", Model.class, param);
+        gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "street_lamp.g3dj", Model.class, param);
+        gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "rock_1.g3dj", Model.class, param);
+        gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "rock_2.g3dj", Model.class, param);
+        gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "rock_3.g3dj", Model.class, param);
     }
 
     private void loadSounds(GameAssetManager gameAssetManager) {
-        File fileHandler = new File(GameC.Files.Sound.FOLDER_PATH);
+        File fileHandler = new File(Files.Sound.FOLDER_PATH);
         File[] files = fileHandler.listFiles();
         for (File file : files) {
             String[] split = file.getName().split("\\.");
-            if (!split[split.length - 1].equals(GameC.Files.Sound.FORMAT)) continue;
-            gameAssetManager.load(GameC.Files.Sound.FOLDER_PATH + "/" + file.getName(), Sound.class);
+            if (!split[split.length - 1].equals(Files.Sound.FORMAT)) continue;
+            gameAssetManager.load(Files.Sound.FOLDER_PATH + "/" + file.getName(), Sound.class);
         }
     }
 

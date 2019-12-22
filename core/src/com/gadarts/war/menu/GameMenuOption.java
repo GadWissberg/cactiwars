@@ -1,19 +1,16 @@
 package com.gadarts.war.menu;
 
-public enum GameMenuOption {
-    NEW("New Game"),
-    SAVE("Save Game"),
-    LOAD("Load Game"),
-    INFO("Info"),
-    QUIT("Quit");
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
-    private final String label;
+public class GameMenuOption extends Label {
+    private final GameMenuOptions optionDefinition;
 
-    GameMenuOption(String label) {
-        this.label = label;
+    public GameMenuOption(GameMenuOptions optionDefinition, LabelStyle style) {
+        super(optionDefinition.getLabel(), style);
+        this.optionDefinition = optionDefinition;
     }
 
-    public String getLabel() {
-        return label;
+    public GameMenuOptions getOptionDefinition() {
+        return optionDefinition;
     }
 }

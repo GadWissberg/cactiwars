@@ -3,7 +3,23 @@ package com.gadarts.war;
 import com.badlogic.gdx.graphics.Color;
 
 public final class GameC {
-    public static final String VERSION = "0.1";
+    public final class General {
+        public static final String VERSION = "0.1";
+        public static final String GAME = "Cactillery";
+
+    }
+
+    public static final class Menu {
+        public static final String NAME_OPTIONS_TABLE = "options_table";
+
+        public static final class CactusIcons {
+            public static final String NAME_LEFT = "cactus_icon_left";
+            public static final String NAME_RIGHT = "cactus_icon_right";
+
+            public static final float MARGIN = 30f;
+        }
+
+    }
 
     public static final class ShadowMap {
 
@@ -16,11 +32,11 @@ public final class GameC {
 
     public final class Files {
         public final class Font {
-        public final class Size {
+            public final class Size {
 
-            public static final int BIG = 80;
-            public static final int MED = 40;
-        }
+                public static final int BIG = 80;
+                public static final int MED = 40;
+            }
 
             public static final String FORMAT = "ttf";
             public static final String FOLDER_PATH = ASSETS_PATH + "fonts";
