@@ -12,7 +12,7 @@ public enum SFX {
     private final String fileName;
 
     SFX() {
-        this.fileName = GameC.Files.SOUNDS_FOLDER_NAME + "/" + name().toLowerCase() + ".wav";
+        this.fileName = GameC.Files.Sound.FOLDER_PATH + "/" + name().toLowerCase() + ".wav";
     }
 
     public String getFileName() {

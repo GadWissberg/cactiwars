@@ -24,9 +24,9 @@ import com.gadarts.shared.definitions.ActorDefinition;
 import com.gadarts.shared.definitions.CharacterAdditionalDefinition;
 import com.gadarts.shared.definitions.Definitions;
 import com.gadarts.shared.definitions.EnvironmentObjectDefinition;
-import com.gadarts.shared.level.Actor;
 import com.gadarts.shared.level.Map;
 import com.gadarts.shared.level.MapModeler;
+import com.gadarts.shared.level.PlacedActorInfo;
 import com.gadarts.shared.level.TilePathSignature;
 import com.gadarts.shared.par.SectionType;
 import com.gadarts.war.GameAssetManager;
@@ -237,10 +237,10 @@ public class MapCreator extends MapModeler {
         TextureAtlas tilesAtlas = assetManager.get(GameC.Files.TEXTURES_FOLDER_NAME + "/" + "grass.txt", TextureAtlas.class);
         modelLevelGround(map, tilesAtlas);
         createLevelPhysics(map);
-        ArrayList<Actor> actors = map.getActors();
+        ArrayList<PlacedActorInfo> actors = map.getActors();
         Definitions<ActorDefinition> actorsDefs = assetManager.get(SectionType.DEF + "/" + SharedC.Par.Actors.ACTORS_DEF_NAME, Definitions.class);
         PooledEngine entitiesEngine = getEntitiesEngine();
-        for (Actor actor : actors) {
+        for (PlacedActorInfo actor : actors) {
             String actorDefinitionId = actor.getActorDefinitionId();
             ActorDefinition actorDefinition = actorsDefs.getDefinitions().get(actorDefinitionId);
             Vector3 position = actor.getPosition();

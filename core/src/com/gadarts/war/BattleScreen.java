@@ -3,11 +3,11 @@ package com.gadarts.war;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.math.Vector3;
 import com.gadarts.shared.level.Map;
 import com.gadarts.shared.par.SectionType;
 import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.level.MapCreator;
+import com.gadarts.war.menu.Hud;
 import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.systems.SystemsHandler;
 import com.gadarts.war.systems.physics.PhysicsSystem;
@@ -15,13 +15,26 @@ import com.gadarts.war.systems.player.PlayerSystem;
 import com.gadarts.war.systems.player.input.InputHandler;
 import com.gadarts.war.systems.render.RenderSystem;
 
-class BattleScreen implements Screen {
+public class BattleScreen implements Screen {
+    private static boolean paused;
     private PooledEngine entitiesEngine;
     private SystemsHandler systemsHandler;
     private ActorFactory actorFactory;
     private Hud hud;
     private SoundPlayer soundPlayer;
-    private Vector3 auxVector = new Vector3();
+
+    public static boolean isPaused() {
+        return paused;
+    }
+
+    public void pauseGame() {
+        BattleScreen.paused = true;
+        hud.activateMenu();
+    }
+
+    public void resumeGame() {
+        BattleScreen.paused = false;
+    }
 
     @Override
     public void show() {
@@ -32,6 +45,7 @@ class BattleScreen implements Screen {
         createWorld();
         initializeInput();
         hud = new Hud(entitiesEngine.getSystem(RenderSystem.class));
+        if (GameSettings.MENU_ON_START) paused = true;
     }
 
     private void createSystemsHandler() {

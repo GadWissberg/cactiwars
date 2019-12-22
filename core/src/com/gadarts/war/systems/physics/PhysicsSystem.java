@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
+import com.gadarts.war.BattleScreen;
 import com.gadarts.war.GameSettings;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.physics.PhysicsComponent;
@@ -32,9 +33,11 @@ public class PhysicsSystem extends EntitySystem implements EntityListener, GameC
 
     @Override
     public void update(float deltaTime) {
-        super.update(deltaTime);
-        btDiscreteDynamicsWorld collisionWorld = bulletHandler.getCollisionWorld();
-        collisionWorld.stepSimulation(deltaTime, 5);
+        if (!BattleScreen.isPaused()) {
+            super.update(deltaTime);
+            btDiscreteDynamicsWorld collisionWorld = bulletHandler.getCollisionWorld();
+            collisionWorld.stepSimulation(deltaTime, 5);
+        }
     }
 
 

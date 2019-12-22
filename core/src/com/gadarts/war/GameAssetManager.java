@@ -1,13 +1,21 @@
 package com.gadarts.war;
 
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.ModelLoader;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.gadarts.shared.SharedC;
 import com.gadarts.shared.par.AssetManagerWrapper;
 import com.gadarts.shared.par.MainParLoadingFailureException;
 import com.gadarts.shared.par.ParInflater;
+import com.gadarts.war.GameC.Files.Font;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +34,7 @@ public class GameAssetManager extends AssetManagerWrapper {
         gameAssetManager.load(GameC.Files.TEXTURES_FOLDER_NAME + "/" + SharedC.TILE_FILE_NAME, TextureAtlas.class);
         loadModels(gameAssetManager);
         loadSounds(gameAssetManager);
+        loadFonts(gameAssetManager);
         gameAssetManager.finishLoading();
     }
 
@@ -42,13 +51,43 @@ public class GameAssetManager extends AssetManagerWrapper {
     }
 
     private void loadSounds(GameAssetManager gameAssetManager) {
-        File fileHandler = new File(GameC.Files.SOUNDS_FOLDER_NAME);
+        File fileHandler = new File(GameC.Files.Sound.FOLDER_PATH);
         File[] files = fileHandler.listFiles();
         for (File file : files) {
             String[] split = file.getName().split("\\.");
-            if (!split[split.length - 1].equals(GameC.Files.SOUND_FORMAT)) continue;
-            gameAssetManager.load(GameC.Files.SOUNDS_FOLDER_NAME + "/" + file.getName(), Sound.class);
+            if (!split[split.length - 1].equals(GameC.Files.Sound.FORMAT)) continue;
+            gameAssetManager.load(GameC.Files.Sound.FOLDER_PATH + "/" + file.getName(), Sound.class);
         }
+    }
+
+    private void loadFonts(GameAssetManager gameAssetManager) {
+        FileHandleResolver resolver = new InternalFileHandleResolver();
+        gameAssetManager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
+        gameAssetManager.setLoader(BitmapFont.class, Font.FORMAT, new FreetypeFontLoader(resolver));
+        FreetypeFontLoader.FreeTypeFontLoaderParameter params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        params.fontFileName = Font.FOLDER_PATH + "/" + "cactus." + Font.FORMAT;
+        params.fontParameters.size = Font.Size.BIG;
+        params.fontParameters.color = new Color(0f, 64f, 0f, 1f);
+        params.fontParameters.borderColor = new Color(0f, 0, 0f, 0.8f);
+        params.fontParameters.borderWidth = 2f;
+        params.fontParameters.shadowColor = new Color(0f, 0, 0f, 0.5f);
+        params.fontParameters.shadowOffsetX = -2;
+        params.fontParameters.shadowOffsetY = 2;
+        params.fontParameters.borderStraight = true;
+        params.fontParameters.kerning = true;
+        gameAssetManager.load("cactus_big.ttf", BitmapFont.class, params);
+        params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        params.fontFileName = Font.FOLDER_PATH + "/" + "cactus." + Font.FORMAT;
+        params.fontParameters.size = Font.Size.MED;
+        params.fontParameters.color = new Color(0f, 64f, 0f, 1f);
+        params.fontParameters.borderColor = new Color(0f, 0, 0f, 0.8f);
+        params.fontParameters.borderWidth = 2f;
+        params.fontParameters.shadowColor = new Color(0f, 0, 0f, 0.5f);
+        params.fontParameters.shadowOffsetX = -2;
+        params.fontParameters.shadowOffsetY = 2;
+        params.fontParameters.borderStraight = true;
+        params.fontParameters.kerning = true;
+        gameAssetManager.load("cactus_med.ttf", BitmapFont.class, params);
     }
 
 }

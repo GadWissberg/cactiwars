@@ -3,6 +3,8 @@ package com.gadarts.war;
 import com.badlogic.gdx.graphics.Color;
 
 public final class GameC {
+    public static final String VERSION = "0.1";
+
     public static final class ShadowMap {
 
         public static final int SIZE = 2048;
@@ -13,11 +15,26 @@ public final class GameC {
 
 
     public final class Files {
+        public final class Font {
+        public final class Size {
+
+            public static final int BIG = 80;
+            public static final int MED = 40;
+        }
+
+            public static final String FORMAT = "ttf";
+            public static final String FOLDER_PATH = ASSETS_PATH + "fonts";
+        }
+
+        public final class Sound {
+
+            public static final String FOLDER_PATH = ASSETS_PATH + "sounds";
+            public static final String FORMAT = "wav";
+        }
+
         public static final String ASSETS_PATH = "core/assets/";
         public static final String TEXTURES_FOLDER_NAME = ASSETS_PATH + "textures";
         public static final String MODELS_FOLDER_NAME = ASSETS_PATH + "models";
-        public static final String SOUNDS_FOLDER_NAME = ASSETS_PATH + "sounds";
-        public static final String SOUND_FORMAT = "wav";
         public static final String MAIN_PAR_FILE = "core/assets/terralust.par";
     }
 

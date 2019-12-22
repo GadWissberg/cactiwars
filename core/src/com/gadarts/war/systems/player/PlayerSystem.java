@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.gadarts.war.BattleScreen;
 import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.systems.player.input.InputEvent;
 import com.gadarts.war.systems.player.input.KeyMap;
@@ -34,8 +35,9 @@ public class PlayerSystem extends EntitySystem implements PlayerInputProcessor, 
 
     @Override
     public void update(float deltaTime) {
-        super.update(deltaTime);
-
+        if (!BattleScreen.isPaused()) {
+            super.update(deltaTime);
+        }
     }
 
     public void setPlayer(Entity player) {
