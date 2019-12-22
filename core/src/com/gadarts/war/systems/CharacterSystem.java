@@ -18,7 +18,6 @@ import com.gadarts.war.components.character.CharacterComponent;
 import com.gadarts.war.components.character.CharacterSoundData;
 import com.gadarts.war.components.character.MovementState;
 import com.gadarts.war.components.physics.PhysicsComponent;
-import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 
 class CharacterSystem extends EntitySystem {
@@ -29,13 +28,8 @@ class CharacterSystem extends EntitySystem {
     private static Vector3 rayTo = new Vector3();
     private static Matrix4 auxMat = new Matrix4();
 
-    private final SoundPlayer soundPlayer;
     private ImmutableArray<Entity> characters;
     private ClosestRayResultCallback callback = new ClosestRayResultCallback(rayFrom, rayTo);
-
-    public CharacterSystem(SoundPlayer soundPlayer) {
-        this.soundPlayer = soundPlayer;
-    }
 
     @Override
     public void addedToEngine(Engine engine) {

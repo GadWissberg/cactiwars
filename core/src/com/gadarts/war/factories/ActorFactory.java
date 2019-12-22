@@ -38,7 +38,6 @@ import com.gadarts.war.factories.recycle.CollisionShapesPool;
 import com.gadarts.war.factories.recycle.ModelInstancesPool;
 import com.gadarts.war.sound.SFX;
 import com.gadarts.war.sound.SoundPlayer;
-
 import java.util.List;
 
 import static com.gadarts.war.systems.physics.PhysicsSystem.auxMatrix;
@@ -91,7 +90,7 @@ public class ActorFactory {
         //        body.setCollisionFlags(body.getCollisionFlags() | CF_CUSTOM_MATERIAL_CALLBACK);
         if (additionals != null) {
             for (CharacterAdditionalDefinition definition : additionals) {
-                CharacterAdditional characterAdditional = createCharacterAdditional(definition, x, y, z, player, modelInstance);
+                CharacterAdditional characterAdditional = createCharacterAdditional(definition, modelInstance);
                 characterComponent.addAdditional(characterAdditional);
             }
         }
@@ -99,9 +98,7 @@ public class ActorFactory {
     }
 
     private CharacterAdditional createCharacterAdditional(CharacterAdditionalDefinition additionalDefinition,
-                                                          float parentX,
-                                                          float parentY,
-                                                          float parentZ, Entity parent, ModelInstance parentModelInstance) {
+                                                          ModelInstance parentModelInstance) {
         String modelFileName = GameC.Files.MODELS_FOLDER_NAME + "/" + additionalDefinition.getModel() + ".g3dj";
         Model model = GameAssetManager.getInstance().get(modelFileName, Model.class);
         ModelInstance additionalModelInstance = modelInstancePool.obtain(modelFileName, model);

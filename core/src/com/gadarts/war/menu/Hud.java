@@ -6,7 +6,11 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.gadarts.war.*;
+import com.gadarts.war.BattleScreen;
+import com.gadarts.war.GameAssetManager;
+import com.gadarts.war.GameC;
+import com.gadarts.war.GameSettings;
+import com.gadarts.war.Profiler;
 import com.gadarts.war.systems.render.RenderSystem;
 
 public class Hud {
@@ -28,9 +32,7 @@ public class Hud {
     private void createMenu(Label.LabelStyle labelStyle) {
         menuTable = new Table();
         GameMenuOption[] options = GameMenuOption.values();
-        for (GameMenuOption option : options) {
-            menuTable.add(new Label(option.getLabel(), labelStyle)).row();
-        }
+        for (GameMenuOption option : options) menuTable.add(new Label(option.getLabel(), labelStyle)).row();
         menuTable.setFillParent(true);
         stage.addActor(menuTable);
         menuTable.setVisible(BattleScreen.isPaused());

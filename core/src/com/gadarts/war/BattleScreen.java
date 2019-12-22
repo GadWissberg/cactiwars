@@ -18,7 +18,6 @@ import com.gadarts.war.systems.render.RenderSystem;
 public class BattleScreen implements Screen {
     private static boolean paused;
     private PooledEngine entitiesEngine;
-    private SystemsHandler systemsHandler;
     private ActorFactory actorFactory;
     private Hud hud;
     private SoundPlayer soundPlayer;
@@ -49,7 +48,7 @@ public class BattleScreen implements Screen {
     }
 
     private void createSystemsHandler() {
-        systemsHandler = new SystemsHandler(entitiesEngine, soundPlayer);
+        SystemsHandler systemsHandler = new SystemsHandler(entitiesEngine, soundPlayer);
         systemsHandler.init();
     }
 

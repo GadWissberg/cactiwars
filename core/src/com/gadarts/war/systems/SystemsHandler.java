@@ -20,11 +20,11 @@ public class SystemsHandler {
         RenderSystem renderSystem = createRenderSystem();
         PhysicsSystem physicsSystem = new PhysicsSystem(soundPlayer);
         physicsSystem.subscribeForEvents(renderSystem);
-        PlayerSystem playerSystem = new PlayerSystem(soundPlayer);
+        PlayerSystem playerSystem = new PlayerSystem();
         playerSystem.subscribeForEvents(cameraSystem);
         engine.addSystem(physicsSystem);
         engine.addSystem(playerSystem);
-        engine.addSystem(new CharacterSystem(soundPlayer));
+        engine.addSystem(new CharacterSystem());
     }
 
     private RenderSystem createRenderSystem() {
