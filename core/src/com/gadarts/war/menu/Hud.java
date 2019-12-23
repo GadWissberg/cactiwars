@@ -1,14 +1,14 @@
 package com.gadarts.war.menu;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.gadarts.war.GameAssetManager;
-import com.gadarts.war.GameC;
-import com.gadarts.war.GameSettings;
-import com.gadarts.war.Profiler;
+import com.gadarts.war.*;
+import com.gadarts.war.menu.input.MenuInputHandler;
 import com.gadarts.war.systems.render.RenderSystem;
 
 public class Hud {
@@ -16,24 +16,30 @@ public class Hud {
     private Profiler profiler;
     private GameMenu menu;
 
-    public Hud(RenderSystem renderSystem) {
+    public Hud(RenderSystem renderSystem, GameScreen parentScreen) {
         stage = new Stage();
         stage.setDebugAll(GameSettings.DRAW_TABLES_BORDERS);
-        createMenu();
+        createMenu(parentScreen);
         stage.setViewport(new ScreenViewport(stage.getCamera()));
         profiler = new Profiler(stage, renderSystem);
     }
 
-    private void createMenu() {
+    private void createMenu(GameScreen parentScreen) {
         BitmapFont font = GameAssetManager.getInstance().get("cactus_med.ttf", BitmapFont.class);
         Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
         stage.addActor(new Label(GameC.General.GAME + " v" + GameC.General.VERSION, labelStyle));
-        createMenuTable();
+        createMenuTable(parentScreen);
         addMenuOptions(labelStyle);
+        menu.update();
+        menu.setVisible(BattleScreen.isPaused());
     }
 
-    private void createMenuTable() {
-        menu = new GameMenu(new MenuInputHandler());
+    private void createMenuTable(GameScreen parentScreen) {
+        MenuInputHandler menuInputHandler = new MenuInputHandler();
+        menu = new GameMenu(menuInputHandler, parentScreen);
+        InputMultiplexer multiplexer = (InputMultiplexer) Gdx.input.getInputProcessor();
+        multiplexer.addProcessor(menuInputHandler);
+        Gdx.input.setInputProcessor(multiplexer);
         stage.addActor(menu);
     }
 
@@ -60,7 +66,9 @@ public class Hud {
 
     public void activateMenu() {
         menu.setVisible(true);
-        menu.setSelected(0);
     }
 
+    public void deactivate() {
+        menu.setVisible(false);
+    }
 }

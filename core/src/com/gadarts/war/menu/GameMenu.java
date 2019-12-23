@@ -1,12 +1,11 @@
 package com.gadarts.war.menu;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
@@ -14,21 +13,25 @@ import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.gadarts.war.BattleScreen;
+import com.badlogic.gdx.utils.SnapshotArray;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
 import com.gadarts.war.GameC.Menu.CactusIcons;
+import com.gadarts.war.GameScreen;
+import com.gadarts.war.menu.input.MenuInputEventsSubscriber;
+import com.gadarts.war.menu.input.MenuInputHandler;
+import com.gadarts.war.menu.input.definitions.MenuInputDefinitions;
 
-public class GameMenu extends Table {
+public class GameMenu extends Table implements MenuInputEventsSubscriber {
     private final Table optionsTable;
-    private final MenuInputHandler input;
+    private final GameScreen parentScreen;
     private int selected;
     private Image leftCactusIcon;
     private Image rightCactusIcon;
 
-    public GameMenu(MenuInputHandler menuInputHandler) {
-        this.input = menuInputHandler;
-        setVisible(BattleScreen.isPaused());
+    public GameMenu(MenuInputHandler menuInputHandler, GameScreen parentScreen) {
+        this.parentScreen = parentScreen;
+        menuInputHandler.subscribeForInputEvents(this);
         addHeader();
         optionsTable = new Table();
         optionsTable.setName(GameC.Menu.NAME_OPTIONS_TABLE);
@@ -40,8 +43,7 @@ public class GameMenu extends Table {
     public void setVisible(boolean visible) {
         super.setVisible(visible);
         if (visible) {
-            InputMultiplexer multiplexer = (InputMultiplexer) Gdx.input.getInputProcessor();
-            multiplexer.getProcessors();
+            update();
         }
     }
 
@@ -92,14 +94,34 @@ public class GameMenu extends Table {
         update();
     }
 
-    private void update() {
-        GameMenuOption option = (GameMenuOption) optionsTable.getChildren().items[selected];
+    public void update() {
+        float optionsTableHeight = optionsTable.getHeight();
+        boolean visible = optionsTableHeight != 0;
+        leftCactusIcon.setVisible(visible);
+        rightCactusIcon.setVisible(visible);
+        repositionCacti();
+    }
+
+    private void repositionCacti() {
+        SnapshotArray<Actor> items = optionsTable.getChildren();
+        GameMenuOption option = (GameMenuOption) items.get(selected);
         float halfTable = optionsTable.getPrefWidth() / 2;
-        float tableX = optionsTable.getX();
-        float leftX = tableX - leftCactusIcon.getWidth() / 2 - halfTable - CactusIcons.MARGIN;
-        float rightX = tableX - rightCactusIcon.getWidth() / 2 + halfTable + CactusIcons.MARGIN;
-        float y = option.getY() + leftCactusIcon.getHeight() / 2;
+        float leftX = -leftCactusIcon.getWidth() / 2 - halfTable - CactusIcons.MARGIN;
+        float rightX = -rightCactusIcon.getWidth() / 2 + halfTable + CactusIcons.MARGIN;
+        float y = option.getY() + leftCactusIcon.getHeight() / 2 - optionsTable.getHeight() + option.getHeight();
         leftCactusIcon.setPosition(leftX, y);
         rightCactusIcon.setPosition(rightX, y);
+    }
+
+    @Override
+    public void onKeyDown(int key) {
+        MenuInputDefinitions event = MenuInputDefinitions.findByKey(key);
+        if (event != null) {
+            event.getDef().execute(this, parentScreen);
+        }
+    }
+
+    public Table getOptionsTable() {
+        return optionsTable;
     }
 }

@@ -1,15 +1,19 @@
-package com.gadarts.war.menu;
+package com.gadarts.war.menu.input;
 
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MenuInputHandler implements InputProcessor {
+    private List<MenuInputEventsSubscriber> subscribers = new ArrayList<>();
+
     @Override
     public boolean keyDown(int i) {
-        if (i == Input.Keys.DOWN) {
-
+        for (MenuInputEventsSubscriber subscriber : subscribers) {
+            subscriber.onKeyDown(i);
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -45,5 +49,10 @@ public class MenuInputHandler implements InputProcessor {
     @Override
     public boolean scrolled(int i) {
         return false;
+    }
+
+    public void subscribeForInputEvents(MenuInputEventsSubscriber subscriber) {
+        if (subscribers.contains(subscriber)) return;
+        subscribers.add(subscriber);
     }
 }

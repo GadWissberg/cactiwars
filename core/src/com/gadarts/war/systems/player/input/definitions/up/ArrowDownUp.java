@@ -1,6 +1,7 @@
 package com.gadarts.war.systems.player.input.definitions.up;
 
 import com.badlogic.ashley.core.Entity;
+import com.gadarts.war.GameScreen;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.character.CharacterComponent;
 import com.gadarts.war.components.character.MovementState;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public class ArrowDownUp implements InputEvent {
     @Override
-    public boolean execute(Entity entity, List<PlayerSystemEventsSubscriber> subscribers) {
+    public boolean execute(Entity entity, List<PlayerSystemEventsSubscriber> subscribers, GameScreen parentScreen) {
         CharacterComponent characterComponent = ComponentsMapper.characters.get(entity);
         if (characterComponent.getMovementState() == MovementState.REVERSE) {
             characterComponent.setMovementState(MovementState.IDLE);

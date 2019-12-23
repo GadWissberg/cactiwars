@@ -13,4 +13,5 @@ public class GameMenuOption extends Label {
     public GameMenuOptions getOptionDefinition() {
         return optionDefinition;
     }
+
 }

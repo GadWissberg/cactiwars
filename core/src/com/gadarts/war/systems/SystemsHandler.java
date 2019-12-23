@@ -1,6 +1,7 @@
 package com.gadarts.war.systems;
 
 import com.badlogic.ashley.core.PooledEngine;
+import com.gadarts.war.GameScreen;
 import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 import com.gadarts.war.systems.player.PlayerSystem;
@@ -15,12 +16,12 @@ public class SystemsHandler {
         this.soundPlayer = soundPlayer;
     }
 
-    public void init() {
+    public void init(GameScreen parentScreen) {
         CameraSystem cameraSystem = createCameraSystem();
         RenderSystem renderSystem = createRenderSystem();
         PhysicsSystem physicsSystem = new PhysicsSystem(soundPlayer);
         physicsSystem.subscribeForEvents(renderSystem);
-        PlayerSystem playerSystem = new PlayerSystem();
+        PlayerSystem playerSystem = new PlayerSystem(parentScreen);
         playerSystem.subscribeForEvents(cameraSystem);
         engine.addSystem(physicsSystem);
         engine.addSystem(playerSystem);

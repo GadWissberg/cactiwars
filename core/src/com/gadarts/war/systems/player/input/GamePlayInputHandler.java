@@ -1,6 +1,7 @@
 package com.gadarts.war.systems.player.input;
 
 import com.badlogic.gdx.InputProcessor;
+import com.gadarts.war.BattleScreen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ public class GamePlayInputHandler implements InputProcessor  {
 
     @Override
     public boolean keyDown(int keycode) {
+        if (BattleScreen.isPaused()) return false;
         for (PlayerInputProcessor sub : subscribers) {
             KeyMap keyMapByKeyCode = KeyMap.findKeyMapByKeyCode(keycode);
             if (keyMapByKeyCode != null) {
@@ -22,6 +24,7 @@ public class GamePlayInputHandler implements InputProcessor  {
 
     @Override
     public boolean keyUp(int keycode) {
+        if (BattleScreen.isPaused()) return false;
         for (PlayerInputProcessor sub : subscribers) {
             KeyMap keyMapByKeyCode = KeyMap.findKeyMapByKeyCode(keycode);
             if (keyMapByKeyCode != null) {

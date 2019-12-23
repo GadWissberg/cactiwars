@@ -3,7 +3,6 @@ package com.gadarts.war;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.Screen;
 import com.gadarts.shared.level.Map;
 import com.gadarts.shared.par.SectionType;
 import com.gadarts.war.factories.ActorFactory;
@@ -16,7 +15,7 @@ import com.gadarts.war.systems.player.PlayerSystem;
 import com.gadarts.war.systems.player.input.GamePlayInputHandler;
 import com.gadarts.war.systems.render.RenderSystem;
 
-public class BattleScreen implements Screen {
+public class BattleScreen implements GameScreen {
     private static boolean paused;
     private PooledEngine entitiesEngine;
     private ActorFactory actorFactory;
@@ -32,8 +31,10 @@ public class BattleScreen implements Screen {
         hud.activateMenu();
     }
 
+    @Override
     public void resumeGame() {
         BattleScreen.paused = false;
+        hud.deactivate();
     }
 
     @Override
@@ -44,13 +45,13 @@ public class BattleScreen implements Screen {
         actorFactory = new ActorFactory(entitiesEngine, soundPlayer);
         createWorld();
         initializeInput();
-        hud = new Hud(entitiesEngine.getSystem(RenderSystem.class));
+        hud = new Hud(entitiesEngine.getSystem(RenderSystem.class), this);
         if (GameSettings.MENU_ON_START) pauseGame();
     }
 
     private void createSystemsHandler() {
         SystemsHandler systemsHandler = new SystemsHandler(entitiesEngine, soundPlayer);
-        systemsHandler.init();
+        systemsHandler.init(this);
     }
 
     private void initializeInput() {
