@@ -32,6 +32,11 @@ public class BattleScreen implements GameScreen {
     }
 
     @Override
+    public SoundPlayer getSoundPlayer() {
+        return soundPlayer;
+    }
+
+    @Override
     public void resumeGame() {
         BattleScreen.paused = false;
         hud.deactivate();
