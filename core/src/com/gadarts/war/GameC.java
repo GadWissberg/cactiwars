@@ -10,6 +10,14 @@ public final class GameC {
     }
 
     public static final class Menu {
+        public static final class BlurShaderKeys {
+            public static final String COLOR_MULTIPLIER = "u_colorMultiplier";
+            public static final String BLUR_DIRECTION = "u_dir";
+            public static final String BLUR_RESOLUTION = "u_resolution";
+            public static final String BLUR_RADIUS = "u_radius";
+
+        }
+
         public static final String NAME_OPTIONS_TABLE = "options_table";
 
         public static final class CactusIcons {

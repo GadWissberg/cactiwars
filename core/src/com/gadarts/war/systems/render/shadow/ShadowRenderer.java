@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector3;
 import com.gadarts.shared.SharedC;
 import com.gadarts.war.GameC;
@@ -47,5 +48,9 @@ public class ShadowRenderer {
     public void dispose() {
         shadowBatch.dispose();
         shadowLight.dispose();
+    }
+
+    public FrameBuffer getFrameBuffer() {
+        return shadowLight.getFrameBuffer();
     }
 }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.gadarts.shared.SharedC.Camera;
+import com.gadarts.war.BattleScreen;
 import com.gadarts.war.GameC;
 import com.gadarts.war.GameSettings;
 import com.gadarts.war.components.CameraComponent;
@@ -53,10 +54,9 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
 
     @Override
     public void update(float deltaTime) {
+        if (BattleScreen.isPaused()) return;
         super.update(deltaTime);
-        if (processor != null) {
-            processor.update();
-        }
+        if (processor != null) processor.update();
         CameraComponent cameraComponent = ComponentsMapper.camera.get(camera);
         if (!GameSettings.SPECTATOR && cameraComponent.getTarget() != null) {
             followTarget(cameraComponent, deltaTime);

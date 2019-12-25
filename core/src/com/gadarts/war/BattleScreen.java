@@ -110,6 +110,7 @@ public class BattleScreen implements GameScreen {
     public void dispose() {
         entitiesEngine.getSystem(PhysicsSystem.class).dispose();
         entitiesEngine.getSystem(RenderSystem.class).dispose();
+        hud.dispose();
     }
 
     public PooledEngine getEntitiesEngine() {

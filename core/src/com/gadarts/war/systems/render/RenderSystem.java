@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.gadarts.shared.definitions.PointLightDefinition;
@@ -54,23 +55,33 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
         engine.addEntityListener(this);
     }
 
+
     @Override
     public void update(float deltaTime) {
-        super.update(deltaTime);
-        render(deltaTime);
+        if (!BattleScreen.isPaused()) {
+            super.update(deltaTime);
+            render(deltaTime, null);
+        }
     }
 
-    private void render(float deltaTime) {
-        initializeDisplay();
+    public void render(float deltaTime, FrameBuffer blurTargetA) {
         renderShadows();
+        if (blurTargetA != null) {
+            blurTargetA.begin();
+        }
+        initializeDisplay();
         renderingDebugHandler.resetCounter();
         modelBatch.begin(camera);
         renderInstances(modelBatch, true, environment, deltaTime);
         modelBatch.end();
         renderingDebugHandler.renderCollisionShapes(camera);
+        if (blurTargetA != null) {
+            blurTargetA.end();
+        }
     }
 
     private void renderShadows() {
+        if (!GameSettings.DRAW_SHADOWS) return;
         shadowRenderer.begin(camera);
         renderInstances(shadowRenderer.getShadowBatch(), false, null, -1);
         shadowRenderer.end();
@@ -119,11 +130,11 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
         return camera.frustum.boundsInFrustum(auxVector31, auxVector32);
     }
 
-    private void initializeDisplay() {
+    public void initializeDisplay() {
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         int coverageSampling = Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0;
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | coverageSampling);
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(1, 0, 0, 1);
     }
 
     public void dispose() {
@@ -179,5 +190,9 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
 
     public int getNumberOfModelInstances() {
         return modelInstanceEntities.size();
+    }
+
+    public GameShaderProvider getShaderProvider() {
+        return (GameShaderProvider) modelBatch.getShaderProvider();
     }
 }
