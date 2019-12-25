@@ -71,9 +71,11 @@ public class Hud {
     private void createMenuTable(GameScreen parentScreen) {
         MenuInputHandler menuInputHandler = new MenuInputHandler();
         menu = new GameMenu(menuInputHandler, parentScreen);
-        InputMultiplexer multiplexer = (InputMultiplexer) Gdx.input.getInputProcessor();
-        multiplexer.addProcessor(menuInputHandler);
-        Gdx.input.setInputProcessor(multiplexer);
+        if (!GameSettings.SPECTATOR) {
+            InputMultiplexer multiplexer = (InputMultiplexer) Gdx.input.getInputProcessor();
+            multiplexer.addProcessor(menuInputHandler);
+            Gdx.input.setInputProcessor(multiplexer);
+        }
         stage.addActor(menu);
     }
 
