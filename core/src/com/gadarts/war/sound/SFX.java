@@ -3,6 +3,7 @@ package com.gadarts.war.sound;
 import com.gadarts.war.GameC;
 
 public enum SFX {
+    AMB_WIND,
     MENU_MOVE,
     MENU_SELECT,
     HEAVY_METAL_CRASH_1,

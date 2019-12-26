@@ -3,11 +3,13 @@ package com.gadarts.war;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.audio.Sound;
 import com.gadarts.shared.level.Map;
 import com.gadarts.shared.par.SectionType;
 import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.level.MapCreator;
 import com.gadarts.war.menu.Hud;
+import com.gadarts.war.sound.SFX;
 import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.systems.SystemsHandler;
 import com.gadarts.war.systems.physics.PhysicsSystem;
@@ -45,6 +47,7 @@ public class BattleScreen implements GameScreen {
     @Override
     public void show() {
         soundPlayer = new SoundPlayer();
+        soundPlayer.play(GameAssetManager.getInstance().get(SFX.AMB_WIND.getFileName(), Sound.class), true);
         entitiesEngine = new PooledEngine();
         createSystemsHandler();
         actorFactory = new ActorFactory(entitiesEngine, soundPlayer);
