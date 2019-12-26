@@ -81,7 +81,7 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     }
 
     private void renderShadows() {
-        if (!GameSettings.DRAW_SHADOWS) return;
+        if (GameSettings.DRAWING_SKIPPING_MODE && GameSettings.SKIP_DRAW_SHADOWS) return;
         shadowRenderer.begin(camera);
         renderInstances(shadowRenderer.getShadowBatch(), false, null, -1);
         shadowRenderer.end();

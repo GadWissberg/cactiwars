@@ -11,6 +11,7 @@ public class DesktopLauncher {
     public static void main(String[] arg) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         config.title = "WarGame";
+        config.foregroundFPS = GameSettings.FPS_TARGET;
         handleScreen(config);
         new LwjglApplication(new WarGame(), config);
         Gdx.app.setLogLevel(GameSettings.LOG_LEVEL);

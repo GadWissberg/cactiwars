@@ -20,6 +20,9 @@ import com.gadarts.war.systems.player.PlayerSystemEventsSubscriber;
 
 import static com.gadarts.war.systems.physics.PhysicsSystem.auxMatrix;
 
+/**
+ * Defines the camera's movement and behaviour.
+ */
 public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubscriber {
     private CameraInputController processor;
     private Entity camera;
@@ -147,6 +150,11 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
         return cam;
     }
 
+    /**
+     * Sets the camera to follow the given entity.
+     *
+     * @param target
+     */
     public void lockToTarget(Entity target) {
         CameraComponent cameraComponent = ComponentsMapper.camera.get(camera);
         cameraComponent.setTarget(target);
