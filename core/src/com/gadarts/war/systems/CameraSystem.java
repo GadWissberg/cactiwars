@@ -73,10 +73,8 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
     private void handleCameraManipulation(float deltaTime, Entity target) {
         Vector3 linearVelocity = ComponentsMapper.physics.get(target).getBody().getLinearVelocity();
         float linearSpeed = linearVelocity.len2();
-        MovementState movementState = ComponentsMapper.characters.get(target).getMovementState();
         ComponentsMapper.physics.get(target).getMotionState().getWorldTransform(auxMatrix);
-        boolean isMoving = movementState == MovementState.ACCELERATING || movementState == MovementState.REVERSE;
-        if (isMoving && !linearVelocity.isCollinear(auxVector.set(0, -1, 0), 0.1f) && linearSpeed != 0)
+        if (!linearVelocity.isCollinear(auxVector.set(0, -1, 0), 0.1f) && Math.abs(linearSpeed) >= 0.1f)
             handleCameraManOnMovement(deltaTime, target);
         else handleCameraManOnIdle(deltaTime);
     }
