@@ -213,7 +213,7 @@ public class MapCreator extends MapModeler {
         String grass = GameC.Files.TEXTURES_FOLDER_NAME + "/" + SharedC.TILE_FILE_NAME;
         TextureAtlas tiles = GameAssetManager.getInstance().get(grass, TextureAtlas.class);
         boolean modelAxis = Gdx.app.getLogLevel() == Gdx.app.LOG_DEBUG && GameSettings.SHOW_AXIS && z == 0 && x == 0;
-        Model region = modelGroundRegion(modelAxis, tiles, regionSize);
+        Model region = modelGroundRegion(modelAxis, tiles, regionSize, "grass_a");
         ground.add(createGroundRegionModelInstanceComponent(z, x, region, regionSize));
         GroundComponent groundComponent = getEntitiesEngine().createComponent(GroundComponent.class);
         groundComponent.init(!isSurrounding);
