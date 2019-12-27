@@ -1248,61 +1248,28 @@
 	], 
 	"materials": [
 		{
-			"id": "Cactus Body", 
-			"ambient": [ 0.000000,  0.000000,  0.000000], 
-			"diffuse": [ 0.800000,  0.800000,  0.800000], 
-			"opacity":  1.000000,
-			"specular": [ 1.000000,  1.000000,  1.000000], 
-			"shininess":  9.607843, 
+			"id": "Tank Aux",
+			"ambient": [
+				0.000000,
+				0.000000,
+				0.000000
+			],
+			"diffuse": [
+				0.800000,
+				0.800000,
+				0.800000
+			],
+			"opacity": 1.000000,
+			"specular": [
+				1.000000,
+				1.000000,
+				1.000000
+			],
+			"shininess": 9.607843,
 			"textures": [
 				{
-					"id": "Cactus", 
-					"filename": "tank.png", 
-					"type": "DIFFUSE"
-				}
-			]
-		}, 
-		{
-			"id": "Cactus Hand", 
-			"ambient": [ 0.000000,  0.000000,  0.000000], 
-			"diffuse": [ 0.800000,  0.800000,  0.800000], 
-			"opacity":  1.000000,
-			"specular": [ 1.000000,  1.000000,  1.000000], 
-			"shininess":  9.607843, 
-			"textures": [
-				{
-					"id": "Cactus Hand", 
-					"filename": "tank.png", 
-					"type": "DIFFUSE"
-				}
-			]
-		}, 
-		{
-			"id": "Gun", 
-			"ambient": [ 0.000000,  0.000000,  0.000000], 
-			"diffuse": [ 0.800000,  0.800000,  0.800000], 
-			"opacity":  1.000000,
-			"specular": [ 1.000000,  1.000000,  1.000000], 
-			"shininess":  9.607843, 
-			"textures": [
-				{
-					"id": "Gun", 
-					"filename": "tank.png", 
-					"type": "DIFFUSE"
-				}
-			]
-		}, 
-		{
-			"id": "Hat", 
-			"ambient": [ 0.000000,  0.000000,  0.000000], 
-			"diffuse": [ 0.800000,  0.800000,  0.800000], 
-			"opacity":  1.000000,
-			"specular": [ 1.000000,  1.000000,  1.000000], 
-			"shininess":  9.607843, 
-			"textures": [
-				{
-					"id": "Hat", 
-					"filename": "tank.png", 
+					"id": "Cactus",
+					"filename": "tank.png",
 					"type": "DIFFUSE"
 				}
 			]
@@ -1310,67 +1277,142 @@
 	], 
 	"nodes": [
 		{
-			"id": "Gun", 
-			"rotation": [-0.707107, -0.000000, -0.000000,  0.707107], 
-			"scale": [ 0.046992,  0.046992,  0.046992], 
-			"translation": [ 0.136742,  0.097743, -0.004431], 
+			"id": "Gun",
+			"rotation": [
+				-0.707107,
+				-0.000000,
+				-0.000000,
+				0.707107
+			],
+			"scale": [
+				0.046992,
+				0.046992,
+				0.046992
+			],
+			"translation": [
+				0.136742,
+				0.098536,
+				-0.004431
+			],
 			"parts": [
 				{
-					"meshpartid": "Cube.007_part1", 
-					"materialid": "Gun", 
-					"uvMapping": [[]]
+					"meshpartid": "Cube.007_part1",
+					"materialid": "Tank Aux",
+					"uvMapping": [
+						[]
+					]
 				}
 			]
-		}, 
+		},
 		{
-			"id": "Hat", 
-			"rotation": [ 0.500000, -0.500000, -0.500000, -0.500000], 
-			"scale": [ 0.134323,  0.092188,  0.092188], 
-			"translation": [ 0.040617,  0.287067, -0.002697], 
+			"id": "Hat",
+			"rotation": [
+				0.500000,
+				-0.500000,
+				-0.500000,
+				-0.500000
+			],
+			"scale": [
+				0.134323,
+				0.092188,
+				0.092188
+			],
+			"translation": [
+				0.040617,
+				0.287859,
+				-0.002697
+			],
 			"parts": [
 				{
-					"meshpartid": "Sphere_part1", 
-					"materialid": "Hat", 
-					"uvMapping": [[]]
+					"meshpartid": "Sphere_part1",
+					"materialid": "Tank Aux",
+					"uvMapping": [
+						[]
+					]
 				}
 			]
-		}, 
+		},
 		{
-			"id": "Cactus Right Hand", 
-			"rotation": [-0.680006, -0.193887,  0.193887,  0.680006], 
-			"scale": [ 0.091824,  0.091824,  1.333085], 
-			"translation": [ 0.069835,  0.092302,  0.052746], 
+			"id": "Cactus Right Hand",
+			"rotation": [
+				-0.680006,
+				-0.193887,
+				0.193887,
+				0.680006
+			],
+			"scale": [
+				0.091824,
+				0.091824,
+				1.333085
+			],
+			"translation": [
+				0.069835,
+				0.093095,
+				0.052746
+			],
 			"parts": [
 				{
-					"meshpartid": "Cylinder.023_part1", 
-					"materialid": "Cactus Hand", 
-					"uvMapping": [[]]
+					"meshpartid": "Cylinder.023_part1",
+					"materialid": "Tank Aux",
+					"uvMapping": [
+						[]
+					]
 				}
 			]
-		}, 
+		},
 		{
-			"id": "Cactus", 
-			"rotation": [-0.707107, -0.000000, -0.000000,  0.707107], 
-			"scale": [ 0.234503,  0.234503,  1.961452], 
-			"translation": [ 0.000000,  0.137346,  0.000000], 
+			"id": "Cactus",
+			"rotation": [
+				-0.707107,
+				-0.000000,
+				-0.000000,
+				0.707107
+			],
+			"scale": [
+				0.234503,
+				0.234503,
+				1.961452
+			],
+			"translation": [
+				0.000000,
+				0.138139,
+				0.000000
+			],
 			"parts": [
 				{
-					"meshpartid": "Cylinder.022_part1", 
-					"materialid": "Cactus Body", 
-					"uvMapping": [[]]
+					"meshpartid": "Cylinder.022_part1",
+					"materialid": "Tank Aux",
+					"uvMapping": [
+						[]
+					]
 				}
 			]
-		}, 
+		},
 		{
-			"id": "Cactus Left Hand", 
-			"rotation": [ 0.193887, -0.680006,  0.680006, -0.193887], 
-			"scale": [-0.091824, -0.091824, -1.333085], 
-			"translation": [ 0.069835,  0.092302, -0.055824], 
+			"id": "Cactus Left Hand",
+			"rotation": [
+				0.193887,
+				-0.680006,
+				0.680006,
+				-0.193887
+			],
+			"scale": [
+				-0.091824,
+				-0.091824,
+				-1.333085
+			],
+			"translation": [
+				0.069835,
+				0.093095,
+				-0.055824
+			],
 			"parts": [
 				{
-					"meshpartid": "Cylinder.024_part1", 
-					"materialid": "Cactus Hand", 
-					"uvMapping": [[]]
+					"meshpartid": "Cylinder.024_part1",
+					"materialid": "Tank Aux",
+					"uvMapping": [
+						[]
+					]
 				}
 			]
 		}

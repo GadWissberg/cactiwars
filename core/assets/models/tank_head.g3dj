@@ -640,46 +640,28 @@
 	], 
 	"materials": [
 		{
-			"id": "Cannon", 
-			"ambient": [ 0.000000,  0.000000,  0.000000], 
-			"diffuse": [ 0.800000,  0.800000,  0.800000], 
-			"opacity":  1.000000,
-			"specular": [ 1.000000,  1.000000,  1.000000], 
-			"shininess":  59.019608, 
+			"id": "Tank Cannon",
+			"ambient": [
+				0.000000,
+				0.000000,
+				0.000000
+			],
+			"diffuse": [
+				0.800000,
+				0.800000,
+				0.800000
+			],
+			"opacity": 1.000000,
+			"specular": [
+				1.000000,
+				1.000000,
+				1.000000
+			],
+			"shininess": 59.019608,
 			"textures": [
 				{
-					"id": "Cannon", 
-					"filename": "tank.png", 
-					"type": "DIFFUSE"
-				}
-			]
-		}, 
-		{
-			"id": "Cap", 
-			"ambient": [ 0.000000,  0.000000,  0.000000], 
-			"diffuse": [ 0.089832,  0.048075,  0.017639], 
-			"opacity":  1.000000,
-			"specular": [ 1.000000,  1.000000,  1.000000], 
-			"shininess":  9.607843, 
-			"textures": [
-				{
-					"id": "Cap", 
-					"filename": "tank.png", 
-					"type": "DIFFUSE"
-				}
-			]
-		}, 
-		{
-			"id": "Tank Head", 
-			"ambient": [ 0.000000,  0.000000,  0.000000], 
-			"diffuse": [ 0.800000,  0.800000,  0.800000], 
-			"opacity":  1.000000,
-			"specular": [ 1.000000,  1.000000,  1.000000], 
-			"shininess":  100.000000, 
-			"textures": [
-				{
-					"id": "Tank Head", 
-					"filename": "tank.png", 
+					"id": "Cannon",
+					"filename": "tank.png",
 					"type": "DIFFUSE"
 				}
 			]
@@ -687,41 +669,86 @@
 	], 
 	"nodes": [
 		{
-			"id": "Cap", 
-			"rotation": [-0.707107, -0.000000, -0.000000,  0.707107], 
-			"scale": [ 0.117201,  0.117201,  0.117201], 
-			"translation": [ 0.000000,  0.307811,  0.000000], 
+			"id": "Cap",
+			"rotation": [
+				-0.707107,
+				-0.000000,
+				-0.000000,
+				0.707107
+			],
+			"scale": [
+				0.117201,
+				0.117201,
+				0.117201
+			],
+			"translation": [
+				0.000000,
+				0.308530,
+				0.000000
+			],
 			"parts": [
 				{
-					"meshpartid": "Torus.001_part1", 
-					"materialid": "Cap", 
-					"uvMapping": [[]]
+					"meshpartid": "Torus.001_part1",
+					"materialid": "Tank Cannon",
+					"uvMapping": [
+						[]
+					]
 				}
 			]
-		}, 
+		},
 		{
-			"id": "Cannon", 
-			"rotation": [ 0.500000, -0.500000,  0.500000, -0.500000], 
-			"scale": [ 0.261950,  0.261950,  0.261950], 
-			"translation": [ 0.400483,  0.165644,  0.000000], 
+			"id": "Cannon",
+			"rotation": [
+				0.500000,
+				-0.500000,
+				0.500000,
+				-0.500000
+			],
+			"scale": [
+				0.261950,
+				0.261950,
+				0.261950
+			],
+			"translation": [
+				0.400483,
+				0.166363,
+				0.000000
+			],
 			"parts": [
 				{
-					"meshpartid": "Cylinder.019_part1", 
-					"materialid": "Cannon", 
-					"uvMapping": [[]]
+					"meshpartid": "Cylinder.019_part1",
+					"materialid": "Tank Cannon",
+					"uvMapping": [
+						[]
+					]
 				}
 			]
-		}, 
+		},
 		{
-			"id": "Head", 
-			"rotation": [ 0.500000, -0.500000, -0.500000, -0.500000], 
-			"scale": [ 1.520511,  1.916379,  1.690966], 
-			"translation": [ 0.000000,  0.164013,  0.000000], 
+			"id": "Head",
+			"rotation": [
+				0.500000,
+				-0.500000,
+				-0.500000,
+				-0.500000
+			],
+			"scale": [
+				1.520511,
+				1.916379,
+				1.690966
+			],
+			"translation": [
+				0.000000,
+				0.164731,
+				0.000000
+			],
 			"parts": [
 				{
-					"meshpartid": "Cylinder.018_part1", 
-					"materialid": "Tank Head", 
-					"uvMapping": [[]]
+					"meshpartid": "Cylinder.018_part1",
+					"materialid": "Tank Cannon",
+					"uvMapping": [
+						[]
+					]
 				}
 			]
 		}
