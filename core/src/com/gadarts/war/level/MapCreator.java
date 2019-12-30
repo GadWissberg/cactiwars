@@ -27,7 +27,6 @@ import com.gadarts.shared.definitions.EnvironmentObjectDefinition;
 import com.gadarts.shared.level.Map;
 import com.gadarts.shared.level.MapModeler;
 import com.gadarts.shared.level.PlacedActorInfo;
-import com.gadarts.shared.level.TilePathSignature;
 import com.gadarts.shared.par.SectionType;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
@@ -170,8 +169,7 @@ public class MapCreator extends MapModeler {
     }
 
     private Material getMaterial(Map map, int row, int col, TextureAtlas tilesAtlas) {
-        int sig = calculateSurroundPathSignature(map.getPath(), row, col);
-        String name = tilesAtlas.findRegion(TilePathSignature.findByValue(sig).getName()).name;
+        String name = tilesAtlas.getRegions().get(map.getPath()[row][col]).name;
         if (materials.containsKey(name)) return materials.get(name);
         else {
             Material material = createGroundMaterial(tilesAtlas, name);

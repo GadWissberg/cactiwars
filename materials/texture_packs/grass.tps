@@ -188,47 +188,13 @@
             <key type="filename">../images/grass_corner_bottom_right.png</key>
             <key type="filename">../images/grass_corner_top_left.png</key>
             <key type="filename">../images/grass_corner_top_right.png</key>
-            <key type="filename">../images/grass_corners.png</key>
             <key type="filename">../images/grass_dec_1.png</key>
-            <key type="filename">../images/grass_gulf_bottom.png</key>
-            <key type="filename">../images/grass_gulf_bottom_edge.png</key>
             <key type="filename">../images/grass_gulf_bottom_left.png</key>
             <key type="filename">../images/grass_gulf_bottom_right.png</key>
-            <key type="filename">../images/grass_gulf_left.png</key>
-            <key type="filename">../images/grass_gulf_left_edge.png</key>
-            <key type="filename">../images/grass_gulf_right.png</key>
-            <key type="filename">../images/grass_gulf_right_edge.png</key>
-            <key type="filename">../images/grass_gulf_top.png</key>
-            <key type="filename">../images/grass_gulf_top_edge.png</key>
             <key type="filename">../images/grass_gulf_top_left.png</key>
             <key type="filename">../images/grass_gulf_top_right.png</key>
-            <key type="filename">../images/grass_half_horizontal_left_left.png</key>
-            <key type="filename">../images/grass_half_horizontal_left_right.png</key>
-            <key type="filename">../images/grass_half_horizontal_right_left.png</key>
-            <key type="filename">../images/grass_half_horizontal_right_right.png</key>
-            <key type="filename">../images/grass_half_vertical_down_left.png</key>
-            <key type="filename">../images/grass_half_vertical_down_right.png</key>
-            <key type="filename">../images/grass_half_vertical_up_left.png</key>
-            <key type="filename">../images/grass_half_vertical_up_right.png</key>
             <key type="filename">../images/grass_horizontal_down.png</key>
             <key type="filename">../images/grass_horizontal_up.png</key>
-            <key type="filename">../images/grass_narrow_horizontal.png</key>
-            <key type="filename">../images/grass_narrow_vertical.png</key>
-            <key type="filename">../images/grass_slash_backward.png</key>
-            <key type="filename">../images/grass_slash_forward.png</key>
-            <key type="filename">../images/grass_surround.png</key>
-            <key type="filename">../images/grass_t_down.png</key>
-            <key type="filename">../images/grass_t_left.png</key>
-            <key type="filename">../images/grass_t_right.png</key>
-            <key type="filename">../images/grass_t_up.png</key>
-            <key type="filename">../images/grass_triplet_bottom_left.png</key>
-            <key type="filename">../images/grass_triplet_bottom_right.png</key>
-            <key type="filename">../images/grass_triplet_top_left.png</key>
-            <key type="filename">../images/grass_triplet_top_right.png</key>
-            <key type="filename">../images/grass_turn_down_left.png</key>
-            <key type="filename">../images/grass_turn_down_right.png</key>
-            <key type="filename">../images/grass_turn_up_left.png</key>
-            <key type="filename">../images/grass_turn_up_right.png</key>
             <key type="filename">../images/grass_vertical_left.png</key>
             <key type="filename">../images/grass_vertical_right.png</key>
             <key type="filename">../images/path.png</key>
@@ -253,46 +219,12 @@
             <filename>../images/grass_corner_bottom_right.png</filename>
             <filename>../images/grass_corner_top_left.png</filename>
             <filename>../images/grass_corner_top_right.png</filename>
-            <filename>../images/grass_corners.png</filename>
-            <filename>../images/grass_gulf_bottom.png</filename>
-            <filename>../images/grass_gulf_bottom_edge.png</filename>
             <filename>../images/grass_gulf_bottom_left.png</filename>
             <filename>../images/grass_gulf_bottom_right.png</filename>
-            <filename>../images/grass_gulf_left.png</filename>
-            <filename>../images/grass_gulf_left_edge.png</filename>
-            <filename>../images/grass_gulf_right.png</filename>
-            <filename>../images/grass_gulf_right_edge.png</filename>
-            <filename>../images/grass_gulf_top.png</filename>
-            <filename>../images/grass_gulf_top_edge.png</filename>
             <filename>../images/grass_gulf_top_left.png</filename>
             <filename>../images/grass_gulf_top_right.png</filename>
-            <filename>../images/grass_half_horizontal_left_left.png</filename>
-            <filename>../images/grass_half_horizontal_left_right.png</filename>
-            <filename>../images/grass_half_horizontal_right_left.png</filename>
-            <filename>../images/grass_half_horizontal_right_right.png</filename>
-            <filename>../images/grass_half_vertical_down_left.png</filename>
-            <filename>../images/grass_half_vertical_down_right.png</filename>
-            <filename>../images/grass_half_vertical_up_left.png</filename>
-            <filename>../images/grass_half_vertical_up_right.png</filename>
             <filename>../images/grass_horizontal_down.png</filename>
             <filename>../images/grass_horizontal_up.png</filename>
-            <filename>../images/grass_narrow_horizontal.png</filename>
-            <filename>../images/grass_narrow_vertical.png</filename>
-            <filename>../images/grass_slash_backward.png</filename>
-            <filename>../images/grass_slash_forward.png</filename>
-            <filename>../images/grass_surround.png</filename>
-            <filename>../images/grass_t_down.png</filename>
-            <filename>../images/grass_t_left.png</filename>
-            <filename>../images/grass_t_right.png</filename>
-            <filename>../images/grass_t_up.png</filename>
-            <filename>../images/grass_triplet_bottom_left.png</filename>
-            <filename>../images/grass_triplet_bottom_right.png</filename>
-            <filename>../images/grass_triplet_top_left.png</filename>
-            <filename>../images/grass_triplet_top_right.png</filename>
-            <filename>../images/grass_turn_down_left.png</filename>
-            <filename>../images/grass_turn_down_right.png</filename>
-            <filename>../images/grass_turn_up_left.png</filename>
-            <filename>../images/grass_turn_up_right.png</filename>
             <filename>../images/grass_vertical_left.png</filename>
             <filename>../images/grass_vertical_right.png</filename>
             <filename>../images/path.png</filename>
