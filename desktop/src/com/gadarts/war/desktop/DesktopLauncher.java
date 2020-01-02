@@ -4,13 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.gadarts.shared.SharedC;
+import com.gadarts.war.GameC;
 import com.gadarts.war.GameSettings;
 import com.gadarts.war.WarGame;
 
 public class DesktopLauncher {
     public static void main(String[] arg) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        config.title = "WarGame";
+        config.title = GameC.General.GAME;
         config.foregroundFPS = GameSettings.FPS_TARGET;
         handleScreen(config);
         new LwjglApplication(new WarGame(), config);

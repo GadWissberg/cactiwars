@@ -5,12 +5,15 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.gadarts.shared.definitions.PointLightDefinition;
@@ -39,6 +42,10 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     private Environment environment;
     private ShadowRenderer shadowRenderer;
     private RenderingDebugHandler renderingDebugHandler;
+    private FrameBuffer fbo;
+    private ModelBatch depthBatch = new ModelBatch(new CelDepthShaderProvider());
+    private SpriteBatch spriteBatch = new SpriteBatch();
+    private ShaderProgram lineShader = new CelLineShaderProgram();
 
     @Override
     public void addedToEngine(Engine engine) {
@@ -53,6 +60,10 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.1f, 0.1f, 0.1f, 1f));
         shadowRenderer = new ShadowRenderer(environment);
         engine.addEntityListener(this);
+        if (GameSettings.CEL_SHADING) {
+            fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),
+                    true);
+        }
     }
 
 
@@ -60,14 +71,30 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     public void update(float deltaTime) {
         if (!BattleScreen.isPaused()) {
             super.update(deltaTime);
+            if (GameSettings.CEL_SHADING) {
+                fbo.begin();
+                Gdx.gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+                Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT);
+                depthBatch.begin(camera);
+                renderInstances(depthBatch, true, null, deltaTime);
+                depthBatch.end();
+                fbo.end();
+            }
             render(deltaTime, null);
+            if (GameSettings.CEL_SHADING) {
+                spriteBatch.setShader(lineShader);
+                spriteBatch.begin();
+                spriteBatch.draw(fbo.getColorBufferTexture(), 0, 0, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 1, 1, 0, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false, true);
+                spriteBatch.end();
+                spriteBatch.setShader(null);
+            }
         }
     }
 
-    public void render(float deltaTime, FrameBuffer blurTargetA) {
+    public void render(float deltaTime, FrameBuffer frameBuffer) {
         renderShadows();
-        if (blurTargetA != null) {
-            blurTargetA.begin();
+        if (frameBuffer != null) {
+            frameBuffer.begin();
         }
         initializeDisplay();
         renderingDebugHandler.resetCounter();
@@ -75,8 +102,8 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
         renderInstances(modelBatch, true, environment, deltaTime);
         modelBatch.end();
         renderingDebugHandler.renderCollisionShapes(camera);
-        if (blurTargetA != null) {
-            blurTargetA.end();
+        if (frameBuffer != null) {
+            frameBuffer.end();
         }
     }
 
@@ -140,6 +167,12 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     public void dispose() {
         modelBatch.dispose();
         shadowRenderer.dispose();
+        if (GameSettings.CEL_SHADING) {
+            depthBatch.dispose();
+            spriteBatch.dispose();
+            fbo.dispose();
+            lineShader.dispose();
+        }
     }
 
     public int getNumberOfVisible() {

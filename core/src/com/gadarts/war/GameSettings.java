@@ -19,4 +19,5 @@ public final class GameSettings {
     public static final boolean SKIP_DRAWING_SURROUNDING_TERRAIN = true;
     public static final boolean SKIP_DRAW_SHADOWS = true;
     public static final int FPS_TARGET = 60;
+    public static final boolean CEL_SHADING = true;
 }
