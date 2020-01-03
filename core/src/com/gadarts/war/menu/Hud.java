@@ -14,13 +14,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gadarts.war.*;
 import com.gadarts.war.menu.input.MenuInputHandler;
+import com.gadarts.war.sound.SFX;
 import com.gadarts.war.systems.render.RenderSystem;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Hud {
     private final Stage stage;
     private final RenderSystem renderSystem;
+    private final GameScreen parentScreen;
     private ShaderProgram blurShaderProgram;
     private Profiler profiler;
     private GameMenu menu;
@@ -30,9 +34,11 @@ public class Hud {
     private int blurResolutionLocation;
     private Vector2 blurMag = new Vector2(1, 1);
     private ShaderProgram regularShaderProgram;
+    private List<HudEventsSubscriber> subscribers = new ArrayList<>();
 
     public Hud(RenderSystem renderSystem, GameScreen parentScreen) {
         this.renderSystem = renderSystem;
+        this.parentScreen = parentScreen;
         stage = new Stage();
         stage.setDebugAll(GameSettings.DRAW_TABLES_BORDERS);
         createMenu(parentScreen);
@@ -123,9 +129,22 @@ public class Hud {
 
     public void activateMenu() {
         menu.setVisible(true);
+        parentScreen.getSoundPlayer().play(SFX.MENU_SELECT);
+        for (HudEventsSubscriber subscriber : subscribers) {
+            subscriber.onMenuActivated();
+        }
     }
 
     public void deactivate() {
         menu.setVisible(false);
+        parentScreen.getSoundPlayer().play(SFX.MENU_SELECT);
+        for (HudEventsSubscriber subscriber : subscribers) {
+            subscriber.onMenuDeactivated();
+        }
+    }
+
+    public void subscribeForEvents(HudEventsSubscriber subscriber) {
+        if (subscribers.contains(subscriber)) return;
+        subscribers.add(subscriber);
     }
 }

@@ -25,7 +25,8 @@ public class SystemsHandler {
         playerSystem.subscribeForEvents(cameraSystem);
         engine.addSystem(physicsSystem);
         engine.addSystem(playerSystem);
-        engine.addSystem(new CharacterSystem());
+        engine.addSystem(new CharacterSystem(parentScreen.getSoundPlayer()));
+        engine.addSystem(new EnvironmentSystem(parentScreen.getSoundPlayer()));
     }
 
     private RenderSystem createRenderSystem() {

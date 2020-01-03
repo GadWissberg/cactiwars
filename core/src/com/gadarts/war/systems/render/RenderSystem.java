@@ -27,6 +27,8 @@ import com.gadarts.war.components.PointLightComponent;
 import com.gadarts.war.components.model.ModelInstanceComponent;
 import com.gadarts.war.systems.physics.CollisionShapesDebugDrawing;
 import com.gadarts.war.systems.physics.PhysicsSystemEventsSubscriber;
+import com.gadarts.war.systems.render.cel.CelDepthShaderProvider;
+import com.gadarts.war.systems.render.cel.CelLineShaderProgram;
 import com.gadarts.war.systems.render.shadow.ShadowRenderer;
 
 import java.util.List;

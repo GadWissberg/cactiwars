@@ -18,18 +18,25 @@ import com.gadarts.war.components.character.CharacterComponent;
 import com.gadarts.war.components.character.CharacterSoundData;
 import com.gadarts.war.components.character.MovementState;
 import com.gadarts.war.components.physics.PhysicsComponent;
+import com.gadarts.war.menu.HudEventsSubscriber;
+import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 
-class CharacterSystem extends EntitySystem {
+public class CharacterSystem extends EntitySystem implements HudEventsSubscriber {
     private static Vector3 auxVector31 = new Vector3();
     private static Vector3 auxVector32 = new Vector3();
     private static Vector2 auxVector21 = new Vector2();
     private static Vector3 rayFrom = new Vector3();
     private static Vector3 rayTo = new Vector3();
     private static Matrix4 auxMat = new Matrix4();
+    private final SoundPlayer soundPlayer;
 
     private ImmutableArray<Entity> characters;
     private ClosestRayResultCallback callback = new ClosestRayResultCallback(rayFrom, rayTo);
+
+    public CharacterSystem(SoundPlayer soundPlayer) {
+        this.soundPlayer = soundPlayer;
+    }
 
     @Override
     public void addedToEngine(Engine engine) {
@@ -156,4 +163,19 @@ class CharacterSystem extends EntitySystem {
         }
     }
 
+    @Override
+    public void onMenuActivated() {
+        for (Entity character : characters) {
+            CharacterSoundData characterSoundData = ComponentsMapper.characters.get(character).getCharacterSoundData();
+            soundPlayer.pauseSound(characterSoundData.getEngineSound(), characterSoundData.getEngineSoundId());
+        }
+    }
+
+    @Override
+    public void onMenuDeactivated() {
+        for (Entity character : characters) {
+            CharacterSoundData characterSoundData = ComponentsMapper.characters.get(character).getCharacterSoundData();
+            soundPlayer.resumeSound(characterSoundData.getEngineSound(), characterSoundData.getEngineSoundId());
+        }
+    }
 }

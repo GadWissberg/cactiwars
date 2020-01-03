@@ -1,4 +1,4 @@
-package com.gadarts.war.systems.render;
+package com.gadarts.war.systems.render.cel;
 
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;

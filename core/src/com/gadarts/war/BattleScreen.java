@@ -11,6 +11,8 @@ import com.gadarts.war.level.MapCreator;
 import com.gadarts.war.menu.Hud;
 import com.gadarts.war.sound.SFX;
 import com.gadarts.war.sound.SoundPlayer;
+import com.gadarts.war.systems.CharacterSystem;
+import com.gadarts.war.systems.EnvironmentSystem;
 import com.gadarts.war.systems.SystemsHandler;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 import com.gadarts.war.systems.player.PlayerSystem;
@@ -54,6 +56,8 @@ public class BattleScreen implements GameScreen {
         createWorld();
         initializeInput();
         hud = new Hud(entitiesEngine.getSystem(RenderSystem.class), this);
+        hud.subscribeForEvents(entitiesEngine.getSystem(CharacterSystem.class));
+        hud.subscribeForEvents(entitiesEngine.getSystem(EnvironmentSystem.class));
         if (GameSettings.MENU_ON_START) pauseGame();
     }
 
