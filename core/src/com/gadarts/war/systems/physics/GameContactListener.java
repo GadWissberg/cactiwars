@@ -1,14 +1,14 @@
 package com.gadarts.war.systems.physics;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ContactListener;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
-import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.gadarts.war.components.ComponentsMapper;
+import com.gadarts.war.components.physics.MotionState;
 import com.gadarts.war.components.physics.PhysicsComponent;
-import com.gadarts.war.level.GroundChildShape;
 import com.gadarts.war.sound.SFX;
 import com.gadarts.war.sound.SoundPlayer;
 
@@ -16,11 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameContactListener extends ContactListener {
+    private static Vector3 auxVector3 = new Vector3();
     private final SoundPlayer soundPlayer;
+    private final Entity camera;
     private List<GameContactListenerEventsSubscriber> subscribers = new ArrayList<>();
 
-    public GameContactListener(SoundPlayer soundPlayer) {
+    public GameContactListener(SoundPlayer soundPlayer, Entity camera) {
         this.soundPlayer = soundPlayer;
+        this.camera = camera;
     }
 
     @Override
@@ -52,17 +55,14 @@ public class GameContactListener extends ContactListener {
         if (ComponentsMapper.characters.has(entity0)) {
             if (colObj1.userData != null) {
                 if (ComponentsMapper.ground.has(entity1)) {
-                    onContactAddedForCharacterWithGround(entity0, entity1, id1);
+                    onContactAddedForCharacterWithGround(entity0, entity1);
                 }
             }
         }
     }
 
-    private void onContactAddedForCharacterWithGround(Entity character, Entity ground, int childShapeIndex) {
+    private void onContactAddedForCharacterWithGround(Entity character, Entity ground) {
         ComponentsMapper.characters.get(character);
-        btCompoundShape compound = (btCompoundShape) ComponentsMapper.physics.get(ground).getBody().getCollisionShape();
-        GroundChildShape child = (GroundChildShape) compound.getChildShape(childShapeIndex);
-        Gdx.app.log("!", ""+child.getTest());
         ComponentsMapper.ground.get(ground).getFrictionMapping();
     }
 
@@ -93,15 +93,22 @@ public class GameContactListener extends ContactListener {
     private void onEnvironmentObjectWithGround(Entity groundEntity, Entity envObjectEntity) {
         float linearSpeed = ComponentsMapper.physics.get(envObjectEntity).getBody().getLinearVelocity().len2();
         if (linearSpeed > 5) {
-            soundPlayer.playRandomByDefinitions(SFX.LIGHT_METAL_CRASH_1, SFX.LIGHT_METAL_CRASH_2);
+            PerspectiveCamera camera = ComponentsMapper.camera.get(this.camera).getCamera();
+            MotionState motionState = ComponentsMapper.physics.get(envObjectEntity).getMotionState();
+            Vector3 envObjectPos = motionState.getWorldTranslation(auxVector3);
+            soundPlayer.playRandomByDefinitions(SFX.LIGHT_METAL_CRASH_1, SFX.LIGHT_METAL_CRASH_2, camera, envObjectPos);
         }
     }
 
     private void onContactStartedForCharacterWithGround(Entity characterEntity, Entity groundEntity) {
         PhysicsComponent characterPhysicsComponent = ComponentsMapper.physics.get(characterEntity);
         float linearV = characterPhysicsComponent.getBody().getLinearVelocity().len2();
-        if (linearV > ComponentsMapper.characters.get(characterEntity).getGroundCrashThreshold())
-            soundPlayer.playRandomByDefinitions(SFX.HEAVY_METAL_CRASH_1, SFX.HEAVY_METAL_CRASH_2);
+        if (linearV > ComponentsMapper.characters.get(characterEntity).getGroundCrashThreshold()) {
+            PerspectiveCamera camera = ComponentsMapper.camera.get(this.camera).getCamera();
+            MotionState motionState = ComponentsMapper.physics.get(characterEntity).getMotionState();
+            Vector3 characterPos = motionState.getWorldTranslation(auxVector3);
+            soundPlayer.playRandomByDefinitions(SFX.HEAVY_METAL_CRASH_1, SFX.HEAVY_METAL_CRASH_2, camera, characterPos);
+        }
     }
 
     private void onCharacterWithEnvironmentObject(Entity characterEntity, Entity envEntity) {
@@ -112,7 +119,8 @@ public class GameContactListener extends ContactListener {
             if (envPhysicsComponent.isStatic()) {
                 subscribers.forEach(sub -> sub.onStaticEnvironmentObjectHardCollision(envEntity));
             }
-            soundPlayer.playRandomByDefinitions(SFX.HEAVY_METAL_CRASH_1, SFX.HEAVY_METAL_CRASH_2);
+            PerspectiveCamera camera = ComponentsMapper.camera.get(this.camera).getCamera();
+            soundPlayer.playRandomByDefinitions(SFX.HEAVY_METAL_CRASH_1, SFX.HEAVY_METAL_CRASH_2, camera, characterPhysicsComponent.getMotionState().getWorldTranslation(auxVector3));
         }
     }
 

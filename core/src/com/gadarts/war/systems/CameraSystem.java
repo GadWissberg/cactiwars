@@ -176,4 +176,8 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
     public void onMovementAccelerationStopped() {
 
     }
+
+    public Entity getCamera() {
+        return camera;
+    }
 }

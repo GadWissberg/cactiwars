@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.gadarts.war.BattleScreen;
 import com.gadarts.war.GameSettings;
+import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.character.CharacterComponent;
 import com.gadarts.war.components.character.CharacterSoundData;
@@ -33,6 +34,7 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
 
     private ImmutableArray<Entity> characters;
     private ClosestRayResultCallback callback = new ClosestRayResultCallback(rayFrom, rayTo);
+    private Entity camera;
 
     public CharacterSystem(SoundPlayer soundPlayer) {
         this.soundPlayer = soundPlayer;
@@ -41,6 +43,7 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
     @Override
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
+        this.camera = getEngine().getEntitiesFor(Family.all(CameraComponent.class).get()).first();
         characters = engine.getEntitiesFor(Family.all(CharacterComponent.class).get());
     }
 
@@ -56,6 +59,11 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
     }
 
     private void handleCharacterSound(Entity character) {
+        handleCharacterSoundPitch(character);
+        handleCharacterSoundVolume(character);
+    }
+
+    private void handleCharacterSoundPitch(Entity character) {
         CharacterComponent characterComponent = ComponentsMapper.characters.get(character);
         CharacterSoundData csd = characterComponent.getCharacterSoundData();
         float speed = ComponentsMapper.physics.get(character).getBody().getLinearVelocity().len2();
@@ -64,6 +72,15 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
             csd.setEngineWorkPitch(value);
             csd.getEngineSound().setPitch(csd.getEngineSoundId(), csd.getEnginePitch());
         }
+    }
+
+    private void handleCharacterSoundVolume(Entity character) {
+        CharacterComponent characterComponent = ComponentsMapper.characters.get(character);
+        CharacterSoundData csd = characterComponent.getCharacterSoundData();
+        ComponentsMapper.physics.get(character).getMotionState().getWorldTranslation(auxVector31);
+        float dst = auxVector31.dst(ComponentsMapper.camera.get(camera).getCamera().position);
+        float volume = MathUtils.norm(0, 2, 100f / (dst * dst));
+        csd.getEngineSound().setVolume(csd.getEngineSoundId(), volume);
     }
 
     private void handleMovement(Entity character) {

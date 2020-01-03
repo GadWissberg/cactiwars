@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.gadarts.war.BattleScreen;
 import com.gadarts.war.GameSettings;
+import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.physics.PhysicsComponent;
 import com.gadarts.war.sound.SoundPlayer;
@@ -70,7 +71,8 @@ public class PhysicsSystem extends EntitySystem implements EntityListener, GameC
     }
 
     private void initializeContactListener() {
-        contactListener = new GameContactListener(soundPlayer);
+        Entity camera = getEngine().getEntitiesFor(Family.all(CameraComponent.class).get()).first();
+        contactListener = new GameContactListener(soundPlayer, camera);
         contactListener.subscribe(this);
     }
 
