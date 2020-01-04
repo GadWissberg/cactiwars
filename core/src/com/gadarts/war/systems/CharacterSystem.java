@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
@@ -53,7 +54,7 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
             super.update(deltaTime);
             for (Entity character : characters) {
                 handleMovement(character);
-                if (GameSettings.ALLOW_SOUND) handleCharacterSound(character);
+                if (GameSettings.ALLOW_SOUND && !GameSettings.MUTE_CHARACTERS_SOUNDS) handleCharacterSound(character);
             }
         }
     }
@@ -78,9 +79,11 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
         CharacterComponent characterComponent = ComponentsMapper.characters.get(character);
         CharacterSoundData csd = characterComponent.getCharacterSoundData();
         ComponentsMapper.physics.get(character).getMotionState().getWorldTranslation(auxVector31);
-        float dst = auxVector31.dst(ComponentsMapper.camera.get(camera).getCamera().position);
+        PerspectiveCamera camera = ComponentsMapper.camera.get(this.camera).getCamera();
+        float pan = SoundPlayer.calculatePan(camera, auxVector31);
+        float dst = auxVector31.dst(camera.position);
         float volume = MathUtils.norm(0, 2, 100f / (dst * dst));
-        csd.getEngineSound().setVolume(csd.getEngineSoundId(), volume);
+        csd.getEngineSound().setPan(csd.getEngineSoundId(), pan, volume);
     }
 
     private void handleMovement(Entity character) {

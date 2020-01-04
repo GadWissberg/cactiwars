@@ -3,11 +3,15 @@ package com.gadarts.war.sound;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector3;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameSettings;
 
 public class SoundPlayer {
+
+    private static Vector3 auxVector = new Vector3();
+    private static Plane auxPlane = new Plane();
 
     public long play(Sound sound) {
         return play(sound, false);
@@ -57,15 +61,21 @@ public class SoundPlayer {
         return play(MathUtils.randomBoolean() ? sound1 : sound2, camera, soundSourcePosition);
     }
 
-    private long play(SFX sound, PerspectiveCamera camera, Vector3 soundSourcePosition) {
+    public static float calculatePan(PerspectiveCamera camera, Vector3 soundSourcePosition) {
+        auxPlane.set(camera.position, auxVector.set(camera.direction).crs(camera.up));
+        float value = auxPlane.normal.dot(soundSourcePosition) + auxPlane.d;
+        return (value < 0 ? -1 : 1) * MathUtils.norm(value >= 0 ? 0 : 0, value >= 0 ? 15f : -15f, value);
+    }
+
+    public long play(SFX sound, PerspectiveCamera camera, Vector3 soundSourcePosition) {
         return play(GameAssetManager.getInstance().get(sound.getFileName(), Sound.class), camera, soundSourcePosition);
     }
 
-    private long play(Sound sound, PerspectiveCamera camera, Vector3 soundSourcePosition) {
+    public long play(Sound sound, PerspectiveCamera camera, Vector3 soundSourcePosition) {
         return play(sound, false, camera, soundSourcePosition);
     }
 
-    private long play(Sound sound, boolean loop, PerspectiveCamera camera, Vector3 soundSourcePosition) {
+    public long play(Sound sound, boolean loop, PerspectiveCamera camera, Vector3 soundSourcePosition) {
         if (!GameSettings.ALLOW_SOUND) return -1;
         long id;
         boolean dynamicSound = camera != null && soundSourcePosition != null;
@@ -76,12 +86,9 @@ public class SoundPlayer {
         return id;
     }
 
-    private float calculatePan(PerspectiveCamera camera, Vector3 soundSourcePosition) {
-        return 0;
-    }
-
     private float calculateVolume(PerspectiveCamera camera, Vector3 soundSourcePosition) {
         float dst = soundSourcePosition.dst(camera.position);
-        return MathUtils.norm(0, 2, 100f / (dst * dst));
+        float v = 100f / (dst * dst);
+        return MathUtils.norm(0, 2, v);
     }
 }

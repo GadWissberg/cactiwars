@@ -20,6 +20,7 @@ import com.gadarts.shared.definitions.PointLightDefinition;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
 import com.gadarts.war.GameC.Tank;
+import com.gadarts.war.GameSettings;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.EnvironmentObjectComponent;
 import com.gadarts.war.components.PlayerComponent;
@@ -38,6 +39,7 @@ import com.gadarts.war.factories.recycle.CollisionShapesPool;
 import com.gadarts.war.factories.recycle.ModelInstancesPool;
 import com.gadarts.war.sound.SFX;
 import com.gadarts.war.sound.SoundPlayer;
+
 import java.util.List;
 
 import static com.gadarts.war.systems.physics.PhysicsSystem.auxMatrix;
@@ -154,6 +156,7 @@ public class ActorFactory {
     }
 
     private void initializeCharacterSoundData(CharacterComponent characterComponent) {
+        if (!GameSettings.ALLOW_SOUND || GameSettings.MUTE_CHARACTERS_SOUNDS) return;
         Sound engineIdleSound = GameAssetManager.getInstance().get(SFX.ENGINE.getFileName(), Sound.class);
         CharacterSoundData characterSoundData = characterComponent.getCharacterSoundData();
         characterSoundData.setEngineSound(engineIdleSound);

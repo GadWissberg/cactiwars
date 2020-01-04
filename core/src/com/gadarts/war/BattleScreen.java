@@ -41,6 +41,11 @@ public class BattleScreen implements GameScreen {
     }
 
     @Override
+    public PooledEngine getEntitiesEngine() {
+        return entitiesEngine;
+    }
+
+    @Override
     public void resumeGame() {
         BattleScreen.paused = false;
         hud.deactivate();
@@ -49,7 +54,9 @@ public class BattleScreen implements GameScreen {
     @Override
     public void show() {
         soundPlayer = new SoundPlayer();
-        soundPlayer.play(GameAssetManager.getInstance().get(SFX.AMB_WIND.getFileName(), Sound.class), true);
+        if (!GameSettings.MUTE_AMB_SOUNDS) {
+            soundPlayer.play(GameAssetManager.getInstance().get(SFX.AMB_WIND.getFileName(), Sound.class), true);
+        }
         entitiesEngine = new PooledEngine();
         createSystemsHandler();
         actorFactory = new ActorFactory(entitiesEngine, soundPlayer);
@@ -118,10 +125,6 @@ public class BattleScreen implements GameScreen {
         entitiesEngine.getSystem(PhysicsSystem.class).dispose();
         entitiesEngine.getSystem(RenderSystem.class).dispose();
         hud.dispose();
-    }
-
-    public PooledEngine getEntitiesEngine() {
-        return entitiesEngine;
     }
 
 }
