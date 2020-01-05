@@ -128,8 +128,7 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
     private boolean checkIfCharacterOnGround(Entity character) {
         initializeRayForTest(character);
         getEngine().getSystem(PhysicsSystem.class).getCollisionWorld().rayTest(rayFrom, rayTo, callback);
-        boolean result = callback.hasHit();
-        return result;
+        return callback.hasHit();
     }
 
     private void initializeRayForTest(Entity character) {

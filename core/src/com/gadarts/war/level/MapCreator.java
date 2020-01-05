@@ -39,7 +39,6 @@ import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.systems.CameraSystem;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 import com.gadarts.war.systems.player.PlayerSystem;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -195,6 +194,7 @@ public class MapCreator extends MapModeler {
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void modelHorizontalSurroundingGroundModel(int numberOfRegions, int z) {
         for (int i = 0; i < numberOfRegions; i++) {
             int regionSize = SharedC.Map.REGION_SIZE_UNIT * 2;

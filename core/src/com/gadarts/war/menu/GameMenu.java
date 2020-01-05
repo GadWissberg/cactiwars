@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
-import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -75,10 +74,9 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
 
     private ParallelAction createCactusIconAction() {
         float duration = 0.5f;
-        SequenceAction movementAction = Actions.sequence(
+        return Actions.sequence(
                 Actions.moveBy(0, -10, duration, Interpolation.exp5),
                 Actions.moveBy(0, 10, duration, Interpolation.exp5));
-        return movementAction;
     }
 
     public void addOption(GameMenuOption menuOption) {

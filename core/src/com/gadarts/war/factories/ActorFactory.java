@@ -39,14 +39,12 @@ import com.gadarts.war.factories.recycle.CollisionShapesPool;
 import com.gadarts.war.factories.recycle.ModelInstancesPool;
 import com.gadarts.war.sound.SFX;
 import com.gadarts.war.sound.SoundPlayer;
-
 import java.util.List;
 
 import static com.gadarts.war.systems.physics.PhysicsSystem.auxMatrix;
 
 public class ActorFactory {
     public static Vector3 auxVector = new Vector3();
-    public static Vector3 auxVector2 = new Vector3();
 
     private final PooledEngine engine;
     private final ModelInstancesPool modelInstancePool;
