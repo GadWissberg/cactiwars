@@ -81,7 +81,7 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
         ComponentsMapper.physics.get(character).getMotionState().getWorldTranslation(auxVector31);
         PerspectiveCamera camera = ComponentsMapper.camera.get(this.camera).getCamera();
         float pan = SoundPlayer.calculatePan(camera, auxVector31);
-        float dst = auxVector31.dst(camera.position);
+        float dst = auxVector31.dst2(camera.position);
         float volume = MathUtils.norm(0, 2, 100f / (dst * dst));
         csd.getEngineSound().setPan(csd.getEngineSoundId(), pan, volume);
     }
@@ -184,6 +184,7 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
 
     @Override
     public void onMenuActivated() {
+        if (!GameSettings.ALLOW_SOUND) return;
         for (Entity character : characters) {
             CharacterSoundData characterSoundData = ComponentsMapper.characters.get(character).getCharacterSoundData();
             soundPlayer.pauseSound(characterSoundData.getEngineSound(), characterSoundData.getEngineSoundId());
@@ -192,6 +193,7 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
 
     @Override
     public void onMenuDeactivated() {
+        if (!GameSettings.ALLOW_SOUND) return;
         for (Entity character : characters) {
             CharacterSoundData characterSoundData = ComponentsMapper.characters.get(character).getCharacterSoundData();
             soundPlayer.resumeSound(characterSoundData.getEngineSound(), characterSoundData.getEngineSoundId());

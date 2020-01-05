@@ -87,7 +87,7 @@ public class SoundPlayer {
     }
 
     private float calculateVolume(PerspectiveCamera camera, Vector3 soundSourcePosition) {
-        float dst = soundSourcePosition.dst(camera.position);
+        float dst = soundSourcePosition.dst2(camera.position);
         float v = 100f / (dst * dst);
         return MathUtils.norm(0, 2, v);
     }

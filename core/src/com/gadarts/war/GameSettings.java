@@ -8,7 +8,7 @@ public final class GameSettings {
     public static final boolean FULL_SCREEN = false;
     public static final boolean SHOW_GL_PROFILING = true;
     public static final boolean SHOW_AXIS = false;
-    public static final boolean ALLOW_SOUND = true;
+    public static final boolean ALLOW_SOUND = false;
     public static final boolean DRAW_COLLISION_SHAPES = false;
     public static final boolean MENU_ON_START = false;
     public static final boolean DRAW_TABLES_BORDERS = false;

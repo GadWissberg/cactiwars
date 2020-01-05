@@ -24,20 +24,22 @@ import static com.gadarts.war.systems.physics.PhysicsSystem.auxMatrix;
  * Defines the camera's movement and behaviour.
  */
 public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubscriber {
+    private static Vector3 auxVector31 = new Vector3();
+    private static Vector3 auxVector32 = new Vector3();
+    private static Vector3 auxVector2 = new Vector3();
     private CameraInputController processor;
-    private Entity camera;
-    private Vector3 auxVector = new Vector3();
-    private Vector3 auxVector2 = new Vector3();
-    private Vector3 auxVector3 = new Vector3();
+    private Entity cameraEntity;
+    private float zoomAcceleration;
+    private float zoomSpeed;
 
     @Override
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
-        camera = new Entity();
+        cameraEntity = new Entity();
         PooledEngine pooledEngine = (PooledEngine) engine;
         CameraComponent cameraComponent = createCameraComponent(pooledEngine);
-        camera.add(cameraComponent);
-        engine.addEntity(camera);
+        cameraEntity.add(cameraComponent);
+        engine.addEntity(cameraEntity);
         createDebugInputProcessor(cameraComponent);
     }
 
@@ -60,7 +62,7 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
         if (BattleScreen.isPaused()) return;
         super.update(deltaTime);
         if (processor != null) processor.update();
-        CameraComponent cameraComponent = ComponentsMapper.camera.get(camera);
+        CameraComponent cameraComponent = ComponentsMapper.camera.get(cameraEntity);
         if (!GameSettings.SPECTATOR && cameraComponent.getTarget() != null) {
             followTarget(cameraComponent, deltaTime);
         }
@@ -77,26 +79,26 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
         Vector3 linearVelocity = ComponentsMapper.physics.get(target).getBody().getLinearVelocity();
         float linearSpeed = linearVelocity.len2();
         ComponentsMapper.physics.get(target).getMotionState().getWorldTransform(auxMatrix);
-        if (!linearVelocity.isCollinear(auxVector.set(0, -1, 0), 0.1f) && Math.abs(linearSpeed) >= 0.1f)
+        if (!linearVelocity.isCollinear(auxVector31.set(0, -1, 0), 0.1f) && Math.abs(linearSpeed) >= 0.1f)
             handleCameraManOnMovement(deltaTime, target);
         else handleCameraManOnIdle(deltaTime);
     }
 
     private void handleCameraManOnMovement(float deltaTime, Entity target) {
         Vector3 targetPos = auxMatrix.getTranslation(auxVector2);
-        CameraComponent cameraComponent = ComponentsMapper.camera.get(this.camera);
+        CameraComponent cameraComponent = ComponentsMapper.camera.get(this.cameraEntity);
         Vector3 cameraPosition = cameraComponent.getCamera().position;
-        if (auxVector.set(cameraPosition).dst2(targetPos) < GameC.Camera.MAX_ZOOM_DISTANCE) {
-            Vector3 directionFromTarget = auxVector3.set(targetPos).sub(cameraPosition).nor();
+        if (auxVector31.set(cameraPosition).dst2(targetPos) < GameC.Camera.MAX_ZOOM_DISTANCE) {
+            Vector3 directionFromTarget = auxVector32.set(targetPos).sub(cameraPosition).nor();
             cameraPosition.add(directionFromTarget.scl(-deltaTime));
         }
         handleCameraFrontOffset(deltaTime, target, cameraPosition, targetPos);
     }
 
     private void handleCameraFrontOffset(float deltaTime, Entity target, Vector3 cameraPosition, Vector3 targetPos) {
-        CameraComponent cameraComponent = ComponentsMapper.camera.get(camera);
+        CameraComponent cameraComponent = ComponentsMapper.camera.get(cameraEntity);
         cameraComponent.setManipulationSpeed(cameraComponent.getManipulationSpeed() + 0.1f);
-        Vector3 targetDirection = auxVector.set(1, 0, 0).rot(auxMatrix).nor();
+        Vector3 targetDirection = auxVector31.set(1, 0, 0).rot(auxMatrix).nor();
         float newX = calculateNewXForTargetFollowing(deltaTime, target, targetPos, targetDirection);
         float newZ = calculateNewZForTargetFollowing(deltaTime, target, targetPos, targetDirection);
         cameraPosition.set(newX, cameraPosition.y, newZ);
@@ -109,7 +111,7 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
         MovementState movementState = ComponentsMapper.characters.get(target).getMovementState();
         boolean isAccelerating = movementState == MovementState.ACCELERATING && linearSpeed > 1f;
         int coef = isAccelerating ? 1 : -1;
-        CameraComponent cameraComponent = ComponentsMapper.camera.get(camera);
+        CameraComponent cameraComponent = ComponentsMapper.camera.get(cameraEntity);
         float manipulationSpeed = cameraComponent.getManipulationSpeed();
         Vector3 cameraPosition = cameraComponent.getCamera().position;
         float newX = cameraPosition.x + coef * targetDir.x * Math.min(linearSpeed, manipulationSpeed) * deltaTime;
@@ -117,13 +119,13 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
     }
 
     private float calculateNewZForTargetFollowing(float deltaTime, Entity target, Vector3 targetPos, Vector3 targetDir) {
-        CameraComponent cameraComponent = ComponentsMapper.camera.get(camera);
+        CameraComponent cameraComponent = ComponentsMapper.camera.get(cameraEntity);
         float linearSpeed = ComponentsMapper.physics.get(target).getBody().getLinearVelocity().len2();
         float minZ = targetPos.z + GameC.Camera.MIN_Z_FRONT_OFFSET;
         float maxZ = targetPos.z + GameC.Camera.MAX_Z_FRONT_OFFSET;
         MovementState movementState = ComponentsMapper.characters.get(target).getMovementState();
         boolean isAccelerating = movementState == MovementState.ACCELERATING && linearSpeed > 1f;
-        Vector3 cameraPosition = ComponentsMapper.camera.get(camera).getCamera().position;
+        Vector3 cameraPosition = ComponentsMapper.camera.get(cameraEntity).getCamera().position;
         int coef = isAccelerating ? 1 : -1;
         float manipulationSpeed = cameraComponent.getManipulationSpeed();
         float newX = cameraPosition.z + coef * targetDir.z * Math.min(linearSpeed, manipulationSpeed) * deltaTime;
@@ -132,10 +134,10 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
 
     private void handleCameraManOnIdle(float deltaTime) {
         Vector3 targetPos = auxMatrix.getTranslation(auxVector2);
-        Vector3 cameraPosition = ComponentsMapper.camera.get(this.camera).getCamera().position;
-        if (auxVector.set(cameraPosition).dst2(targetPos) > GameC.Camera.MIN_ZOOM_DISTANCE) {
-            ComponentsMapper.camera.get(camera).setManipulationSpeed(0);
-            Vector3 directionFromTarget = auxVector3.set(auxVector.set(targetPos.x,
+        Vector3 cameraPosition = ComponentsMapper.camera.get(this.cameraEntity).getCamera().position;
+        if (auxVector31.set(cameraPosition).dst2(targetPos) > GameC.Camera.MIN_ZOOM_DISTANCE) {
+            ComponentsMapper.camera.get(cameraEntity).setManipulationSpeed(0);
+            Vector3 directionFromTarget = auxVector32.set(auxVector31.set(targetPos.x,
                     targetPos.y + Camera.TARGET_Y_MIN_OFFSET, targetPos.z + Camera.TARGET_Z_MIN_OFFSET))
                     .sub(cameraPosition).nor();
             cameraPosition.add(directionFromTarget.scl(deltaTime));
@@ -156,9 +158,9 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
      * @param target
      */
     public void lockToTarget(Entity target) {
-        CameraComponent cameraComponent = ComponentsMapper.camera.get(camera);
+        CameraComponent cameraComponent = ComponentsMapper.camera.get(cameraEntity);
         cameraComponent.setTarget(target);
-        Vector3 targetPos = ComponentsMapper.physics.get(target).getMotionState().getWorldTranslation(auxVector);
+        Vector3 targetPos = ComponentsMapper.physics.get(target).getMotionState().getWorldTranslation(auxVector31);
         PerspectiveCamera camera = cameraComponent.getCamera();
         Vector3 position = camera.position;
         position.set(targetPos.x, targetPos.y + Camera.TARGET_Y_MIN_OFFSET, targetPos.z + Camera.TARGET_Z_MIN_OFFSET);
@@ -177,7 +179,7 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
 
     }
 
-    public Entity getCamera() {
-        return camera;
+    public Entity getCameraEntity() {
+        return cameraEntity;
     }
 }
