@@ -44,13 +44,13 @@ import java.util.List;
 import static com.gadarts.war.systems.physics.PhysicsSystem.auxMatrix;
 
 public class ActorFactory {
-    public static Vector3 auxVector = new Vector3();
+    public static Vector3 auxVctr = new Vector3();
 
     private final PooledEngine engine;
     private final ModelInstancesPool modelInstancePool;
     private final CollisionShapesPool collisionShapePool;
     private final SoundPlayer soundPlayer;
-    private BoundingBox auxBoundBox = new BoundingBox();
+    private BoundingBox auxBndBx = new BoundingBox();
 
     public ActorFactory(PooledEngine engine, SoundPlayer soundPlayer) {
         this.engine = engine;
@@ -61,40 +61,70 @@ public class ActorFactory {
 
     public Entity createPlayer(String modelFileName, float x, float y, float z, float rotation, List<CharacterAdditionalDefinition> additionals) {
         Entity player = engine.createEntity();
+        createPlayerComponent(modelFileName, x, y, z, rotation, additionals, player);
+        //        body.setCollisionFlags(body.getCollisionFlags() | CF_CUSTOM_MATERIAL_CALLBACK);
+        return player;
+    }
+
+    private void createPlayerComponent(String modelFileName, float x, float y, float z, float rotation,
+                                       List<CharacterAdditionalDefinition> additionals, Entity player) {
+        ModelInstanceComponent modelInstanceComponent = createModelInstanceComponent(modelFileName, x, y + 0.1f, z);
+        player.add(modelInstanceComponent);
         player.add(engine.createComponent(PlayerComponent.class));
         CharacterComponent characterComponent = createCharacterComponent();
         player.add(characterComponent);
-        ModelInstanceComponent modelInstanceComponent = createModelInstanceComponent(modelFileName, x, y + 0.1f, z);
-        player.add(modelInstanceComponent);
-        ModelInstance modelInstance = modelInstanceComponent.getModelInstance();
-        PhysicsComponent physicsComponent = createPhysicsComponent(modelFileName, player, modelInstance, 400);
+        player.add(createPlayerPhysicsComponent(modelFileName, rotation, player, modelInstanceComponent));
+        player.add(engine.createComponent(AnimationComponent.class).init(modelInstanceComponent.getModelInstance()));
+        createPlayerAdditionals(additionals, modelInstanceComponent, characterComponent);
+    }
+
+    private PhysicsComponent createPlayerPhysicsComponent(String modelFileName, float rotation, Entity player,
+                                                          ModelInstanceComponent modelInstanceComponent) {
+        PhysicsComponent physicsComponent = createPhysicsComponent(
+                modelFileName,
+                player,
+                modelInstanceComponent.getModelInstance(),
+                400);
+        createPlayerPhysicsBody(rotation, physicsComponent);
+        return physicsComponent;
+    }
+
+    private void createPlayerPhysicsBody(float rotation, PhysicsComponent physicsComponent) {
         btRigidBody body = physicsComponent.getBody();
+        definePlayerPhysicsBody(rotation, physicsComponent, body);
+    }
+
+    private void definePlayerPhysicsBody(float rotation, PhysicsComponent physicsComponent, btRigidBody body) {
         body.setDamping(0, 0.1f);
-        btCompoundShape collisionShape = (btCompoundShape) body.getCollisionShape();
-        float halfWidth = auxBoundBox.getWidth() / 2;
-        float halfHeight = auxBoundBox.getHeight() / 2;
-        float halfDepth = auxBoundBox.getDepth() / 2;
-        Vector3 halfExtents = auxVector.set(halfWidth, halfHeight, halfDepth);
-        btBoxShape box = Pools.obtain(btBoxShapeWrapper.class);
-        box.setImplicitShapeDimensions(halfExtents);
-        collisionShape.addChildShape(auxMatrix.setToTranslation(0, halfExtents.y, 0), box);
+        Vector3 halves = auxVctr.set(auxBndBx.getWidth() / 2, auxBndBx.getHeight() / 2, auxBndBx.getDepth() / 2);
+        createPlayerPhysicsBodyShape(body, halves);
         physicsComponent.recalculateLocalInertia();
-        body.setContactCallbackFlag(CollisionFilterGroups.CharacterFilter);
-        body.setContactCallbackFilter(CollisionFilterGroups.CharacterFilter | CollisionFilterGroups.KinematicFilter);
-        player.add(physicsComponent);
+        definePlyrPhysicsCallbacks(body, CollisionFilterGroups.CharacterFilter | CollisionFilterGroups.KinematicFilter);
         body.getMotionState().getWorldTransform(auxMatrix);
         body.setCenterOfMassTransform(auxMatrix.rotate(Vector3.Y, rotation));
-        AnimationComponent animationComponent = engine.createComponent(AnimationComponent.class);
-        animationComponent.init(modelInstance);
-        player.add(animationComponent);
-        //        body.setCollisionFlags(body.getCollisionFlags() | CF_CUSTOM_MATERIAL_CALLBACK);
+    }
+
+    private void createPlayerPhysicsBodyShape(btRigidBody body, Vector3 halfExtents) {
+        btBoxShape box = Pools.obtain(btBoxShapeWrapper.class);
+        box.setImplicitShapeDimensions(halfExtents);
+        ((btCompoundShape) body.getCollisionShape()).addChildShape(auxMatrix.setToTranslation(0, halfExtents.y, 0), box);
+    }
+
+    private void definePlyrPhysicsCallbacks(btRigidBody body, int i) {
+        body.setContactCallbackFlag(CollisionFilterGroups.CharacterFilter);
+        body.setContactCallbackFilter(i);
+    }
+
+    private void createPlayerAdditionals(List<CharacterAdditionalDefinition> additionals,
+                                         ModelInstanceComponent modelInstanceComponent,
+                                         CharacterComponent characterComponent) {
         if (additionals != null) {
             for (CharacterAdditionalDefinition definition : additionals) {
+                ModelInstance modelInstance = modelInstanceComponent.getModelInstance();
                 CharacterAdditional characterAdditional = createCharacterAdditional(definition, modelInstance);
                 characterComponent.addAdditional(characterAdditional);
             }
         }
-        return player;
     }
 
     private CharacterAdditional createCharacterAdditional(CharacterAdditionalDefinition additionalDefinition,
@@ -105,7 +135,7 @@ public class ActorFactory {
         CharacterAdditional characterAdditional = Pools.obtain(CharacterAdditional.class);
         Node additionalNode = new Node();
         additionalNode.addChildren(additionalModelInstance.nodes);
-        Vector3 offsetCoords = additionalDefinition.getOffsetCoords(auxVector);
+        Vector3 offsetCoords = additionalDefinition.getOffsetCoords(auxVctr);
         additionalNode.translation.add(offsetCoords.x, offsetCoords.y, offsetCoords.z);
         parentModelInstance.nodes.add(additionalNode);
         parentModelInstance.calculateTransforms();
@@ -138,7 +168,7 @@ public class ActorFactory {
         modelInstance.transform.setToTranslation(x, y, z);
         ModelInstanceComponent modelInstanceComponent = engine.createComponent(ModelInstanceComponent.class);
         modelInstanceComponent.init(modelInstance);
-        modelInstanceComponent.getBoundingBox(auxBoundBox);
+        modelInstanceComponent.getBoundingBox(auxBndBx);
         return modelInstanceComponent;
     }
 
@@ -176,16 +206,15 @@ public class ActorFactory {
         } else {
             btCylinderShape modelBody = Pools.obtain(btCylinderShapeWrapper.class);
             btCapsuleShapeXWrapper head = Pools.obtain(btCapsuleShapeXWrapper.class);
-            modelBody.setImplicitShapeDimensions(auxVector.set(0.1f, 2, 0.1f));
-            head.setImplicitShapeDimensions(auxVector.set(0.1f, 0.2f, 0.1f));
+            modelBody.setImplicitShapeDimensions(auxVctr.set(0.1f, 2, 0.1f));
+            head.setImplicitShapeDimensions(auxVctr.set(0.1f, 0.2f, 0.1f));
             collisionShape.addChildShape(auxMatrix.idt().translate(0, 0, 0), modelBody);
             collisionShape.addChildShape(auxMatrix.idt().translate(0.3f, 2.2f, 0), head);
 
         }
         body.setAngularFactor(0);
         physicsComponent.recalculateLocalInertia();
-        body.setContactCallbackFlag(CollisionFilterGroups.CharacterFilter);
-        body.setContactCallbackFilter(CollisionFilterGroups.KinematicFilter);
+        definePlyrPhysicsCallbacks(body, CollisionFilterGroups.KinematicFilter);
         body.getMotionState().getWorldTransform(auxMatrix);
         body.setCenterOfMassTransform(auxMatrix.rotate(Vector3.Y, rotation));
         modelInstanceComponent.getModelInstance().transform.rotate(Vector3.Y, rotation);

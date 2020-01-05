@@ -19,7 +19,7 @@ public class PhysicsComponent implements Component, Pool.Poolable {
     public void init(int mass, btCollisionShape collisionShape, Matrix4 transform) {
         this.mass = mass;
         this.collisionShape = collisionShape;
-        Vector3 translation = transform.getTranslation(ActorFactory.auxVector);
+        Vector3 translation = transform.getTranslation(ActorFactory.auxVctr);
         motionState.setTransformationObject(transform.setToTranslation(translation));
         if (mass == 0) localInertia.setZero();
         else collisionShape.calculateLocalInertia(mass, localInertia);
