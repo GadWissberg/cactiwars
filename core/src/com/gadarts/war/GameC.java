@@ -3,6 +3,9 @@ package com.gadarts.war;
 import com.badlogic.gdx.graphics.Color;
 
 public final class GameC {
+    public static final float CHARACTER_ROTATION_MULTIPLIER_WITH_DT = 75;
+    public static final float CHARACTER_MOVING_MULTIPLIER_WITH_DT = 10;
+
     public final class General {
         public static final String VERSION = "0.1";
         public static final String GAME = "CactiWars";

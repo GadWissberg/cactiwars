@@ -1,6 +1,7 @@
 package com.gadarts.war.systems.physics;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ContactListener;
@@ -115,6 +116,7 @@ public class GameContactListener extends ContactListener {
         PhysicsComponent characterPhysicsComponent = ComponentsMapper.physics.get(characterEntity);
         btRigidBody characterBody = characterPhysicsComponent.getBody();
         PhysicsComponent envPhysicsComponent = ComponentsMapper.physics.get(envEntity);
+        Gdx.app.log("SPEED", "" + characterBody.getLinearVelocity().len2() + ", delta:");
         if (characterBody.getLinearVelocity().len2() * characterPhysicsComponent.getMass() > envPhysicsComponent.getMass() * 159) {
             if (envPhysicsComponent.isStatic()) {
                 subscribers.forEach(sub -> sub.onStaticEnvironmentObjectHardCollision(envEntity));

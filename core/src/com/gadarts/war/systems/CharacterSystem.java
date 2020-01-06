@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.gadarts.war.BattleScreen;
+import com.gadarts.war.GameC;
 import com.gadarts.war.GameSettings;
 import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
@@ -53,7 +54,7 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
         if (!BattleScreen.isPaused()) {
             super.update(deltaTime);
             for (Entity character : characters) {
-                handleMovement(character);
+                handleMovement(character, deltaTime);
                 if (GameSettings.ALLOW_SOUND && !GameSettings.MUTE_CHARACTERS_SOUNDS) handleCharacterSound(character);
             }
         }
@@ -61,7 +62,7 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
 
     private void handleCharacterSound(Entity character) {
         handleCharacterSoundPitch(character);
-        handleCharacterSoundVolume(character);
+        handleCharacterSoundVolumeAndPan(character);
     }
 
     private void handleCharacterSoundPitch(Entity character) {
@@ -75,7 +76,7 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
         }
     }
 
-    private void handleCharacterSoundVolume(Entity character) {
+    private void handleCharacterSoundVolumeAndPan(Entity character) {
         CharacterComponent characterComponent = ComponentsMapper.characters.get(character);
         CharacterSoundData csd = characterComponent.getCharacterSoundData();
         ComponentsMapper.physics.get(character).getMotionState().getWorldTranslation(auxVector31);
@@ -86,40 +87,40 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
         csd.getEngineSound().setPan(csd.getEngineSoundId(), pan, volume);
     }
 
-    private void handleMovement(Entity character) {
+    private void handleMovement(Entity character, float deltaTime) {
         takeStep(character);
-        handleAccelerating(character);
-        handleRotation(character);
+        handleAccelerating(character, deltaTime);
+        handleRotation(character, deltaTime);
     }
 
-    private void handleRotation(Entity character) {
+    private void handleRotation(Entity character, float deltaTime) {
         CharacterComponent characterComponent = ComponentsMapper.characters.get(character);
         if (characterComponent.isRotating() && characterComponent.getSpeed() != 0 && checkIfCharacterOnGround(character)) {
-            rotate(character, characterComponent);
+            rotate(character, characterComponent, deltaTime);
         }
     }
 
-    private void rotate(Entity character, CharacterComponent characterComponent) {
-        float rotation = characterComponent.getRotation();
+    private void rotate(Entity character, CharacterComponent characterComponent, float deltaTime) {
+        float rotation = characterComponent.getRotation() * deltaTime * GameC.CHARACTER_ROTATION_MULTIPLIER_WITH_DT;
         characterComponent.setDirection(characterComponent.getDirection(auxVector21).rotate(-rotation));
         PhysicsComponent physicsComponent = ComponentsMapper.physics.get(character);
-        physicsComponent.getBody().applyTorqueImpulse(auxVector31.set(0, 1, 0).scl(rotation));
+        physicsComponent.getBody().applyTorqueImpulse(auxVector31.set(Vector3.Y).scl(rotation));
     }
 
-    private void handleAccelerating(Entity character) {
+    private void handleAccelerating(Entity character, float deltaTime) {
         CharacterComponent characterComponent = ComponentsMapper.characters.get(character);
         if (checkIfCharacterOnGround(character)) {
-            if (accelerateAccordingToMovementState(characterComponent)) return;
+            if (accelerateAccordingToMovementState(characterComponent, deltaTime)) return;
         }
         decelerate(characterComponent);
     }
 
-    private boolean accelerateAccordingToMovementState(CharacterComponent characterComponent) {
+    private boolean accelerateAccordingToMovementState(CharacterComponent characterComponent, float deltaTime) {
         if (characterComponent.getMovementState() == MovementState.ACCELERATING) {
-            accelerate(characterComponent);
+            accelerate(characterComponent, deltaTime);
             return true;
         } else if (characterComponent.getMovementState() == MovementState.REVERSE) {
-            reverse(characterComponent);
+            reverse(characterComponent, deltaTime);
             return true;
         }
         return false;
@@ -151,20 +152,22 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
         }
     }
 
-    private void reverse(CharacterComponent characterComponent) {
+    private void reverse(CharacterComponent characterComponent, float deltaTime) {
         float speed = characterComponent.getSpeed();
         float maxReverseSpeed = characterComponent.getMaxReverseSpeed();
         if (speed > -maxReverseSpeed) {
-            float reverseAcc = characterComponent.getReverseAcceleration();
+            float deltaTimeBalanced = deltaTime * GameC.CHARACTER_MOVING_MULTIPLIER_WITH_DT;
+            float reverseAcc = characterComponent.getReverseAcceleration() * deltaTimeBalanced;
             float newSpeed = Math.abs(maxReverseSpeed - speed) < reverseAcc ? -maxReverseSpeed : speed - reverseAcc;
             characterComponent.setSpeed(newSpeed);
         }
     }
 
-    private void accelerate(CharacterComponent characterComponent) {
+    private void accelerate(CharacterComponent characterComponent, float deltaTime) {
         float speed = characterComponent.getSpeed();
         float maxFrontSpeed = characterComponent.getMaxFrontSpeed();
-        float acceleration = characterComponent.getAcceleration();
+        float deltaTimeBalanced = deltaTime * GameC.CHARACTER_MOVING_MULTIPLIER_WITH_DT;
+        float acceleration = characterComponent.getAcceleration() * deltaTimeBalanced;
         if (speed < maxFrontSpeed) {
             float newSpeed = Math.abs(maxFrontSpeed - speed) < acceleration ? maxFrontSpeed : speed + acceleration;
             characterComponent.setSpeed(newSpeed);
@@ -173,11 +176,12 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
 
     private void takeStep(Entity character) {
         CharacterComponent characterComponent = ComponentsMapper.characters.get(character);
-        if (characterComponent.getSpeed() != 0) {
+        float speed = characterComponent.getSpeed();
+        if (speed != 0) {
             btRigidBody body = ComponentsMapper.physics.get(character).getBody();
-            characterComponent.getDirection(auxVector21).scl(characterComponent.getSpeed());
+            characterComponent.getDirection(auxVector21).scl(speed);
             ComponentsMapper.physics.get(character).getMotionState().getWorldTransform(auxMat);
-            body.setLinearVelocity(auxVector31.set(1, 0, 0).rot(auxMat).scl(characterComponent.getSpeed()));
+            body.setLinearVelocity(auxVector31.set(Vector3.X).rot(auxMat).scl(speed));
             if (!body.isActive()) body.activate();
         }
     }
