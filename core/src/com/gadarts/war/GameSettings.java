@@ -12,7 +12,7 @@ public final class GameSettings {
     public static final boolean DRAW_COLLISION_SHAPES = false;
     public static final boolean MENU_ON_START = false;
     public static final boolean DRAW_TABLES_BORDERS = false;
-    public static final boolean DRAWING_SKIPPING_MODE = false;
+    public static final boolean SKIP_DRAWING_MODE = false;
     public static final boolean SKIP_GROUND_DRAWING = true;
     public static final boolean SKIP_CHARACTER_DRAWING = false;
     public static final boolean SKIP_ENV_OBJECT_DRAWING = true;

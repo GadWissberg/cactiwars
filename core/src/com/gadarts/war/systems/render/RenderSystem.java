@@ -110,7 +110,7 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     }
 
     private void renderShadows() {
-        if (GameSettings.DRAWING_SKIPPING_MODE && GameSettings.SKIP_DRAW_SHADOWS) return;
+        if (GameSettings.SKIP_DRAWING_MODE && GameSettings.SKIP_DRAW_SHADOWS) return;
         shadowRenderer.begin(camera);
         renderInstances(shadowRenderer.getShadowBatch(), false, null, -1);
         shadowRenderer.end();
@@ -141,7 +141,7 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     }
 
     private boolean shouldSkipRender(Entity entity) {
-        if (!GameSettings.DRAWING_SKIPPING_MODE) return false;
+        if (!GameSettings.SKIP_DRAWING_MODE) return false;
         boolean groundCheck = GameSettings.SKIP_GROUND_DRAWING && ComponentsMapper.ground.has(entity);
         boolean characterCheck = GameSettings.SKIP_CHARACTER_DRAWING && ComponentsMapper.characters.has(entity);
         boolean envCheck = GameSettings.SKIP_ENV_OBJECT_DRAWING && ComponentsMapper.environmentObject.has(entity);

@@ -39,6 +39,7 @@ import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.systems.CameraSystem;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 import com.gadarts.war.systems.player.PlayerSystem;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -132,7 +133,7 @@ public class MapCreator extends MapModeler {
                 modelGroundRegion(map, tilesAtlas, row, col);
             }
         }
-        if (!GameSettings.DRAWING_SKIPPING_MODE || !GameSettings.SKIP_DRAWING_SURROUNDING_TERRAIN) {
+        if (!GameSettings.SKIP_DRAWING_MODE || !GameSettings.SKIP_DRAWING_SURROUNDING_TERRAIN) {
             modelSurroundingGround();
         }
     }
