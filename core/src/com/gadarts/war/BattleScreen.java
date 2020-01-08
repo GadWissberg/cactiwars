@@ -1,11 +1,15 @@
 package com.gadarts.war;
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.gadarts.shared.level.Map;
 import com.gadarts.shared.par.SectionType;
+import com.gadarts.war.components.model.ModelInstanceComponent;
 import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.level.MapCreator;
 import com.gadarts.war.menu.Hud;
@@ -66,6 +70,13 @@ public class BattleScreen implements GameScreen {
         hud.subscribeForEvents(entitiesEngine.getSystem(CharacterSystem.class));
         hud.subscribeForEvents(entitiesEngine.getSystem(EnvironmentSystem.class));
         if (GameSettings.MENU_ON_START) pauseGame();
+        Entity test = entitiesEngine.createEntity();
+        ModelInstanceComponent modelInstanceTest = entitiesEngine.createComponent(ModelInstanceComponent.class);
+        ModelInstance modelInstance = new ModelInstance(GameAssetManager.getInstance().get(GameC.Files.MODELS_FOLDER_NAME + "/" + "cacti.g3dj", Model.class));
+        modelInstance.transform.setTranslation(0, 1, 0);
+        modelInstanceTest.init(modelInstance);
+        test.add(modelInstanceTest);
+        entitiesEngine.addEntity(test);
     }
 
     private void createSystemsHandler() {
