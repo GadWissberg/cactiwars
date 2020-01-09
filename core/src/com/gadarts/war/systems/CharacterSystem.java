@@ -12,7 +12,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
-import com.gadarts.war.BattleScreen;
 import com.gadarts.war.GameC;
 import com.gadarts.war.GameSettings;
 import com.gadarts.war.components.CameraComponent;
@@ -22,6 +21,7 @@ import com.gadarts.war.components.character.CharacterSoundData;
 import com.gadarts.war.components.character.MovementState;
 import com.gadarts.war.components.physics.PhysicsComponent;
 import com.gadarts.war.menu.HudEventsSubscriber;
+import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 

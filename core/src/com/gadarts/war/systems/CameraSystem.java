@@ -10,12 +10,12 @@ import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.gadarts.shared.SharedC.Camera;
-import com.gadarts.war.BattleScreen;
 import com.gadarts.war.GameC;
 import com.gadarts.war.GameSettings;
 import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.character.MovementState;
+import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.systems.player.PlayerSystemEventsSubscriber;
 
 import static com.gadarts.war.systems.physics.PhysicsSystem.auxMatrix;
@@ -27,10 +27,31 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
     private static Vector3 auxVector31 = new Vector3();
     private static Vector3 auxVector32 = new Vector3();
     private static Vector3 auxVector2 = new Vector3();
-    private CameraInputController processor;
+    private CameraInputController debugInputProcessor;
     private Entity cameraEntity;
     private float zoomAcceleration;
     private float zoomSpeed;
+
+    public static CameraInputController createAndSetDebugInputProcessor(PerspectiveCamera camera) {
+        CameraInputController processor = new CameraInputController(camera);
+        processor.autoUpdate = true;
+        Gdx.input.setInputProcessor(processor);
+        return processor;
+    }
+
+    private CameraComponent createCameraComponent(PooledEngine pooledEngine) {
+        CameraComponent cameraComponent = (pooledEngine).createComponent(CameraComponent.class);
+        cameraComponent.setCamera(createCamera());
+        return cameraComponent;
+    }
+
+    public static PerspectiveCamera createCamera() {
+        PerspectiveCamera cam = new PerspectiveCamera(Camera.FOV, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        cam.near = Camera.NEAR;
+        cam.far = Camera.FAR;
+        cam.update();
+        return cam;
+    }
 
     @Override
     public void addedToEngine(Engine engine) {
@@ -40,32 +61,7 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
         CameraComponent cameraComponent = createCameraComponent(pooledEngine);
         cameraEntity.add(cameraComponent);
         engine.addEntity(cameraEntity);
-        createDebugInputProcessor(cameraComponent);
-    }
-
-    private CameraComponent createCameraComponent(PooledEngine pooledEngine) {
-        CameraComponent cameraComponent = (pooledEngine).createComponent(CameraComponent.class);
-        cameraComponent.setCamera(createCamera());
-        return cameraComponent;
-    }
-
-    private void createDebugInputProcessor(CameraComponent cameraComponent) {
-        if (GameSettings.SPECTATOR) {
-            processor = new CameraInputController(cameraComponent.getCamera());
-            processor.autoUpdate = true;
-            Gdx.input.setInputProcessor(processor);
-        }
-    }
-
-    @Override
-    public void update(float deltaTime) {
-        if (BattleScreen.isPaused()) return;
-        super.update(deltaTime);
-        if (processor != null) processor.update();
-        CameraComponent cameraComponent = ComponentsMapper.camera.get(cameraEntity);
-        if (!GameSettings.SPECTATOR && cameraComponent.getTarget() != null) {
-            followTarget(cameraComponent, deltaTime);
-        }
+        if (GameSettings.SPECTATOR) debugInputProcessor = createAndSetDebugInputProcessor(cameraComponent.getCamera());
     }
 
     private void followTarget(CameraComponent cameraComponent, float deltaTime) {
@@ -144,12 +140,15 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
         }
     }
 
-    private PerspectiveCamera createCamera() {
-        PerspectiveCamera cam = new PerspectiveCamera(Camera.FOV, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.near = Camera.NEAR;
-        cam.far = Camera.FAR;
-        cam.update();
-        return cam;
+    @Override
+    public void update(float deltaTime) {
+        if (BattleScreen.isPaused()) return;
+        super.update(deltaTime);
+        if (debugInputProcessor != null) debugInputProcessor.update();
+        CameraComponent cameraComponent = ComponentsMapper.camera.get(cameraEntity);
+        if (!GameSettings.SPECTATOR && cameraComponent.getTarget() != null) {
+            followTarget(cameraComponent, deltaTime);
+        }
     }
 
     /**

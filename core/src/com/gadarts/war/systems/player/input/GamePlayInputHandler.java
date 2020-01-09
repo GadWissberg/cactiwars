@@ -1,7 +1,7 @@
 package com.gadarts.war.systems.player.input;
 
 import com.badlogic.gdx.InputProcessor;
-import com.gadarts.war.BattleScreen;
+import com.gadarts.war.screens.BattleScreen;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,20 +1,18 @@
-package com.gadarts.war;
+package com.gadarts.war.screens;
 
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.gadarts.shared.level.Map;
 import com.gadarts.shared.par.SectionType;
-import com.gadarts.war.components.model.ModelInstanceComponent;
+import com.gadarts.war.GameAssetManager;
+import com.gadarts.war.GameSettings;
+import com.gadarts.war.InGameScreen;
 import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.level.MapCreator;
 import com.gadarts.war.menu.Hud;
 import com.gadarts.war.sound.SFX;
-import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.systems.CharacterSystem;
 import com.gadarts.war.systems.EnvironmentSystem;
 import com.gadarts.war.systems.SystemsHandler;
@@ -23,12 +21,11 @@ import com.gadarts.war.systems.player.PlayerSystem;
 import com.gadarts.war.systems.player.input.GamePlayInputHandler;
 import com.gadarts.war.systems.render.RenderSystem;
 
-public class BattleScreen implements GameScreen {
+public class BattleScreen extends BaseGameScreen implements InGameScreen {
     private static boolean paused;
     private PooledEngine entitiesEngine;
     private ActorFactory actorFactory;
     private Hud hud;
-    private SoundPlayer soundPlayer;
 
     public static boolean isPaused() {
         return paused;
@@ -37,11 +34,6 @@ public class BattleScreen implements GameScreen {
     public void pauseGame() {
         BattleScreen.paused = true;
         hud.activateMenu();
-    }
-
-    @Override
-    public SoundPlayer getSoundPlayer() {
-        return soundPlayer;
     }
 
     @Override
@@ -57,30 +49,22 @@ public class BattleScreen implements GameScreen {
 
     @Override
     public void show() {
-        soundPlayer = new SoundPlayer();
         if (!GameSettings.MUTE_AMB_SOUNDS) {
-            soundPlayer.play(GameAssetManager.getInstance().get(SFX.AMB_WIND.getFileName(), Sound.class), true);
+            getSoundPlayer().play(GameAssetManager.getInstance().get(SFX.AMB_WIND.getFileName(), Sound.class), true);
         }
         entitiesEngine = new PooledEngine();
         createSystemsHandler();
-        actorFactory = new ActorFactory(entitiesEngine, soundPlayer);
+        actorFactory = new ActorFactory(entitiesEngine, getSoundPlayer());
         createWorld();
         initializeInput();
         hud = new Hud(entitiesEngine.getSystem(RenderSystem.class), this);
         hud.subscribeForEvents(entitiesEngine.getSystem(CharacterSystem.class));
         hud.subscribeForEvents(entitiesEngine.getSystem(EnvironmentSystem.class));
         if (GameSettings.MENU_ON_START) pauseGame();
-        Entity test = entitiesEngine.createEntity();
-        ModelInstanceComponent modelInstanceTest = entitiesEngine.createComponent(ModelInstanceComponent.class);
-        ModelInstance modelInstance = new ModelInstance(GameAssetManager.getInstance().get(GameC.Files.MODELS_FOLDER_NAME + "/" + "cacti.g3dj", Model.class));
-        modelInstance.transform.setTranslation(0, 1, 0);
-        modelInstanceTest.init(modelInstance);
-        test.add(modelInstanceTest);
-        entitiesEngine.addEntity(test);
     }
 
     private void createSystemsHandler() {
-        SystemsHandler systemsHandler = new SystemsHandler(entitiesEngine, soundPlayer);
+        SystemsHandler systemsHandler = new SystemsHandler(entitiesEngine, getSoundPlayer());
         systemsHandler.init(this);
     }
 
@@ -136,6 +120,11 @@ public class BattleScreen implements GameScreen {
         entitiesEngine.getSystem(PhysicsSystem.class).dispose();
         entitiesEngine.getSystem(RenderSystem.class).dispose();
         hud.dispose();
+    }
+
+    @Override
+    public void onEscPressed() {
+        resumeGame();
     }
 
 }

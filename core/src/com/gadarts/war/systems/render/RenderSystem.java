@@ -3,6 +3,7 @@ package com.gadarts.war.systems.render;
 import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -17,7 +18,6 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.gadarts.shared.definitions.PointLightDefinition;
-import com.gadarts.war.BattleScreen;
 import com.gadarts.war.GameSettings;
 import com.gadarts.war.GameShaderProvider;
 import com.gadarts.war.components.CameraComponent;
@@ -25,6 +25,7 @@ import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.EnvironmentObjectComponent;
 import com.gadarts.war.components.PointLightComponent;
 import com.gadarts.war.components.model.ModelInstanceComponent;
+import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.systems.physics.CollisionShapesDebugDrawing;
 import com.gadarts.war.systems.physics.PhysicsSystemEventsSubscriber;
 import com.gadarts.war.systems.render.cel.CelDepthShaderProvider;
@@ -69,14 +70,20 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     }
 
 
+    public static void resetDisplay(Color color) {
+        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        int coverageSampling = Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0;
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | coverageSampling);
+        Gdx.gl.glClearColor(color.r, color.g, color.b, 1);
+    }
+
     @Override
     public void update(float deltaTime) {
         if (!BattleScreen.isPaused()) {
             super.update(deltaTime);
             if (GameSettings.CEL_SHADING) {
                 fbo.begin();
-                Gdx.gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-                Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT);
+                resetDisplay(Color.CLEAR);
                 depthBatch.begin(camera);
                 renderInstances(depthBatch, true, null, deltaTime);
                 depthBatch.end();
@@ -90,22 +97,6 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
                 spriteBatch.end();
                 spriteBatch.setShader(null);
             }
-        }
-    }
-
-    public void render(float deltaTime, FrameBuffer frameBuffer) {
-        renderShadows();
-        if (frameBuffer != null) {
-            frameBuffer.begin();
-        }
-        initializeDisplay();
-        renderingDebugHandler.resetCounter();
-        modelBatch.begin(camera);
-        renderInstances(modelBatch, true, environment, deltaTime);
-        modelBatch.end();
-        renderingDebugHandler.renderCollisionShapes(camera);
-        if (frameBuffer != null) {
-            frameBuffer.end();
         }
     }
 
@@ -159,11 +150,20 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
         return camera.frustum.boundsInFrustum(auxVector31, auxVector32);
     }
 
-    public void initializeDisplay() {
-        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        int coverageSampling = Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0;
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | coverageSampling);
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+    public void render(float deltaTime, FrameBuffer frameBuffer) {
+        renderShadows();
+        if (frameBuffer != null) {
+            frameBuffer.begin();
+        }
+        resetDisplay(Color.BLACK);
+        renderingDebugHandler.resetCounter();
+        modelBatch.begin(camera);
+        renderInstances(modelBatch, true, environment, deltaTime);
+        modelBatch.end();
+        renderingDebugHandler.renderCollisionShapes(camera);
+        if (frameBuffer != null) {
+            frameBuffer.end();
+        }
     }
 
     public void dispose() {

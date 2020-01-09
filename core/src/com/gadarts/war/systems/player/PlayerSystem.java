@@ -3,8 +3,8 @@ package com.gadarts.war.systems.player;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
-import com.gadarts.war.BattleScreen;
-import com.gadarts.war.GameScreen;
+import com.gadarts.war.InGameScreen;
+import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.systems.player.input.InputEvent;
 import com.gadarts.war.systems.player.input.KeyMap;
 import com.gadarts.war.systems.player.input.PlayerInputProcessor;
@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerSystem extends EntitySystem implements PlayerInputProcessor, PlayerSystemEventsSubscriber {
-    private final GameScreen parentScreen;
+    private final InGameScreen parentScreen;
     private Entity player;
     private List<PlayerSystemEventsSubscriber> subscribers = new ArrayList<>();
 
-    public PlayerSystem(GameScreen parentScreen) {
+    public PlayerSystem(InGameScreen parentScreen) {
         this.parentScreen = parentScreen;
     }
 

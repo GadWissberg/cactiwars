@@ -20,6 +20,10 @@ public class Profiler {
     private StringBuilder stringBuilder;
     private Label label;
 
+    public Profiler(Stage stage) {
+        this(stage, null);
+    }
+
     public Profiler(Stage stage, RenderSystem renderSystem) {
         this.stage = stage;
         this.renderSystem = renderSystem;
@@ -59,7 +63,7 @@ public class Profiler {
         int valueWithoutText = glProfiler.getTextureBindings() - 1;
         displayLine(GameC.Profiler.GL_TEXTURE_BINDINGS_STRING, valueWithoutText);
         displayLine(GameC.Profiler.GL_VERTEX_COUNT_STRING, glProfiler.getVertexCount().total);
-        displayNumberOfVisibleObjects();
+        if (renderSystem != null) displayNumberOfVisibleObjects();
         glProfiler.reset();
     }
 

@@ -13,8 +13,20 @@ public final class GameC {
     }
 
     public static final class Menu {
+        public static final class MainMenu {
+            public static final int MIN_SPEED = 1;
+            public static final int MAX_SPEED = 3;
+            public static final int NUMBER_OF_CACTI = 5;
+
+            public static final class Camera {
+                public static final float X = 5;
+                public static final float Y = -10;
+                public static final float Z = 10;
+
+            }
+        }
+
         public static final class BlurShaderKeys {
-            public static final String COLOR_MULTIPLIER = "u_colorMultiplier";
             public static final String BLUR_DIRECTION = "u_dir";
             public static final String BLUR_RESOLUTION = "u_resolution";
             public static final String BLUR_RADIUS = "u_radius";

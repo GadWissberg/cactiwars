@@ -1,9 +1,10 @@
 package com.gadarts.war;
 
 import com.badlogic.gdx.Gdx;
+import com.gadarts.war.screens.Screens;
 
 public final class GameSettings {
-    public static final boolean SPECTATOR = true;
+    public static final boolean SPECTATOR = false;
     public static final int LOG_LEVEL = Gdx.app.LOG_DEBUG;
     public static final boolean FULL_SCREEN = false;
     public static final boolean SHOW_GL_PROFILING = true;
@@ -22,5 +23,6 @@ public final class GameSettings {
     public static final boolean CEL_SHADING = true;
     public static final boolean MUTE_AMB_SOUNDS = true;
     public static final boolean MUTE_CHARACTERS_SOUNDS = false;
+    public static final Screens INITIAL_SCREEN = Screens.MAIN_MENU;
 
 }

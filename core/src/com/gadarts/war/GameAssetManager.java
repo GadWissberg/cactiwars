@@ -55,7 +55,9 @@ public class GameAssetManager extends AssetManagerWrapper {
         gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "rock_1.g3dj", Model.class, param);
         gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "rock_2.g3dj", Model.class, param);
         gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "rock_3.g3dj", Model.class, param);
-        gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "cacti.g3dj", Model.class, param);
+        gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "menu_dec_barrel.g3dj", Model.class, param);
+        gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "menu_dec_saguaro.g3dj", Model.class, param);
+        gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "menu_dec_prickly.g3dj", Model.class, param);
     }
 
     private void loadSounds(GameAssetManager gameAssetManager) {

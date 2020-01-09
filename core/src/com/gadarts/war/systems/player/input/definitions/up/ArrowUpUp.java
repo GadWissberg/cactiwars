@@ -1,7 +1,7 @@
 package com.gadarts.war.systems.player.input.definitions.up;
 
 import com.badlogic.ashley.core.Entity;
-import com.gadarts.war.GameScreen;
+import com.gadarts.war.InGameScreen;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.character.CharacterComponent;
 import com.gadarts.war.components.character.MovementState;
@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ArrowUpUp implements InputEvent {
     @Override
-    public boolean execute(Entity entity, List<PlayerSystemEventsSubscriber> subscribers, GameScreen parentScreen) {
+    public boolean execute(Entity entity, List<PlayerSystemEventsSubscriber> subscribers, InGameScreen parentScreen) {
         CharacterComponent characterComponent = ComponentsMapper.characters.get(entity);
         if (characterComponent.getMovementState() == MovementState.ACCELERATING) {
             characterComponent.setMovementState(MovementState.IDLE);
