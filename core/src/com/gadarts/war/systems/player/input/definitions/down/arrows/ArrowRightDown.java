@@ -10,9 +10,9 @@ import java.util.List;
 
 public class ArrowRightDown extends ArrowPressedEvent{
     @Override
-    public boolean execute(Entity entity, List<PlayerSystemEventsSubscriber> subscribers, InGameScreen parentScreen) {
-        super.execute(entity, subscribers, parentScreen);
-        CharacterComponent characterComponent = ComponentsMapper.characters.get(entity);
+    public boolean execute(Entity player, List<PlayerSystemEventsSubscriber> subscribers, InGameScreen parentScreen) {
+        super.execute(player, subscribers, parentScreen);
+        CharacterComponent characterComponent = ComponentsMapper.characters.get(player);
         characterComponent.setRotation(-characterComponent.getRotationDefinition());
         return true;
     }

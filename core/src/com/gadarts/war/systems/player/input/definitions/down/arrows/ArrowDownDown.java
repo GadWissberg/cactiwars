@@ -8,11 +8,14 @@ import com.gadarts.war.systems.player.PlayerSystemEventsSubscriber;
 
 import java.util.List;
 
+/**
+ * Executed when arrow down is pressed.
+ */
 public class ArrowDownDown extends ArrowPressedEvent {
     @Override
-    public boolean execute(Entity entity, List<PlayerSystemEventsSubscriber> subscribers, InGameScreen parentScreen) {
-        super.execute(entity, subscribers, parentScreen);
-        ComponentsMapper.characters.get(entity).setMovementState(MovementState.REVERSE);
+    public boolean execute(Entity player, List<PlayerSystemEventsSubscriber> subscribers, InGameScreen parentScreen) {
+        super.execute(player, subscribers, parentScreen);
+        ComponentsMapper.characters.get(player).setMovementState(MovementState.REVERSE);
         return true;
     }
 }

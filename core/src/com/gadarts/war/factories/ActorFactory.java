@@ -39,6 +39,7 @@ import com.gadarts.war.factories.recycle.CollisionShapesPool;
 import com.gadarts.war.factories.recycle.ModelInstancesPool;
 import com.gadarts.war.sound.SFX;
 import com.gadarts.war.sound.SoundPlayer;
+
 import java.util.List;
 
 import static com.gadarts.war.systems.physics.PhysicsSystem.auxMatrix;
@@ -59,23 +60,23 @@ public class ActorFactory {
         this.soundPlayer = soundPlayer;
     }
 
-    public Entity createPlayer(String modelFileName, float x, float y, float z, float rotation, List<CharacterAdditionalDefinition> additionals) {
+    public Entity createPlayer(PlayerProperties playerProperties) {
         Entity player = engine.createEntity();
-        createPlayerComponent(modelFileName, x, y, z, rotation, additionals, player);
+        createPlayerComponents(playerProperties, player);
+        createPlayerAdditionals(playerProperties.getAdditionals(), player);
         //        body.setCollisionFlags(body.getCollisionFlags() | CF_CUSTOM_MATERIAL_CALLBACK);
         return player;
     }
 
-    private void createPlayerComponent(String modelFileName, float x, float y, float z, float rotation,
-                                       List<CharacterAdditionalDefinition> additionals, Entity player) {
-        ModelInstanceComponent modelInstanceComponent = createModelInstanceComponent(modelFileName, x, y + 0.1f, z);
-        player.add(modelInstanceComponent);
+    private void createPlayerComponents(PlayerProperties pProps, Entity player) {
+        String model = pProps.getModelFileName();
+        ModelInstanceComponent mic = createModelInstanceComponent(model, pProps.getX(), pProps.getY(), pProps.getZ());
+        player.add(mic);
         player.add(engine.createComponent(PlayerComponent.class));
         CharacterComponent characterComponent = createCharacterComponent();
         player.add(characterComponent);
-        player.add(createPlayerPhysicsComponent(modelFileName, rotation, player, modelInstanceComponent));
-        player.add(engine.createComponent(AnimationComponent.class).init(modelInstanceComponent.getModelInstance()));
-        createPlayerAdditionals(additionals, modelInstanceComponent, characterComponent);
+        player.add(createPlayerPhysicsComponent(model, pProps.getRotation(), player, mic));
+        player.add(engine.createComponent(AnimationComponent.class).init(mic.getModelInstance()));
     }
 
     private PhysicsComponent createPlayerPhysicsComponent(String modelFileName, float rotation, Entity player,
@@ -115,16 +116,15 @@ public class ActorFactory {
         body.setContactCallbackFilter(i);
     }
 
-    private void createPlayerAdditionals(List<CharacterAdditionalDefinition> additionals,
-                                         ModelInstanceComponent modelInstanceComponent,
-                                         CharacterComponent characterComponent) {
-        if (additionals != null) {
+    private void createPlayerAdditionals(List<CharacterAdditionalDefinition> additionals, Entity player) {
+        ModelInstanceComponent modelInstanceComponent = player.getComponent(ModelInstanceComponent.class);
+        CharacterComponent characterComponent = player.getComponent(CharacterComponent.class);
+        if (additionals != null)
             for (CharacterAdditionalDefinition definition : additionals) {
                 ModelInstance modelInstance = modelInstanceComponent.getModelInstance();
                 CharacterAdditional characterAdditional = createCharacterAdditional(definition, modelInstance);
                 characterComponent.addAdditional(characterAdditional);
             }
-        }
     }
 
     private CharacterAdditional createCharacterAdditional(CharacterAdditionalDefinition additionalDefinition,
@@ -231,4 +231,5 @@ public class ActorFactory {
         }
         return env;
     }
+
 }

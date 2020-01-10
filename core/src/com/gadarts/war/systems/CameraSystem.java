@@ -29,8 +29,6 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
     private static Vector3 auxVector2 = new Vector3();
     private CameraInputController debugInputProcessor;
     private Entity cameraEntity;
-    private float zoomAcceleration;
-    private float zoomSpeed;
 
     public static CameraInputController createAndSetDebugInputProcessor(PerspectiveCamera camera) {
         CameraInputController processor = new CameraInputController(camera);

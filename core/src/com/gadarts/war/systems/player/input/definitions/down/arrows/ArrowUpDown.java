@@ -10,9 +10,9 @@ import java.util.List;
 
 public class ArrowUpDown extends ArrowPressedEvent {
     @Override
-    public boolean execute(Entity entity, List<PlayerSystemEventsSubscriber> subscribers, InGameScreen parentScreen) {
-        super.execute(entity, subscribers, parentScreen);
-        ComponentsMapper.characters.get(entity).setMovementState(MovementState.ACCELERATING);
+    public boolean execute(Entity player, List<PlayerSystemEventsSubscriber> subscribers, InGameScreen parentScreen) {
+        super.execute(player, subscribers, parentScreen);
+        ComponentsMapper.characters.get(player).setMovementState(MovementState.ACCELERATING);
         for (PlayerSystemEventsSubscriber subscriber : subscribers) {
             subscriber.onMovementAccelerationBegan();
         }
