@@ -1,8 +1,10 @@
-package com.gadarts.war.screens;
+package com.gadarts.war.screens.menu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
@@ -10,6 +12,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
@@ -23,9 +26,11 @@ import com.gadarts.war.GameC.Menu.MainMenu;
 import com.gadarts.war.GameSettings;
 import com.gadarts.war.Profiler;
 import com.gadarts.war.menu.GameMenu;
+import com.gadarts.war.screens.BaseGameScreen;
 import com.gadarts.war.systems.CameraSystem;
 import com.gadarts.war.systems.render.RenderSystem;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class MainMenuScreen extends BaseGameScreen {
@@ -41,12 +46,17 @@ public class MainMenuScreen extends BaseGameScreen {
     private Matrix4 auxMatrix = new Matrix4();
     private GameMenu menu;
     private Profiler profiler;
+    private Texture background;
+    private ShaderProgram backgroundShaderProgram;
+    private MainMenuBackground backgroundObject;
 
     @Override
     public void show() {
         super.show();
         cam = CameraSystem.createCamera();
-        cam.translate(Gdx.graphics.getWidth() / 100f, -Gdx.graphics.getHeight() / 100f, MainMenu.Camera.Z);
+        int width = Gdx.graphics.getWidth();
+        int height = Gdx.graphics.getHeight();
+        cam.translate(width / 100f, -height / 100f, MainMenu.Camera.Z);
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
         environment.add(new DirectionalLight().setDirection(-1, -0.5f, -0.5f).setColor(0.6f, 0.6f, 0.6f, 1f));
         createCacti();
@@ -59,6 +69,16 @@ public class MainMenuScreen extends BaseGameScreen {
         stage.setDebugAll(GameSettings.DRAW_TABLES_BORDERS);
         stage.setViewport(new ScreenViewport(stage.getCamera()));
         profiler = new Profiler(stage);
+        Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
+        pixmap.setColor(1f, 0, 0, 1);
+        pixmap.fillRectangle(0, 0, width, height);
+        background = new Texture(pixmap);
+        pixmap.dispose();
+        String vertexShader = Gdx.files.internal("shaders" + File.separator + "vertex_main_menu_background.glsl").readString();
+        ShaderProgram.pedantic = false;
+        String fragmentShader = Gdx.files.internal("shaders" + File.separator + "fragment_main_menu_background.glsl").readString();
+        backgroundShaderProgram = new ShaderProgram(vertexShader, fragmentShader);
+        backgroundObject = new MainMenuBackground(background, backgroundShaderProgram);
     }
 
     @Override
@@ -66,6 +86,8 @@ public class MainMenuScreen extends BaseGameScreen {
         super.dispose();
         stage.dispose();
         modelBatch.dispose();
+        background.dispose();
+        backgroundShaderProgram.dispose();
     }
 
     private void createCacti() {
@@ -125,6 +147,8 @@ public class MainMenuScreen extends BaseGameScreen {
         super.render(deltaTime);
         if (debugInputProcessor != null) debugInputProcessor.update();
         cam.update();
+        RenderSystem.resetDisplay(Color.BLACK);
+        backgroundObject.draw(stage.getBatch(), 1f);
         renderCacti(deltaTime);
         stage.act(deltaTime);
         stage.draw();
@@ -139,7 +163,6 @@ public class MainMenuScreen extends BaseGameScreen {
 
     private void renderCacti(float deltaTime) {
         modelBatch.begin(cam);
-        RenderSystem.resetDisplay(Color.ROYAL);
         for (CactusDec cactus : cacti) {
             Vector2 movingVector = cactus.getMovingVector();
             ModelInstance modelInstance = cactus.getModelInstance();

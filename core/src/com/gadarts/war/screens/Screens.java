@@ -1,5 +1,7 @@
 package com.gadarts.war.screens;
 
+import com.gadarts.war.screens.menu.MainMenuScreen;
+
 public enum Screens {
     MAIN_MENU(MainMenuScreen.class), BATTLE(BattleScreen.class);
 
