@@ -23,6 +23,6 @@ public final class GameSettings {
     public static final boolean CEL_SHADING = true;
     public static final boolean MUTE_AMB_SOUNDS = true;
     public static final boolean MUTE_CHARACTERS_SOUNDS = false;
-    public static final Screens INITIAL_SCREEN = Screens.MAIN_MENU;
+    public static final Screens INITIAL_SCREEN = Screens.BATTLE;
 
 }
