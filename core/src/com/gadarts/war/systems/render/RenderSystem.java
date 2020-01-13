@@ -55,7 +55,7 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
         super.addedToEngine(engine);
         renderingDebugHandler = new RenderingDebugHandler();
         GameShaderProvider shaderProvider = new GameShaderProvider();
-        modelBatch = new ModelBatch(shaderProvider);
+        modelBatch = new ModelBatch(shaderProvider, new MgsxRenderableSorter());
         Entity cameraEntity = engine.getEntitiesFor(Family.all(CameraComponent.class).get()).get(0);
         camera = ComponentsMapper.camera.get(cameraEntity).getCamera();
         modelInstanceEntities = engine.getEntitiesFor(Family.all(ModelInstanceComponent.class).get());
