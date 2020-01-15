@@ -1,0 +1,21 @@
+{
+  "tiles": [
+    "grass_corner_top_right",
+    "grass_dec_1",
+    "grass_gulf_bottom_left",
+    "grass_gulf_bottom_right",
+    "grass_gulf_top_left",
+    "grass_gulf_top_right",
+    "grass_horizontal_down",
+    "grass_horizontal_up",
+    "grass_vertical_left",
+    "grass_vertical_right",
+    "path",
+    "grass_a",
+    "grass_b",
+    "grass_c",
+    "grass_corner_bottom_left",
+    "grass_corner_bottom_right",
+    "grass_corner_top_left"
+  ]
+}
