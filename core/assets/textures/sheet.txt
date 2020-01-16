@@ -1,4 +1,4 @@
-grass.png
+sheet.png
 size: 216, 432
 format: RGBA8888
 filter: Linear,Linear
