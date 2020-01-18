@@ -21,6 +21,7 @@ import com.badlogic.gdx.physics.bullet.collision.btStaticPlaneShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.utils.Pools;
 import com.gadarts.shared.SharedC;
+import com.gadarts.shared.SharedUtils;
 import com.gadarts.shared.definitions.ActorDefinition;
 import com.gadarts.shared.definitions.CharacterAdditionalDefinition;
 import com.gadarts.shared.definitions.Definitions;
@@ -211,8 +212,7 @@ public class MapCreator extends MapModeler {
 
     private void modelGroundRegion(int z, int x, int regionSize, boolean isSurrounding) {
         Entity ground = new Entity();
-        String grass = GameC.Files.TEXTURES_FOLDER_NAME + "/" + SharedC.TILE_FILE_NAME;
-        TextureAtlas tiles = GameAssetManager.getInstance().get(grass, TextureAtlas.class);
+        TextureAtlas tiles = GameAssetManager.getInstance().get(GameC.Files.TILES_ATLAS_ASSET_NAME, TextureAtlas.class);
         boolean modelAxis = Gdx.app.getLogLevel() == Gdx.app.LOG_DEBUG && GameSettings.SHOW_AXIS && z == 0 && x == 0;
         Model region = modelGroundRegion(modelAxis, tiles, regionSize, "grass_a");
         ground.add(createGroundRegionModelInstanceComponent(z, x, region, regionSize));
@@ -235,8 +235,8 @@ public class MapCreator extends MapModeler {
 
     public void createLevelIntoEngine(Map map, ActorFactory actorFactory) {
         GameAssetManager assetManager = GameAssetManager.getInstance();
-        TextureAtlas tilesAtlas = assetManager.get(GameC.Files.TEXTURES_FOLDER_NAME + "/" + "grass.txt", TextureAtlas.class);
-        modelLevelGround(map, tilesAtlas);
+        SharedUtils.generateAtlasOfTiles(GameAssetManager.getInstance(), GameC.Files.TILES_ATLAS_ASSET_NAME);
+        modelLevelGround(map, assetManager.get(GameC.Files.TILES_ATLAS_ASSET_NAME, TextureAtlas.class));
         createLevelPhysics(map);
         ArrayList<PlacedActorInfo> actors = map.getActors();
         Definitions<ActorDefinition> actorsDefs = assetManager.get(SectionType.DEF + "/" + SharedC.Par.Actors.ACTORS_DEF_NAME, Definitions.class);

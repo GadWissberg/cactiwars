@@ -54,6 +54,8 @@ public final class GameC {
 
 
     public final class Files {
+        public static final String TILES_ATLAS_ASSET_NAME = "ATL/tiles";
+
         public final class Font {
             public final class Size {
 
@@ -72,9 +74,9 @@ public final class GameC {
         }
 
         public static final String ASSETS_PATH = "core/assets/";
-        public static final String TEXTURES_FOLDER_NAME = ASSETS_PATH + "textures";
+        public static final String PIX_FOLDER_NAME = ASSETS_PATH + "pix";
         public static final String MODELS_FOLDER_NAME = ASSETS_PATH + "models";
-        public static final String MAIN_PAR_FILE = "core/assets/terralust.par";
+        public static final String MAIN_PAR_FILE = "core/assets/cactiwars.par";
     }
 
     public final class Camera {

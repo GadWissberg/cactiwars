@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.SnapshotArray;
+import com.gadarts.shared.par.SectionType;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
 import com.gadarts.war.GameC.Menu.CactusIcons;
@@ -62,7 +63,7 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
     }
 
     private void addCactusIcons() {
-        String fileName = GameC.Files.TEXTURES_FOLDER_NAME + "/cactus_icon.png";
+        String fileName = SectionType.TXT + "/cactus_icon.png";
         leftCactusIcon = createCactusIcon(fileName);
         rightCactusIcon = createCactusIcon(fileName);
     }

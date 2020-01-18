@@ -5,14 +5,11 @@ import com.badlogic.gdx.assets.loaders.ModelLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.graphics.g3d.Model;
-import com.gadarts.shared.SharedC;
 import com.gadarts.shared.par.AssetManagerWrapper;
 import com.gadarts.shared.par.MainParLoadingFailureException;
 import com.gadarts.shared.par.ParInflater;
@@ -33,16 +30,10 @@ public class GameAssetManager extends AssetManagerWrapper {
         ParInflater inflater = new ParInflater();
         inflater.inflatePar(inflater.readPar(Files.MAIN_PAR_FILE), this);
         GameAssetManager gameAssetManager = GameAssetManager.getInstance();
-        loadTextures(gameAssetManager);
         loadModels(gameAssetManager);
         loadSounds(gameAssetManager);
         loadFonts(gameAssetManager);
         gameAssetManager.finishLoading();
-    }
-
-    private void loadTextures(GameAssetManager gameAssetManager) {
-        gameAssetManager.load(Files.TEXTURES_FOLDER_NAME + "/" + SharedC.TILE_FILE_NAME, TextureAtlas.class);
-        gameAssetManager.load(Files.TEXTURES_FOLDER_NAME + "/cactus_icon.png", Texture.class);
     }
 
     private void loadModels(GameAssetManager gameAssetManager) {
