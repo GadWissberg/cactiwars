@@ -4,8 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -16,10 +16,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.SnapshotArray;
-import com.gadarts.shared.par.SectionType;
+import com.gadarts.shared.SharedC.AssetRelated;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
 import com.gadarts.war.GameC.Menu.CactusIcons;
+import com.gadarts.war.GameC.Menu.MainMenu;
 import com.gadarts.war.GameSettings;
 import com.gadarts.war.menu.input.MenuInputEventsSubscriber;
 import com.gadarts.war.menu.input.MenuInputHandler;
@@ -63,13 +64,15 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
     }
 
     private void addCactusIcons() {
-        String fileName = SectionType.TXT + "/cactus_icon.png";
-        leftCactusIcon = createCactusIcon(fileName);
-        rightCactusIcon = createCactusIcon(fileName);
+        GameAssetManager am = GameAssetManager.getInstance();
+        TextureAtlas atlas = am.getAsset(AssetRelated.ATLAS_ASSET_PREFIX, MainMenu.ATLAS_NAME, TextureAtlas.class);
+        TextureAtlas.AtlasRegion cactusIcon = atlas.findRegion(CactusIcons.REGION_NAME);
+        leftCactusIcon = createCactusIcon(cactusIcon);
+        rightCactusIcon = createCactusIcon(cactusIcon);
     }
 
-    private Image createCactusIcon(String fileName) {
-        Image cactus = new Image(GameAssetManager.getInstance().get(fileName, Texture.class));
+    private Image createCactusIcon(TextureAtlas.AtlasRegion cactusIcon) {
+        Image cactus = new Image(cactusIcon);
         cactus.setOrigin(cactus.getWidth() / 2, cactus.getHeight() / 2);
         addActor(cactus);
         Action action = createCactusIconAction();

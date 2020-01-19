@@ -19,13 +19,11 @@ import com.badlogic.gdx.physics.bullet.collision.btBroadphaseProxy;
 import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
 import com.badlogic.gdx.physics.bullet.collision.btStaticPlaneShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pools;
 import com.gadarts.shared.SharedC;
 import com.gadarts.shared.SharedUtils;
-import com.gadarts.shared.definitions.ActorDefinition;
-import com.gadarts.shared.definitions.CharacterAdditionalDefinition;
-import com.gadarts.shared.definitions.Definitions;
-import com.gadarts.shared.definitions.EnvironmentObjectDefinition;
+import com.gadarts.shared.definitions.*;
 import com.gadarts.shared.level.Map;
 import com.gadarts.shared.level.MapModeler;
 import com.gadarts.shared.level.PlacedActorInfo;
@@ -43,7 +41,6 @@ import com.gadarts.war.systems.CameraSystem;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 import com.gadarts.war.systems.player.PlayerSystem;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -172,7 +169,7 @@ public class MapCreator extends MapModeler {
     }
 
     private Material getMaterial(Map map, int row, int col, TextureAtlas tilesAtlas) {
-        String name = tilesAtlas.getRegions().get(map.getPath()[row][col]).name;
+        String name = map.getUsedTiles().get(map.getPath()[row][col]).getTileName();
         if (materials.containsKey(name)) return materials.get(name);
         else {
             Material material = createGroundMaterial(tilesAtlas, name);
@@ -235,11 +232,12 @@ public class MapCreator extends MapModeler {
 
     public void createLevelIntoEngine(Map map, ActorFactory actorFactory) {
         GameAssetManager assetManager = GameAssetManager.getInstance();
-        SharedUtils.generateAtlasOfTiles(GameAssetManager.getInstance(), GameC.Files.TILES_ATLAS_ASSET_NAME);
+        Array<TileDefinition> usedTiles = map.getUsedTiles();
+        SharedUtils.generateAtlasOfTiles(GameAssetManager.getInstance(), GameC.Files.TILES_ATLAS_ASSET_NAME, usedTiles);
         modelLevelGround(map, assetManager.get(GameC.Files.TILES_ATLAS_ASSET_NAME, TextureAtlas.class));
         createLevelPhysics(map);
-        ArrayList<PlacedActorInfo> actors = map.getActors();
-        Definitions<ActorDefinition> actorsDefs = assetManager.get(SectionType.DEF + "/" + SharedC.Par.Actors.ACTORS_DEF_NAME, Definitions.class);
+        Array<PlacedActorInfo> actors = map.getActors();
+        Definitions<ActorDefinition> actorsDefs = assetManager.get(SectionType.DEF + "/" + SharedC.AssetRelated.Actors.ACTORS_DEF_NAME, Definitions.class);
         PooledEngine entitiesEngine = getEntitiesEngine();
         for (PlacedActorInfo actor : actors) {
             String actorDefinitionId = actor.getActorDefinitionId();

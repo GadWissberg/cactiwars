@@ -5,14 +5,21 @@ import com.badlogic.gdx.assets.loaders.ModelLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.PixmapPacker;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.graphics.g3d.Model;
-import com.gadarts.shared.par.AssetManagerWrapper;
-import com.gadarts.shared.par.MainParLoadingFailureException;
-import com.gadarts.shared.par.ParInflater;
+import com.gadarts.shared.SharedC.AssetRelated;
+import com.gadarts.shared.definitions.AtlasDefinition;
+import com.gadarts.shared.definitions.Definitions;
+import com.gadarts.shared.par.*;
+import com.gadarts.shared.par.inflations.DefinitionType;
 import com.gadarts.war.GameC.Files;
 import com.gadarts.war.GameC.Files.Font;
 
@@ -34,6 +41,26 @@ public class GameAssetManager extends AssetManagerWrapper {
         loadSounds(gameAssetManager);
         loadFonts(gameAssetManager);
         gameAssetManager.finishLoading();
+        createAtlases();
+    }
+
+    private void createAtlases() {
+        String fileName = SectionType.DEF + AssetRelated.ASSET_NAME_SEPARATOR + DefinitionType.ATLASES.name().toLowerCase();
+        Definitions<AtlasDefinition> atlasesDef = getInstance().get(fileName, Definitions.class);
+        atlasesDef.getDefinitions().forEach((defName, atlasDefinition) -> {
+            PixmapPacker p = new PixmapPacker(Files.ATLAS_SIZE, Files.ATLAS_SIZE, Format.RGBA8888, 0, true);
+            String prefix = SectionType.PIX + AssetRelated.ASSET_NAME_SEPARATOR;
+            atlasDefinition.getTextures().forEach(textureName -> {
+                String pix = prefix + textureName;
+                Pixmap image = getInstance().get(pix);
+                p.pack(textureName, image);
+                unload(pix);
+            });
+            TextureAtlas atlas = p.generateTextureAtlas(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest, false);
+            BaseGameAsset baseGameAsset = new BaseGameAsset(AssetRelated.ATLAS_ASSET_PREFIX + AssetRelated.ASSET_NAME_SEPARATOR + defName, atlas);
+            addAsset(baseGameAsset, TextureAtlas.class);
+            p.dispose();
+        });
     }
 
     private void loadModels(GameAssetManager gameAssetManager) {

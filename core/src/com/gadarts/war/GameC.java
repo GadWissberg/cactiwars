@@ -17,6 +17,7 @@ public final class GameC {
             public static final int MIN_SPEED = 1;
             public static final int MAX_SPEED = 3;
             public static final int NUMBER_OF_CACTI = 5;
+            public static final String ATLAS_NAME = "menu";
 
             public static final class Camera {
                 public static final float X = 5;
@@ -36,10 +37,9 @@ public final class GameC {
         public static final String NAME_OPTIONS_TABLE = "options_table";
 
         public static final class CactusIcons {
-            public static final String NAME_LEFT = "cactus_icon_left";
-            public static final String NAME_RIGHT = "cactus_icon_right";
 
             public static final float MARGIN = 30f;
+            public static final String REGION_NAME = "cactus_icon";
         }
 
     }
@@ -55,6 +55,7 @@ public final class GameC {
 
     public final class Files {
         public static final String TILES_ATLAS_ASSET_NAME = "ATL/tiles";
+        public static final int ATLAS_SIZE = 1024;
 
         public final class Font {
             public final class Size {
