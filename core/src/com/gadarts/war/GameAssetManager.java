@@ -49,16 +49,17 @@ public class GameAssetManager extends AssetManagerWrapper {
         Definitions<AtlasDefinition> atlasesDef = getInstance().get(fileName, Definitions.class);
         atlasesDef.getDefinitions().forEach((defName, atlasDefinition) -> {
             PixmapPacker p = new PixmapPacker(Files.ATLAS_SIZE, Files.ATLAS_SIZE, Format.RGBA8888, 0, true);
-            String prefix = SectionType.PIX + AssetRelated.ASSET_NAME_SEPARATOR;
+            p.setPageWidth(atlasDefinition.getWidth());
+            p.setPageHeight(atlasDefinition.getHeight());
             atlasDefinition.getTextures().forEach(textureName -> {
-                String pix = prefix + textureName;
+                String pix = SectionType.PIX + AssetRelated.ASSET_NAME_SEPARATOR + textureName;
                 Pixmap image = getInstance().get(pix);
                 p.pack(textureName, image);
                 unload(pix);
             });
             TextureAtlas atlas = p.generateTextureAtlas(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest, false);
             BaseGameAsset baseGameAsset = new BaseGameAsset(AssetRelated.ATLAS_ASSET_PREFIX + AssetRelated.ASSET_NAME_SEPARATOR + defName, atlas);
-            addAsset(baseGameAsset, TextureAtlas.class);
+            addGameAsset(baseGameAsset, TextureAtlas.class);
             p.dispose();
         });
     }

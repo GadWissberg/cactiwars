@@ -1,5 +1,9 @@
 {
-  "menu": [
-    "cactus_icon"
-  ]
+  "menu": {
+    "width": 1024,
+    "regions": [
+      "cactus_icon",
+      "logo"
+    ]
+  }
 }

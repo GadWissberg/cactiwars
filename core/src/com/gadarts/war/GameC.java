@@ -13,6 +13,8 @@ public final class GameC {
     }
 
     public static final class Menu {
+        public static final String LOGO_NAME = "logo";
+
         public static final class MainMenu {
             public static final int MIN_SPEED = 1;
             public static final int MAX_SPEED = 3;

@@ -8,14 +8,13 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.SnapshotArray;
+import com.badlogic.gdx.utils.Scaling;
 import com.gadarts.shared.SharedC.AssetRelated;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
@@ -29,19 +28,32 @@ import com.gadarts.war.screens.BaseGameScreen;
 import com.gadarts.war.screens.BattleScreen;
 
 public class GameMenu extends Table implements MenuInputEventsSubscriber {
-    private final Table optionsTable;
+    private final OptionsTable optionsTable;
     private final BaseGameScreen parentScreen;
     private int selected;
     private Image leftCactusIcon;
     private Image rightCactusIcon;
+    private Image logo;
 
     public GameMenu(BaseGameScreen parentScreen) {
         this.parentScreen = parentScreen;
-        addHeader();
-        optionsTable = new Table();
+        addLogo();
+        optionsTable = new OptionsTable();
         optionsTable.setName(GameC.Menu.NAME_OPTIONS_TABLE);
         add(optionsTable).row();
         addCactusIcons();
+    }
+
+    private void addLogo() {
+        GameAssetManager assetManager = GameAssetManager.getInstance();
+        TextureAtlas menuAtlas = assetManager.getGameAsset(
+                AssetRelated.ATLAS_ASSET_PREFIX,
+                MainMenu.ATLAS_NAME,
+                TextureAtlas.class);
+        TextureAtlas.AtlasRegion region = menuAtlas.findRegion(GameC.Menu.LOGO_NAME);
+        logo = new Image(region);
+        logo.setScaling(Scaling.none);
+        add(logo).size(region.getRegionWidth(), region.getRegionHeight()).row();
     }
 
     @Override
@@ -58,14 +70,9 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
         setPosition(stage.getWidth() / 2, stage.getHeight() / 2);
     }
 
-    private void addHeader() {
-        BitmapFont bigFont = GameAssetManager.getInstance().get("cactus_big.ttf", BitmapFont.class);
-        add(new Label(GameC.General.GAME, new Label.LabelStyle(bigFont, Color.WHITE))).row();
-    }
-
     private void addCactusIcons() {
         GameAssetManager am = GameAssetManager.getInstance();
-        TextureAtlas atlas = am.getAsset(AssetRelated.ATLAS_ASSET_PREFIX, MainMenu.ATLAS_NAME, TextureAtlas.class);
+        TextureAtlas atlas = am.getGameAsset(AssetRelated.ATLAS_ASSET_PREFIX, MainMenu.ATLAS_NAME, TextureAtlas.class);
         TextureAtlas.AtlasRegion cactusIcon = atlas.findRegion(CactusIcons.REGION_NAME);
         leftCactusIcon = createCactusIcon(cactusIcon);
         rightCactusIcon = createCactusIcon(cactusIcon);
@@ -87,10 +94,6 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
                 Actions.moveBy(0, 10, duration, Interpolation.exp5));
     }
 
-    public void addOption(GameMenuOption menuOption) {
-        optionsTable.add(menuOption).row();
-    }
-
     public int getSelected() {
         return selected;
     }
@@ -101,23 +104,9 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
     }
 
     public void update() {
-        float optionsTableHeight = optionsTable.getHeight();
-        boolean visible = optionsTableHeight != 0;
-        leftCactusIcon.setVisible(visible);
-        rightCactusIcon.setVisible(visible);
-        repositionCacti();
+        optionsTable.repositionCacti(selected, leftCactusIcon, rightCactusIcon);
     }
 
-    private void repositionCacti() {
-        SnapshotArray<Actor> items = optionsTable.getChildren();
-        GameMenuOption option = (GameMenuOption) items.get(selected);
-        float halfTable = optionsTable.getPrefWidth() / 2;
-        float leftX = -leftCactusIcon.getWidth() / 2 - halfTable - CactusIcons.MARGIN;
-        float rightX = -rightCactusIcon.getWidth() / 2 + halfTable + CactusIcons.MARGIN;
-        float y = option.getY() + leftCactusIcon.getHeight() / 2 - optionsTable.getHeight() + option.getHeight();
-        leftCactusIcon.setPosition(leftX, y);
-        rightCactusIcon.setPosition(rightX, y);
-    }
 
     @Override
     public void onKeyDown(int key) {
@@ -127,7 +116,7 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
         }
     }
 
-    public Table getOptionsTable() {
+    public OptionsTable getOptionsTable() {
         return optionsTable;
     }
 
@@ -154,6 +143,7 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
         stage.addActor(new Label(GameC.General.GAME + " v" + GameC.General.VERSION, labelStyle));
         createMenuTable(stage);
         addMenuOptions(labelStyle);
+        optionsTable.addIndicators(leftCactusIcon, rightCactusIcon);
         update();
         setVisible(BattleScreen.isPaused());
     }
@@ -163,7 +153,7 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
         for (GameMenuOptions option : options) {
             GameMenuOption menuOption = new GameMenuOption(option, labelStyle);
             menuOption.setName(option.name());
-            addOption(menuOption);
+            optionsTable.addOption(menuOption);
         }
     }
 
