@@ -4,7 +4,6 @@ import com.badlogic.gdx.Game;
 import com.gadarts.shared.par.MainParLoadingFailureException;
 import com.gadarts.war.screens.BaseGameScreen;
 import com.gadarts.war.sound.SoundPlayer;
-
 import java.io.IOException;
 
 public class WarGame extends Game {
@@ -26,5 +25,6 @@ public class WarGame extends Game {
     @Override
     public void dispose() {
         GameAssetManager.getInstance().dispose();
+        screen.dispose();
     }
 }

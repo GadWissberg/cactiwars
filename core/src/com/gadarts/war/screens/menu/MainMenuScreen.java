@@ -29,7 +29,6 @@ import com.gadarts.war.menu.GameMenu;
 import com.gadarts.war.screens.BaseGameScreen;
 import com.gadarts.war.systems.CameraSystem;
 import com.gadarts.war.systems.render.RenderSystem;
-
 import java.io.File;
 import java.util.ArrayList;
 
@@ -44,7 +43,6 @@ public class MainMenuScreen extends BaseGameScreen {
     private PerspectiveCamera cam;
     private CameraInputController debugInputProcessor;
     private Matrix4 auxMatrix = new Matrix4();
-    private GameMenu menu;
     private Profiler profiler;
     private Texture background;
     private ShaderProgram backgroundShaderProgram;
@@ -63,7 +61,7 @@ public class MainMenuScreen extends BaseGameScreen {
         if (GameSettings.SPECTATOR) {
             debugInputProcessor = CameraSystem.createAndSetDebugInputProcessor(cam);
         }
-        menu = new GameMenu(this);
+        GameMenu menu = new GameMenu(this);
         menu.initialize(stage);
         menu.setVisible(true);
         stage.setDebugAll(GameSettings.DRAW_TABLES_BORDERS);
