@@ -9,7 +9,6 @@ public final class GameSettings {
     public static final boolean FULL_SCREEN = false;
     public static final boolean SHOW_GL_PROFILING = true;
     public static final boolean SHOW_AXIS = false;
-    public static final boolean ALLOW_SOUND = false;
     public static final boolean DRAW_COLLISION_SHAPES = false;
     public static final boolean MENU_ON_START = false;
     public static final boolean DRAW_TABLES_BORDERS = false;
@@ -21,7 +20,8 @@ public final class GameSettings {
     public static final boolean SKIP_DRAW_SHADOWS = true;
     public static final int FPS_TARGET = 60;
     public static final boolean CEL_SHADING = true;
-    public static final boolean MUTE_AMB_SOUNDS = true;
+    public static final boolean ALLOW_SOUND = false;
+    public static final boolean MUTE_AMB_SOUNDS = false;
     public static final boolean MUTE_CHARACTERS_SOUNDS = false;
     public static final Screens INITIAL_SCREEN = Screens.BATTLE;
 
