@@ -33,7 +33,6 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
     private int selected;
     private Image leftCactusIcon;
     private Image rightCactusIcon;
-    private Image logo;
 
     public GameMenu(BaseGameScreen parentScreen) {
         this.parentScreen = parentScreen;
@@ -51,7 +50,7 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
                 MainMenu.ATLAS_NAME,
                 TextureAtlas.class);
         TextureAtlas.AtlasRegion region = menuAtlas.findRegion(GameC.Menu.LOGO_NAME);
-        logo = new Image(region);
+        Image logo = new Image(region);
         logo.setScaling(Scaling.none);
         add(logo).size(region.getRegionWidth(), region.getRegionHeight()).row();
     }

@@ -1,6 +1,10 @@
 package com.gadarts.war.systems.physics;
 
-import com.badlogic.ashley.core.*;
+import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.EntityListener;
+import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
@@ -13,7 +17,6 @@ import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.physics.PhysicsComponent;
 import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.sound.SoundPlayer;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +28,10 @@ public class PhysicsSystem extends EntitySystem implements EntityListener, GameC
     private final SoundPlayer soundPlayer;
     private PhysicsSystemBulletHandler bulletHandler = new PhysicsSystemBulletHandler();
     private ImmutableArray<Entity> physicals;
+
+    @SuppressWarnings("FieldCanBeLocal")
     private GameContactListener contactListener;
+
     private List<PhysicsSystemEventsSubscriber> subscribers = new ArrayList<PhysicsSystemEventsSubscriber>();
 
     public PhysicsSystem(SoundPlayer soundPlayer) {
