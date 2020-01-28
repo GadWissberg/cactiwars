@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.gadarts.shared.level.Map;
 import com.gadarts.shared.par.SectionType;
 import com.gadarts.war.GameAssetManager;
@@ -34,6 +35,11 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
     public void pauseGame() {
         BattleScreen.paused = true;
         hud.activateMenu();
+    }
+
+    @Override
+    public Stage getHudStage() {
+        return hud.getStage();
     }
 
     @Override
