@@ -13,7 +13,7 @@ public class MenuInputHandler implements InputProcessor {
         for (MenuInputEventsSubscriber subscriber : subscribers) {
             subscriber.onKeyDown(i);
         }
-        return true;
+        return false;
     }
 
     @Override

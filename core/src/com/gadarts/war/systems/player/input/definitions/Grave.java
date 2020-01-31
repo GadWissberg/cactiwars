@@ -8,7 +8,7 @@ import com.gadarts.war.systems.player.input.InputEvent;
 
 import java.util.List;
 
-public class LetterQ implements InputEvent {
+public class Grave implements InputEvent {
 	@Override
 	public boolean execute(Entity entity, List<PlayerSystemEventsSubscriber> subscribers, InGameScreen parentScreen) {
 		Console console = parentScreen.getHudStage().getRoot().findActor(Console.NAME);

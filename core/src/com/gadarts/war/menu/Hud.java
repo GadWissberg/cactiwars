@@ -45,12 +45,16 @@ public class Hud {
 		stage.setViewport(new ScreenViewport(stage.getCamera()));
 		profiler = new Profiler(stage, renderSystem);
 		initializeBlur();
-		stage.addActor(new Console());
+		Console console = new Console();
+		console.subscribeForEvents(parentScreen);
+		stage.addActor(console);
 	}
 
 	public void dispose() {
 		blurShaderProgram.dispose();
 		blurFrameBuffer.dispose();
+		Console console = getStage().getRoot().findActor(Console.NAME);
+		console.dispose();
 		stage.dispose();
 	}
 
@@ -122,4 +126,5 @@ public class Hud {
 	public Stage getStage() {
 		return stage;
 	}
+
 }

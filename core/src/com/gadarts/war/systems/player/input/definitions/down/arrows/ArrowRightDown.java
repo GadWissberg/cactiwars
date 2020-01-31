@@ -14,6 +14,6 @@ public class ArrowRightDown extends ArrowPressedEvent{
         super.execute(player, subscribers, parentScreen);
         CharacterComponent characterComponent = ComponentsMapper.characters.get(player);
         characterComponent.setRotation(-characterComponent.getRotationDefinition());
-        return true;
+        return false;
     }
 }

@@ -8,10 +8,11 @@ import com.gadarts.war.screens.BaseGameScreen;
 import com.gadarts.war.sound.SFX;
 
 public class MenuEnterDefinition implements MenuInputDefinition {
-    @Override
-    public void execute(GameMenu gameMenu, BaseGameScreen parentScreen) {
-        parentScreen.getSoundPlayer().play(GameAssetManager.getInstance().get(SFX.MENU_SELECT.getFileName(), Sound.class));
-        GameMenuOption option = (GameMenuOption) gameMenu.getOptionsTable().getChildren().get(gameMenu.getSelected());
-        option.getOptionDefinition().execute();
-    }
+	@Override
+	public void execute(GameMenu gameMenu, BaseGameScreen parentScreen) {
+		if (!gameMenu.isVisible()) return;
+		parentScreen.getSoundPlayer().play(GameAssetManager.getInstance().get(SFX.MENU_SELECT.getFileName(), Sound.class));
+		GameMenuOption option = (GameMenuOption) gameMenu.getOptionsTable().getChildren().get(gameMenu.getSelected());
+		option.getOptionDefinition().execute();
+	}
 }
