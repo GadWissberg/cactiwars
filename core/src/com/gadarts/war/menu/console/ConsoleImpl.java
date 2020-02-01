@@ -20,7 +20,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.StringBuilder;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.gadarts.war.menu.console.commands.CommandResult;
-import com.gadarts.war.menu.console.commands.Console;
 import com.gadarts.war.menu.console.commands.ConsoleCommands;
 import com.gadarts.war.systems.player.input.KeyMap;
 
