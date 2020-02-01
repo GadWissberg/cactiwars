@@ -17,10 +17,10 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.utils.Pools;
 import com.gadarts.shared.definitions.CharacterAdditionalDefinition;
 import com.gadarts.shared.definitions.PointLightDefinition;
+import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
 import com.gadarts.war.GameC.Tank;
-import com.gadarts.war.GameSettings;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.EnvironmentObjectComponent;
 import com.gadarts.war.components.PlayerComponent;
@@ -184,7 +184,7 @@ public class ActorFactory {
     }
 
     private void initializeCharacterSoundData(CharacterComponent characterComponent) {
-        if (!GameSettings.ALLOW_SOUND || GameSettings.MUTE_CHARACTERS_SOUNDS) return;
+        if (!DefaultGameSettings.ALLOW_SOUND || DefaultGameSettings.MUTE_CHARACTERS_SOUNDS) return;
         Sound engineIdleSound = GameAssetManager.getInstance().get(SFX.ENGINE.getFileName(), Sound.class);
         CharacterSoundData characterSoundData = characterComponent.getCharacterSoundData();
         characterSoundData.setEngineSound(engineIdleSound);

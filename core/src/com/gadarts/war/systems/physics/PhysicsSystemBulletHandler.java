@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.bullet.collision.btGhostPairCallback;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
-import com.gadarts.war.GameSettings;
+import com.gadarts.war.DefaultGameSettings;
 
 public class PhysicsSystemBulletHandler {
     private btDiscreteDynamicsWorld collisionWorld;
@@ -64,7 +64,7 @@ public class PhysicsSystemBulletHandler {
     }
 
     void initializeDebugDrawer() {
-        if (!GameSettings.DRAW_COLLISION_SHAPES) return;
+		if (!DefaultGameSettings.DRAW_COLLISION_SHAPES) return;
         debugDrawer = new DebugDrawer();
         debugDrawer.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_MAX_DEBUG_DRAW_MODE);
         collisionWorld.setDebugDrawer(debugDrawer);

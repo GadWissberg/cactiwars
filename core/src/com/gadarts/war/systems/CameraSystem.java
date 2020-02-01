@@ -10,8 +10,8 @@ import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.gadarts.shared.SharedC.Camera;
+import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameC;
-import com.gadarts.war.GameSettings;
 import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.character.MovementState;
@@ -59,7 +59,8 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
         CameraComponent cameraComponent = createCameraComponent(pooledEngine);
         cameraEntity.add(cameraComponent);
         engine.addEntity(cameraEntity);
-        if (GameSettings.SPECTATOR) debugInputProcessor = createAndSetDebugInputProcessor(cameraComponent.getCamera());
+        if (DefaultGameSettings.SPECTATOR)
+            debugInputProcessor = createAndSetDebugInputProcessor(cameraComponent.getCamera());
     }
 
     private void followTarget(CameraComponent cameraComponent, float deltaTime) {
@@ -144,7 +145,7 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
         super.update(deltaTime);
         if (debugInputProcessor != null) debugInputProcessor.update();
         CameraComponent cameraComponent = ComponentsMapper.camera.get(cameraEntity);
-        if (!GameSettings.SPECTATOR && cameraComponent.getTarget() != null) {
+        if (!DefaultGameSettings.SPECTATOR && cameraComponent.getTarget() != null) {
             followTarget(cameraComponent, deltaTime);
         }
     }

@@ -1,4 +1,4 @@
-package com.gadarts.war.menu;
+package com.gadarts.war.menu.hud;
 
 public interface HudEventsSubscriber {
     void onMenuActivated();

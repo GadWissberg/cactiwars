@@ -1,7 +1,12 @@
 package com.gadarts.war.screens;
 
 import com.badlogic.gdx.Screen;
-import com.gadarts.war.menu.ConsoleEventsSubscriber;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.gadarts.war.Profiler;
+import com.gadarts.war.menu.console.ConsoleEventsSubscriber;
+import com.gadarts.war.menu.console.commands.BordersCommand;
+import com.gadarts.war.menu.console.commands.ConsoleCommands;
+import com.gadarts.war.menu.console.commands.ProfilerCommand;
 import com.gadarts.war.sound.SoundPlayer;
 
 public abstract class BaseGameScreen implements Screen, ConsoleEventsSubscriber {
@@ -52,4 +57,27 @@ public abstract class BaseGameScreen implements Screen, ConsoleEventsSubscriber 
 
 	public abstract void onEscPressed();
 
+	protected String commandProfileExecuted(Profiler profiler) {
+		String msg;
+		profiler.toggle();
+		msg = profiler.isEnabled() ? ProfilerCommand.PROFILING_ACTIVATED : ProfilerCommand.PROFILING_DEACTIVATED;
+		return msg;
+	}
+
+	protected String commandDrawBordersExecuted(Stage stage) {
+		String msg;
+		stage.setDebugAll(!stage.isDebugAll());
+		msg = stage.isDebugAll() ? BordersCommand.BORDERS_ACTIVATED : BordersCommand.BORDERS_DEACTIVATED;
+		return msg;
+	}
+
+	protected String reactToCommand(ConsoleCommands command, Profiler profiler, Stage stage) {
+		String msg = null;
+		if (command == ConsoleCommands.PROFILER) {
+			msg = commandProfileExecuted(profiler);
+		} else if (command == ConsoleCommands.BORDERS) {
+			msg = commandDrawBordersExecuted(stage);
+		}
+		return msg;
+	}
 }

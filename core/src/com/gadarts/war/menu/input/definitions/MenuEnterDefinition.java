@@ -12,7 +12,7 @@ public class MenuEnterDefinition implements MenuInputDefinition {
 	public void execute(GameMenu gameMenu, BaseGameScreen parentScreen) {
 		if (!gameMenu.isVisible()) return;
 		parentScreen.getSoundPlayer().play(GameAssetManager.getInstance().get(SFX.MENU_SELECT.getFileName(), Sound.class));
-		GameMenuOption option = (GameMenuOption) gameMenu.getOptionsTable().getChildren().get(gameMenu.getSelected());
+		GameMenuOption option = (GameMenuOption) gameMenu.getMenuOptionsTable().getChildren().get(gameMenu.getSelected());
 		option.getOptionDefinition().execute();
 	}
 }

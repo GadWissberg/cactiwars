@@ -1,4 +1,4 @@
-package com.gadarts.war.menu;
+package com.gadarts.war.menu.console;
 
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
@@ -19,12 +19,15 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.StringBuilder;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.gadarts.war.menu.console.commands.CommandResult;
+import com.gadarts.war.menu.console.commands.Console;
+import com.gadarts.war.menu.console.commands.ConsoleCommands;
 import com.gadarts.war.systems.player.input.KeyMap;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
-public class Console extends Table {
+public class ConsoleImpl extends Table implements Console {
 	public static final String NAME = "console";
 	public static final int CURSOR_WIDTH = 10;
 	public static final int CURSOR_HEIGHT = 10;
@@ -36,6 +39,7 @@ public class Console extends Table {
 	private static final String INPUT_NAME = "input";
 	private static final String TEXT_LABEL_NAME = "text";
 	private static final Color INPUT_COLOR = Color.WHITE;
+	private static final String NOT_RECOGNIZED = "\'%s\' is not recognized as a command.";
 
 	private final BitmapFont font = new BitmapFont();
 	private Texture backgroundTexture;
@@ -46,8 +50,9 @@ public class Console extends Table {
 	private StringBuilder stringBuilder = new StringBuilder();
 	private SimpleDateFormat date = new SimpleDateFormat("HH:mm:ss");
 	private Timestamp timeStamp = new Timestamp(TimeUtils.millis());
+	private CommandResult commandResult = new CommandResult();
 
-	public Console() {
+	public ConsoleImpl() {
 		setName(NAME);
 		TextureRegionDrawable textBackgroundTexture = createTextBackgroundTexture();
 		float height = Gdx.graphics.getHeight() * 2f / 3f;
@@ -82,19 +87,50 @@ public class Console extends Table {
 		input.setTextFieldListener((textField, c) -> {
 			if (c == KeyMap.GRAVE.getAsciiValue()) {
 				textField.setText(null);
-				if (!Console.this.hasActions()) if (isActive()) deactivate();
+				if (!ConsoleImpl.this.hasActions()) if (isActive()) deactivate();
 			} else if (c == '\r' || c == '\n') {
-				appendLine(textField);
+				applyInput(textField);
 			}
 		});
 	}
 
-	private void appendLine(TextField textField) {
-		String text = textField.getText();
-		timeStamp.setTime(TimeUtils.millis());
-		stringBuilder.append(" [").append(date.format(timeStamp)).append("]: ").append(text).append('\n');
-		((Label) getStage().getRoot().findActor(TEXT_LABEL_NAME)).setText(stringBuilder);
+	private void applyInput(TextField textField) {
+		insertNewLog(textField.getText(), true);
+		String inputCommand = textField.getText();
+		try {
+			ConsoleCommands command = ConsoleCommands.valueOf(prepareInput(inputCommand));
+			command.getCommand().run(this);
+		} catch (Exception e) {
+			insertNewLog(String.format(NOT_RECOGNIZED, inputCommand), false);
+		}
 		textField.setText(null);
+	}
+
+	private String prepareInput(String text) {
+		if (text == null) return null;
+		return text.toUpperCase().replaceAll(" ", "");
+	}
+
+	@Override
+	public void insertNewLog(String text, boolean logTime) {
+		timeStamp.setTime(TimeUtils.millis());
+		if (logTime) {
+			stringBuilder.append(" [").append(date.format(timeStamp)).append("]: ").append(text).append('\n');
+		} else {
+			stringBuilder.append(text).append('\n');
+		}
+		((Label) getStage().getRoot().findActor(TEXT_LABEL_NAME)).setText(stringBuilder);
+	}
+
+	@Override
+	public CommandResult notifyCommandExecution(ConsoleCommands command) {
+		boolean result = false;
+		commandResult.clear();
+		for (ConsoleEventsSubscriber sub : subscribers) {
+			result |= sub.onCommandRun(command, commandResult);
+		}
+		commandResult.setResult(result);
+		return commandResult;
 	}
 
 	private TextureRegionDrawable createCursorTexture() {
@@ -137,7 +173,7 @@ public class Console extends Table {
 		float amountY = -Gdx.graphics.getHeight() / 3f;
 		addAction(Actions.moveBy(0, amountY, TRANSITION_DURATION, INTERPOLATION));
 		setVisible(true);
-		subscribers.forEach(ConsoleEventsSubscriber::consoleActivated);
+		subscribers.forEach(ConsoleEventsSubscriber::onConsoleActivated);
 	}
 
 	public void deactivate() {
@@ -146,7 +182,7 @@ public class Console extends Table {
 		float amountY = Gdx.graphics.getHeight() / 3f;
 		MoveByAction move = Actions.moveBy(0, amountY, TRANSITION_DURATION, Interpolation.pow2);
 		addAction(Actions.sequence(move, Actions.visible(false)));
-		subscribers.forEach(ConsoleEventsSubscriber::consoleDeactivated);
+		subscribers.forEach(ConsoleEventsSubscriber::onConsoleDeactivated);
 		getStage().unfocusAll();
 		((InputMultiplexer) Gdx.input.getInputProcessor()).removeProcessor(getStage());
 	}

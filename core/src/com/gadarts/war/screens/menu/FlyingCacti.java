@@ -15,9 +15,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
+import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
-import com.gadarts.war.GameSettings;
 import com.gadarts.war.systems.CameraSystem;
 
 public class FlyingCacti {
@@ -40,7 +40,7 @@ public class FlyingCacti {
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
 		environment.add(new DirectionalLight().setDirection(-1, -0.5f, -0.5f).setColor(0.6f, 0.6f, 0.6f, 1f));
 		createCacti();
-		if (GameSettings.SPECTATOR) {
+		if (DefaultGameSettings.SPECTATOR) {
 			debugInputProcessor = CameraSystem.createAndSetDebugInputProcessor(cam);
 		}
 	}

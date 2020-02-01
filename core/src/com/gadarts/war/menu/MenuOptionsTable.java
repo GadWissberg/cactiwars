@@ -3,16 +3,16 @@ package com.gadarts.war.menu;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
-public class OptionsTable extends Table {
-    private final Table leftSide = new Table();
-    private final Table rightSide = new Table();
-    private Table options = new Table();
+public class MenuOptionsTable extends Table {
+	private final Table leftSide = new Table();
+	private final Table rightSide = new Table();
+	private Table options = new Table();
 
-    public OptionsTable() {
-        add(leftSide);
-        add(options);
-        add(rightSide);
-    }
+	public MenuOptionsTable() {
+		add(leftSide);
+		add(options);
+		add(rightSide);
+	}
 
     public void addOption(GameMenuOption menuOption) {
         options.add(menuOption).row();

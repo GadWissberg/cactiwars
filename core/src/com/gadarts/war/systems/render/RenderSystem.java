@@ -18,7 +18,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.gadarts.shared.definitions.PointLightDefinition;
-import com.gadarts.war.GameSettings;
+import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameShaderProvider;
 import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
@@ -63,10 +63,10 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.1f, 0.1f, 0.1f, 1f));
         shadowRenderer = new ShadowRenderer(environment);
         engine.addEntityListener(this);
-        if (GameSettings.CEL_SHADING) {
-            fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),
-                    true);
-        }
+		if (DefaultGameSettings.CEL_SHADING) {
+			fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),
+					true);
+		}
     }
 
 
@@ -81,27 +81,27 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     public void update(float deltaTime) {
         if (!BattleScreen.isPaused()) {
             super.update(deltaTime);
-            if (GameSettings.CEL_SHADING) {
-                fbo.begin();
-                resetDisplay(Color.CLEAR);
-                depthBatch.begin(camera);
-                renderInstances(depthBatch, true, null, deltaTime);
-                depthBatch.end();
-                fbo.end();
-            }
+			if (DefaultGameSettings.CEL_SHADING) {
+				fbo.begin();
+				resetDisplay(Color.CLEAR);
+				depthBatch.begin(camera);
+				renderInstances(depthBatch, true, null, deltaTime);
+				depthBatch.end();
+				fbo.end();
+			}
             render(deltaTime, null);
-            if (GameSettings.CEL_SHADING) {
-                spriteBatch.setShader(lineShader);
-                spriteBatch.begin();
-                spriteBatch.draw(fbo.getColorBufferTexture(), 0, 0, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 1, 1, 0, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false, true);
-                spriteBatch.end();
-                spriteBatch.setShader(null);
-            }
+			if (DefaultGameSettings.CEL_SHADING) {
+				spriteBatch.setShader(lineShader);
+				spriteBatch.begin();
+				spriteBatch.draw(fbo.getColorBufferTexture(), 0, 0, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 1, 1, 0, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false, true);
+				spriteBatch.end();
+				spriteBatch.setShader(null);
+			}
         }
     }
 
     private void renderShadows() {
-        if (GameSettings.SKIP_DRAWING_MODE && GameSettings.SKIP_DRAW_SHADOWS) return;
+		if (DefaultGameSettings.SKIP_DRAWING_MODE && DefaultGameSettings.SKIP_DRAW_SHADOWS) return;
         shadowRenderer.begin(camera);
         renderInstances(shadowRenderer.getShadowBatch(), false, null, -1);
         shadowRenderer.end();
@@ -132,12 +132,12 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     }
 
     private boolean shouldSkipRender(Entity entity) {
-        if (!GameSettings.SKIP_DRAWING_MODE) return false;
-        boolean groundCheck = GameSettings.SKIP_GROUND_DRAWING && ComponentsMapper.ground.has(entity);
-        boolean characterCheck = GameSettings.SKIP_CHARACTER_DRAWING && ComponentsMapper.characters.has(entity);
-        boolean envCheck = GameSettings.SKIP_ENV_OBJECT_DRAWING && ComponentsMapper.environmentObject.has(entity);
-        return groundCheck || characterCheck || envCheck;
-    }
+		if (!DefaultGameSettings.SKIP_DRAWING_MODE) return false;
+		boolean groundCheck = DefaultGameSettings.SKIP_GROUND_DRAWING && ComponentsMapper.ground.has(entity);
+		boolean characterCheck = DefaultGameSettings.SKIP_CHARACTER_DRAWING && ComponentsMapper.characters.has(entity);
+		boolean envCheck = DefaultGameSettings.SKIP_ENV_OBJECT_DRAWING && ComponentsMapper.environmentObject.has(entity);
+		return groundCheck || characterCheck || envCheck;
+	}
 
     private boolean isVisible(PerspectiveCamera camera, Entity entity) {
         ModelInstanceComponent modelInstanceComponent = ComponentsMapper.modelInstance.get(entity);
@@ -169,12 +169,12 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     public void dispose() {
         modelBatch.dispose();
         shadowRenderer.dispose();
-        if (GameSettings.CEL_SHADING) {
-            depthBatch.dispose();
-            spriteBatch.dispose();
-            fbo.dispose();
-            lineShader.dispose();
-        }
+		if (DefaultGameSettings.CEL_SHADING) {
+			depthBatch.dispose();
+			spriteBatch.dispose();
+			fbo.dispose();
+			lineShader.dispose();
+		}
     }
 
     public int getNumberOfVisible() {

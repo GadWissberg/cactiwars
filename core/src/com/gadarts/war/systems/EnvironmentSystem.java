@@ -1,7 +1,7 @@
 package com.gadarts.war.systems;
 
 import com.badlogic.ashley.core.EntitySystem;
-import com.gadarts.war.menu.HudEventsSubscriber;
+import com.gadarts.war.menu.hud.HudEventsSubscriber;
 import com.gadarts.war.sound.SFX;
 import com.gadarts.war.sound.SoundPlayer;
 

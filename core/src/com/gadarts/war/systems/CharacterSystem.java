@@ -12,15 +12,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
+import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameC;
-import com.gadarts.war.GameSettings;
 import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.character.CharacterComponent;
 import com.gadarts.war.components.character.CharacterSoundData;
 import com.gadarts.war.components.character.MovementState;
 import com.gadarts.war.components.physics.PhysicsComponent;
-import com.gadarts.war.menu.HudEventsSubscriber;
+import com.gadarts.war.menu.hud.HudEventsSubscriber;
 import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.systems.physics.PhysicsSystem;
@@ -55,7 +55,8 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
             super.update(deltaTime);
             for (Entity character : characters) {
                 handleMovement(character, deltaTime);
-                if (GameSettings.ALLOW_SOUND && !GameSettings.MUTE_CHARACTERS_SOUNDS) handleCharacterSound(character);
+                if (DefaultGameSettings.ALLOW_SOUND && !DefaultGameSettings.MUTE_CHARACTERS_SOUNDS)
+                    handleCharacterSound(character);
             }
         }
     }
@@ -188,7 +189,7 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
 
     @Override
     public void onMenuActivated() {
-        if (!GameSettings.ALLOW_SOUND) return;
+        if (!DefaultGameSettings.ALLOW_SOUND) return;
         for (Entity character : characters) {
             CharacterSoundData characterSoundData = ComponentsMapper.characters.get(character).getCharacterSoundData();
             soundPlayer.pauseSound(characterSoundData.getEngineSound(), characterSoundData.getEngineSoundId());
@@ -197,7 +198,7 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
 
     @Override
     public void onMenuDeactivated() {
-        if (!GameSettings.ALLOW_SOUND) return;
+        if (!DefaultGameSettings.ALLOW_SOUND) return;
         for (Entity character : characters) {
             CharacterSoundData characterSoundData = ComponentsMapper.characters.get(character).getCharacterSoundData();
             soundPlayer.resumeSound(characterSoundData.getEngineSound(), characterSoundData.getEngineSoundId());

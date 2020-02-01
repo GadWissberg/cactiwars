@@ -28,9 +28,9 @@ import com.gadarts.shared.level.Map;
 import com.gadarts.shared.level.MapModeler;
 import com.gadarts.shared.level.PlacedActorInfo;
 import com.gadarts.shared.par.SectionType;
+import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
-import com.gadarts.war.GameSettings;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.GroundComponent;
 import com.gadarts.war.components.model.ModelInstanceComponent;
@@ -133,9 +133,9 @@ public class MapCreator extends MapModeler {
                 modelGroundRegion(map, tilesAtlas, row, col);
             }
         }
-        if (!GameSettings.SKIP_DRAWING_MODE || !GameSettings.SKIP_DRAWING_SURROUNDING_TERRAIN) {
-            modelSurroundingGround();
-        }
+		if (!DefaultGameSettings.SKIP_DRAWING_MODE || !DefaultGameSettings.SKIP_DRAWING_SURROUNDING_TERRAIN) {
+			modelSurroundingGround();
+		}
     }
 
     private void modelGroundRegion(Map map, TextureAtlas tilesAtlas, int originRow, int originCol) {
@@ -209,9 +209,9 @@ public class MapCreator extends MapModeler {
 
     private void modelGroundRegion(int z, int x, int regionSize, boolean isSurrounding) {
         Entity ground = new Entity();
-        TextureAtlas tiles = GameAssetManager.getInstance().get(GameC.Files.TILES_ATLAS_ASSET_NAME, TextureAtlas.class);
-        boolean modelAxis = Gdx.app.getLogLevel() == Gdx.app.LOG_DEBUG && GameSettings.SHOW_AXIS && z == 0 && x == 0;
-        Model region = modelGroundRegion(modelAxis, tiles, regionSize, "grass_a");
+		TextureAtlas tiles = GameAssetManager.getInstance().get(GameC.Files.TILES_ATLAS_ASSET_NAME, TextureAtlas.class);
+		boolean modelAxis = Gdx.app.getLogLevel() == Gdx.app.LOG_DEBUG && DefaultGameSettings.SHOW_AXIS && z == 0 && x == 0;
+		Model region = modelGroundRegion(modelAxis, tiles, regionSize, "grass_a");
         ground.add(createGroundRegionModelInstanceComponent(z, x, region, regionSize));
         GroundComponent groundComponent = getEntitiesEngine().createComponent(GroundComponent.class);
         groundComponent.init(!isSurrounding);

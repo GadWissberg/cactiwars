@@ -7,12 +7,14 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.gadarts.shared.level.Map;
 import com.gadarts.shared.par.SectionType;
+import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameAssetManager;
-import com.gadarts.war.GameSettings;
 import com.gadarts.war.InGameScreen;
 import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.level.MapCreator;
-import com.gadarts.war.menu.Hud;
+import com.gadarts.war.menu.console.commands.CommandResult;
+import com.gadarts.war.menu.console.commands.ConsoleCommands;
+import com.gadarts.war.menu.hud.Hud;
 import com.gadarts.war.sound.SFX;
 import com.gadarts.war.systems.CharacterSystem;
 import com.gadarts.war.systems.EnvironmentSystem;
@@ -55,7 +57,7 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 
 	@Override
 	public void show() {
-		if (!GameSettings.MUTE_AMB_SOUNDS) {
+		if (!DefaultGameSettings.MUTE_AMB_SOUNDS) {
 			getSoundPlayer().play(GameAssetManager.getInstance().get(SFX.AMB_WIND.getFileName(), Sound.class), true);
 		}
 		entitiesEngine = new PooledEngine();
@@ -66,7 +68,7 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 		hud = new Hud(entitiesEngine.getSystem(RenderSystem.class), this);
 		hud.subscribeForEvents(entitiesEngine.getSystem(CharacterSystem.class));
 		hud.subscribeForEvents(entitiesEngine.getSystem(EnvironmentSystem.class));
-		if (GameSettings.MENU_ON_START) pauseGame();
+		if (DefaultGameSettings.MENU_ON_START) pauseGame();
 	}
 
 	private void createSystemsHandler() {
@@ -75,7 +77,7 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 	}
 
 	private void initializeInput() {
-		if (!GameSettings.SPECTATOR) {
+		if (!DefaultGameSettings.SPECTATOR) {
 			InputMultiplexer multiplexer = new InputMultiplexer();
 			GamePlayInputHandler processor = new GamePlayInputHandler();
 			multiplexer.addProcessor(processor);
@@ -134,12 +136,18 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 	}
 
 	@Override
-	public void consoleActivated() {
+	public void onConsoleActivated() {
 		paused = true;
 	}
 
 	@Override
-	public void consoleDeactivated() {
+	public boolean onCommandRun(ConsoleCommands command, CommandResult commandResult) {
+		commandResult.setMessage(reactToCommand(command, hud.getProfiler(), getHudStage()));
+		return true;
+	}
+
+	@Override
+	public void onConsoleDeactivated() {
 		paused = false;
 	}
 }

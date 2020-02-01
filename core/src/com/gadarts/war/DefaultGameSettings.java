@@ -3,7 +3,7 @@ package com.gadarts.war;
 import com.badlogic.gdx.Gdx;
 import com.gadarts.war.screens.Screens;
 
-public final class GameSettings {
+public final class DefaultGameSettings {
     public static final boolean SPECTATOR = false;
     public static final int LOG_LEVEL = Gdx.app.LOG_DEBUG;
     public static final boolean FULL_SCREEN = false;

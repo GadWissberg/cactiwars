@@ -1,4 +1,4 @@
-package com.gadarts.war.menu;
+package com.gadarts.war.menu.hud;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -8,9 +8,11 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameC;
-import com.gadarts.war.GameSettings;
 import com.gadarts.war.Profiler;
+import com.gadarts.war.menu.GameMenu;
+import com.gadarts.war.menu.console.ConsoleImpl;
 import com.gadarts.war.screens.BaseGameScreen;
 import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.sound.SFX;
@@ -39,22 +41,22 @@ public class Hud {
 		this.renderSystem = renderSystem;
 		this.parentScreen = parentScreen;
 		stage = new Stage();
-		stage.setDebugAll(GameSettings.DRAW_TABLES_BORDERS);
+		stage.setDebugAll(DefaultGameSettings.DRAW_TABLES_BORDERS);
 		menu = new GameMenu(parentScreen);
 		menu.initialize(stage);
 		stage.setViewport(new ScreenViewport(stage.getCamera()));
 		profiler = new Profiler(stage, renderSystem);
 		initializeBlur();
-		Console console = new Console();
-		console.subscribeForEvents(parentScreen);
-		stage.addActor(console);
+		ConsoleImpl consoleImpl = new ConsoleImpl();
+		consoleImpl.subscribeForEvents(parentScreen);
+		stage.addActor(consoleImpl);
 	}
 
 	public void dispose() {
 		blurShaderProgram.dispose();
 		blurFrameBuffer.dispose();
-		Console console = getStage().getRoot().findActor(Console.NAME);
-		console.dispose();
+		ConsoleImpl consoleImpl = getStage().getRoot().findActor(ConsoleImpl.NAME);
+		consoleImpl.dispose();
 		stage.dispose();
 	}
 
@@ -127,4 +129,7 @@ public class Hud {
 		return stage;
 	}
 
+	public Profiler getProfiler() {
+		return profiler;
+	}
 }

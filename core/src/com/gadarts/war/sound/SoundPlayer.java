@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector3;
+import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameAssetManager;
-import com.gadarts.war.GameSettings;
 
 public class SoundPlayer {
 
@@ -76,7 +76,7 @@ public class SoundPlayer {
     }
 
     public long play(Sound sound, boolean loop, PerspectiveCamera camera, Vector3 soundSourcePosition) {
-        if (!GameSettings.ALLOW_SOUND) return -1;
+		if (!DefaultGameSettings.ALLOW_SOUND) return -1;
         long id;
         boolean dynamicSound = camera != null && soundSourcePosition != null;
         float volume = dynamicSound ? calculateVolume(camera, soundSourcePosition) : 1f;

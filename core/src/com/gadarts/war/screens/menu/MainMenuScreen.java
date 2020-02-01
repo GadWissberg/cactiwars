@@ -7,9 +7,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.gadarts.war.GameSettings;
+import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.Profiler;
 import com.gadarts.war.menu.GameMenu;
+import com.gadarts.war.menu.console.commands.CommandResult;
+import com.gadarts.war.menu.console.commands.ConsoleCommands;
 import com.gadarts.war.screens.BaseGameScreen;
 import com.gadarts.war.systems.render.RenderSystem;
 
@@ -33,7 +35,7 @@ public class MainMenuScreen extends BaseGameScreen {
 		GameMenu menu = new GameMenu(this);
 		menu.initialize(stage);
 		menu.setVisible(true);
-		stage.setDebugAll(GameSettings.DRAW_TABLES_BORDERS);
+		stage.setDebugAll(DefaultGameSettings.DRAW_TABLES_BORDERS);
 		stage.setViewport(new ScreenViewport(stage.getCamera()));
 		profiler = new Profiler(stage);
 		Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
@@ -77,12 +79,19 @@ public class MainMenuScreen extends BaseGameScreen {
 
 
 	@Override
-	public void consoleActivated() {
+	public void onConsoleActivated() {
 
 	}
 
 	@Override
-	public void consoleDeactivated() {
+	public boolean onCommandRun(ConsoleCommands command, CommandResult commandResult) {
+		commandResult.setMessage(reactToCommand(command, profiler, stage));
+		return true;
+	}
+
+
+	@Override
+	public void onConsoleDeactivated() {
 
 	}
 }

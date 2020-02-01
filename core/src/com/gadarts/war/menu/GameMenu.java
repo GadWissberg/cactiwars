@@ -16,11 +16,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Scaling;
 import com.gadarts.shared.SharedC.AssetRelated;
+import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
 import com.gadarts.war.GameC.Menu.CactusIcons;
 import com.gadarts.war.GameC.Menu.MainMenu;
-import com.gadarts.war.GameSettings;
 import com.gadarts.war.menu.input.MenuInputEventsSubscriber;
 import com.gadarts.war.menu.input.MenuInputHandler;
 import com.gadarts.war.menu.input.definitions.MenuInputDefinitions;
@@ -28,7 +28,7 @@ import com.gadarts.war.screens.BaseGameScreen;
 import com.gadarts.war.screens.BattleScreen;
 
 public class GameMenu extends Table implements MenuInputEventsSubscriber {
-    private final OptionsTable optionsTable;
+    private final MenuOptionsTable menuOptionsTable;
     private final BaseGameScreen parentScreen;
     private int selected;
     private Image leftCactusIcon;
@@ -37,9 +37,9 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
     public GameMenu(BaseGameScreen parentScreen) {
         this.parentScreen = parentScreen;
         addLogo();
-        optionsTable = new OptionsTable();
-        optionsTable.setName(GameC.Menu.NAME_OPTIONS_TABLE);
-        add(optionsTable).row();
+        menuOptionsTable = new MenuOptionsTable();
+        menuOptionsTable.setName(GameC.Menu.NAME_OPTIONS_TABLE);
+        add(menuOptionsTable).row();
         addCactusIcons();
     }
 
@@ -103,7 +103,7 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
     }
 
     public void update() {
-        optionsTable.repositionCacti(selected, leftCactusIcon, rightCactusIcon);
+        menuOptionsTable.repositionCacti(selected, leftCactusIcon, rightCactusIcon);
     }
 
 
@@ -115,14 +115,14 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
         }
     }
 
-    public OptionsTable getOptionsTable() {
-        return optionsTable;
+    public MenuOptionsTable getMenuOptionsTable() {
+        return menuOptionsTable;
     }
 
     private void createMenuTable(Stage stage) {
         MenuInputHandler menuInputHandler = new MenuInputHandler();
         menuInputHandler.subscribeForInputEvents(this);
-        if (!GameSettings.SPECTATOR) {
+        if (!DefaultGameSettings.SPECTATOR) {
             InputMultiplexer multiplexer = (InputMultiplexer) Gdx.input.getInputProcessor();
             InputProcessor processor;
             if (multiplexer != null) {
@@ -142,7 +142,7 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
         stage.addActor(new Label(GameC.General.GAME + " v" + GameC.General.VERSION, labelStyle));
         createMenuTable(stage);
         addMenuOptions(labelStyle);
-        optionsTable.addIndicators(leftCactusIcon, rightCactusIcon);
+        menuOptionsTable.addIndicators(leftCactusIcon, rightCactusIcon);
         update();
         setVisible(BattleScreen.isPaused());
     }
@@ -152,7 +152,7 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
         for (GameMenuOptions option : options) {
             GameMenuOption menuOption = new GameMenuOption(option, labelStyle);
             menuOption.setName(option.name());
-            optionsTable.addOption(menuOption);
+            menuOptionsTable.addOption(menuOption);
         }
     }
 

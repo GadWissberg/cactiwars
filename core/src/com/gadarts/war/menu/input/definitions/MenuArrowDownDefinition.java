@@ -11,11 +11,11 @@ public class MenuArrowDownDefinition implements MenuInputDefinition {
     public void execute(GameMenu gameMenu, BaseGameScreen parentScreen) {
         parentScreen.getSoundPlayer().play(GameAssetManager.getInstance().get(SFX.MENU_MOVE.getFileName(), Sound.class));
         int selected = gameMenu.getSelected();
-        if (selected == gameMenu.getOptionsTable().getNumberOfOptions() - 1) {
-            gameMenu.setSelected(0);
-        } else {
-            gameMenu.setSelected(selected + 1);
-        }
+        if (selected == gameMenu.getMenuOptionsTable().getNumberOfOptions() - 1) {
+			gameMenu.setSelected(0);
+		} else {
+			gameMenu.setSelected(selected + 1);
+		}
         gameMenu.update();
     }
 }
