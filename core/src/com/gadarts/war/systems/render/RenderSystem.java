@@ -101,7 +101,7 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     }
 
     private void renderShadows() {
-		if (DefaultGameSettings.SKIP_DRAWING_MODE && DefaultGameSettings.SKIP_DRAW_SHADOWS) return;
+        if (RenderSettings.SKIP_DRAWING_MODE && RenderSettings.SKIP_DRAW_SHADOWS) return;
         shadowRenderer.begin(camera);
         renderInstances(shadowRenderer.getShadowBatch(), false, null, -1);
         shadowRenderer.end();
@@ -132,12 +132,12 @@ public class RenderSystem extends EntitySystem implements PhysicsSystemEventsSub
     }
 
     private boolean shouldSkipRender(Entity entity) {
-		if (!DefaultGameSettings.SKIP_DRAWING_MODE) return false;
-		boolean groundCheck = DefaultGameSettings.SKIP_GROUND_DRAWING && ComponentsMapper.ground.has(entity);
-		boolean characterCheck = DefaultGameSettings.SKIP_CHARACTER_DRAWING && ComponentsMapper.characters.has(entity);
-		boolean envCheck = DefaultGameSettings.SKIP_ENV_OBJECT_DRAWING && ComponentsMapper.environmentObject.has(entity);
-		return groundCheck || characterCheck || envCheck;
-	}
+        if (!RenderSettings.SKIP_DRAWING_MODE) return false;
+        boolean groundCheck = RenderSettings.SKIP_GROUND_DRAWING && ComponentsMapper.ground.has(entity);
+        boolean characterCheck = RenderSettings.SKIP_CHARACTER_DRAWING && ComponentsMapper.characters.has(entity);
+        boolean envCheck = RenderSettings.SKIP_ENV_OBJECT_DRAWING && ComponentsMapper.environmentObject.has(entity);
+        return groundCheck || characterCheck || envCheck;
+    }
 
     private boolean isVisible(PerspectiveCamera camera, Entity entity) {
         ModelInstanceComponent modelInstanceComponent = ComponentsMapper.modelInstance.get(entity);

@@ -12,12 +12,6 @@ public final class DefaultGameSettings {
     public static final boolean DRAW_COLLISION_SHAPES = false;
     public static final boolean MENU_ON_START = false;
     public static final boolean DRAW_TABLES_BORDERS = false;
-    public static final boolean SKIP_DRAWING_MODE = false;
-    public static final boolean SKIP_GROUND_DRAWING = true;
-    public static final boolean SKIP_CHARACTER_DRAWING = true;
-    public static final boolean SKIP_ENV_OBJECT_DRAWING = true;
-    public static final boolean SKIP_DRAWING_SURROUNDING_TERRAIN = true;
-    public static final boolean SKIP_DRAW_SHADOWS = true;
     public static final int FPS_TARGET = 60;
     public static final boolean CEL_SHADING = true;
     public static final boolean ALLOW_SOUND = false;

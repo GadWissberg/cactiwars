@@ -19,7 +19,7 @@ public class GamePlayInputHandler implements InputProcessor  {
                 sub.onKeyDown(keyMapByKeyCode);
             }
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class GamePlayInputHandler implements InputProcessor  {
                 sub.onKeyUp(KeyMap.findKeyMapByKeyCode(keycode));
             }
         }
-        return true;
+		return false;
     }
 
     @Override

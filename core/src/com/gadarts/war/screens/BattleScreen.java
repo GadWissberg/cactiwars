@@ -13,7 +13,7 @@ import com.gadarts.war.InGameScreen;
 import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.level.MapCreator;
 import com.gadarts.war.menu.console.commands.CommandResult;
-import com.gadarts.war.menu.console.commands.ConsoleCommands;
+import com.gadarts.war.menu.console.commands.Commands;
 import com.gadarts.war.menu.hud.Hud;
 import com.gadarts.war.sound.SFX;
 import com.gadarts.war.systems.CharacterSystem;
@@ -141,7 +141,7 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 	}
 
 	@Override
-	public boolean onCommandRun(ConsoleCommands command, CommandResult commandResult) {
+	public boolean onCommandRun(Commands command, CommandResult commandResult) {
 		commandResult.setMessage(reactToCommand(command, hud.getProfiler(), getHudStage()));
 		return true;
 	}

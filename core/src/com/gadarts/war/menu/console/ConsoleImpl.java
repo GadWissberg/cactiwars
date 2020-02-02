@@ -1,8 +1,6 @@
 package com.gadarts.war.menu.console;
 
-import com.badlogic.gdx.Files;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -20,13 +18,14 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.StringBuilder;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.gadarts.war.menu.console.commands.CommandResult;
-import com.gadarts.war.menu.console.commands.ConsoleCommands;
+import com.gadarts.war.menu.console.commands.Commands;
 import com.gadarts.war.systems.player.input.KeyMap;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Stack;
 
-public class ConsoleImpl extends Table implements Console {
+public class ConsoleImpl extends Table implements Console, InputProcessor {
 	public static final String NAME = "console";
 	public static final int CURSOR_WIDTH = 10;
 	public static final int CURSOR_HEIGHT = 10;
@@ -50,6 +49,8 @@ public class ConsoleImpl extends Table implements Console {
 	private SimpleDateFormat date = new SimpleDateFormat("HH:mm:ss");
 	private Timestamp timeStamp = new Timestamp(TimeUtils.millis());
 	private CommandResult commandResult = new CommandResult();
+	private Stack<String> inputHistory = new Stack<>();
+	private Stack<String> inputHistoryAux = new Stack<>();
 
 	public ConsoleImpl() {
 		setName(NAME);
@@ -97,8 +98,13 @@ public class ConsoleImpl extends Table implements Console {
 		insertNewLog(textField.getText(), true);
 		String inputCommand = textField.getText();
 		try {
-			ConsoleCommands command = ConsoleCommands.valueOf(prepareInput(inputCommand));
-			command.getCommand().run(this);
+			if (!inputHistoryAux.empty()) {
+				inputHistoryAux.insertElementAt(inputCommand, 0);
+			} else {
+				inputHistory.push(inputCommand);
+			}
+			Commands command = Commands.findCommandByNameOrAlias(prepareInput(inputCommand));
+			command.getCommandImpl().run(this);
 		} catch (Exception e) {
 			insertNewLog(String.format(NOT_RECOGNIZED, inputCommand), false);
 		}
@@ -122,7 +128,7 @@ public class ConsoleImpl extends Table implements Console {
 	}
 
 	@Override
-	public CommandResult notifyCommandExecution(ConsoleCommands command) {
+	public CommandResult notifyCommandExecution(Commands command) {
 		boolean result = false;
 		commandResult.clear();
 		for (ConsoleEventsSubscriber sub : subscribers) {
@@ -167,12 +173,18 @@ public class ConsoleImpl extends Table implements Console {
 	public void activate() {
 		if (active) return;
 		getStage().setKeyboardFocus(getStage().getRoot().findActor(INPUT_NAME));
-		((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(getStage());
+		initializeInput();
 		active = true;
 		float amountY = -Gdx.graphics.getHeight() / 3f;
 		addAction(Actions.moveBy(0, amountY, TRANSITION_DURATION, INTERPOLATION));
 		setVisible(true);
 		subscribers.forEach(ConsoleEventsSubscriber::onConsoleActivated);
+	}
+
+	private void initializeInput() {
+		InputMultiplexer inputProcessor = (InputMultiplexer) Gdx.input.getInputProcessor();
+		inputProcessor.addProcessor(this);
+		inputProcessor.addProcessor(getStage());
 	}
 
 	public void deactivate() {
@@ -183,7 +195,13 @@ public class ConsoleImpl extends Table implements Console {
 		addAction(Actions.sequence(move, Actions.visible(false)));
 		subscribers.forEach(ConsoleEventsSubscriber::onConsoleDeactivated);
 		getStage().unfocusAll();
-		((InputMultiplexer) Gdx.input.getInputProcessor()).removeProcessor(getStage());
+		detachInput();
+	}
+
+	private void detachInput() {
+		InputMultiplexer inputProcessor = (InputMultiplexer) Gdx.input.getInputProcessor();
+		inputProcessor.removeProcessor(this);
+		inputProcessor.removeProcessor(getStage());
 	}
 
 	public boolean isActive() {
@@ -200,5 +218,60 @@ public class ConsoleImpl extends Table implements Console {
 	public void subscribeForEvents(ConsoleEventsSubscriber subscriber) {
 		if (subscribers.contains(subscriber, true)) return;
 		subscribers.add(subscriber);
+	}
+
+	@Override
+	public boolean keyDown(int keycode) {
+		if (keycode == Input.Keys.DOWN) {
+			manipulateInputHistory(inputHistoryAux, inputHistory);
+		} else if (keycode == Input.Keys.UP) {
+			manipulateInputHistory(inputHistory, inputHistoryAux);
+		}
+		return false;
+	}
+
+	@Override
+	public boolean keyUp(int keycode) {
+		return false;
+	}
+
+	private boolean manipulateInputHistory(Stack<String> takeFrom, Stack<String> putIn) {
+		if (takeFrom.empty()) return true;
+		TextField input = getStage().getRoot().findActor(INPUT_NAME);
+		String pop = takeFrom.pop();
+		input.setText(pop);
+		input.setCursorPosition(input.getText().length());
+		putIn.push(pop);
+		return true;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		return false;
+	}
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		return false;
+	}
+
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		return false;
+	}
+
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		return false;
+	}
+
+	@Override
+	public boolean mouseMoved(int screenX, int screenY) {
+		return false;
+	}
+
+	@Override
+	public boolean scrolled(int amount) {
+		return false;
 	}
 }
