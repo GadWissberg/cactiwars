@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.StringBuilder;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.gadarts.war.menu.console.commands.CommandInvoke;
 import com.gadarts.war.menu.console.commands.CommandResult;
 import com.gadarts.war.menu.console.commands.Commands;
 import com.gadarts.war.systems.player.input.KeyMap;
@@ -30,14 +31,17 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	public static final int CURSOR_WIDTH = 10;
 	public static final int CURSOR_HEIGHT = 10;
 	public static final Interpolation.Pow INTERPOLATION = Interpolation.pow2;
-	private static final float TRANSITION_DURATION = 1f;
+	public static final String NOT_RECOGNIZED = "\'%s\' is not recognized as a command.";
 	private static final float INPUT_HEIGHT = 20f;
 	private static final float PADDING = 10f;
 	private static final Color TEXT_BACKGROUND_COLOR = new Color(0, 0.2f, 0, 0.8f);
 	private static final String INPUT_NAME = "input";
 	private static final String TEXT_LABEL_NAME = "text";
 	private static final Color INPUT_COLOR = Color.WHITE;
-	private static final String NOT_RECOGNIZED = "\'%s\' is not recognized as a command.";
+	private static final float TRANSITION_DURATION = 0.5f;
+	private static final String PARAMETER_EXPECTED = "Failed to apply command! Parameter is expected at \'%s\'";
+	private static final String PARAMETER_VALUE_EXPECTED = "Failed to apply command! Value is expected for " +
+			"parameter \'%s\'";
 
 	private final BitmapFont font = new BitmapFont();
 	private Texture backgroundTexture;
@@ -97,23 +101,37 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	private void applyInput(TextField textField) {
 		insertNewLog(textField.getText(), true);
 		String inputCommand = textField.getText();
+		if (!inputHistoryAux.empty()) inputHistoryAux.insertElementAt(inputCommand, 0);
+		else inputHistory.push(inputCommand);
 		try {
-			if (!inputHistoryAux.empty()) {
-				inputHistoryAux.insertElementAt(inputCommand, 0);
-			} else {
-				inputHistory.push(inputCommand);
-			}
-			Commands command = Commands.findCommandByNameOrAlias(prepareInput(inputCommand));
-			command.getCommandImpl().run(this);
-		} catch (Exception e) {
-			insertNewLog(String.format(NOT_RECOGNIZED, inputCommand), false);
+			CommandInvoke commandToInvoke;
+			commandToInvoke = parseCommandFromInput(inputCommand);
+			commandToInvoke.getCommand().getCommandImpl().run(this, commandToInvoke.getParameters());
+		} catch (InputParsingFailureException e) {
+			insertNewLog(e.getMessage(), false);
 		}
 		textField.setText(null);
 	}
 
-	private String prepareInput(String text) {
+	private CommandInvoke parseCommandFromInput(String text) throws InputParsingFailureException {
 		if (text == null) return null;
-		return text.toUpperCase().replaceAll(" ", "");
+		String[] entries = text.toUpperCase().split(" ");
+		String commandName = entries[0];
+		CommandInvoke command;
+		command = new CommandInvoke(Commands.findCommandByNameOrAlias(commandName));
+		parseParameters(entries, command);
+		return command;
+	}
+
+	private void parseParameters(String[] entries, CommandInvoke command) throws InputParsingFailureException {
+		for (int i = 1; i < entries.length; i += 2) {
+			String parameter = entries[i];
+			if (!parameter.startsWith("-"))
+				throw new InputParsingFailureException(String.format(PARAMETER_EXPECTED, parameter));
+			if (i + 1 == entries.length || entries[i + 1].startsWith("-"))
+				throw new InputParsingFailureException(String.format(PARAMETER_VALUE_EXPECTED, parameter));
+			command.addParameter(parameter.substring(1), entries[i + 1]);
+		}
 	}
 
 	@Override

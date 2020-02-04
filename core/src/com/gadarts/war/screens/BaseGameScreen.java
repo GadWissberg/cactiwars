@@ -4,9 +4,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.gadarts.war.Profiler;
 import com.gadarts.war.menu.console.ConsoleEventsSubscriber;
-import com.gadarts.war.menu.console.commands.BordersCommand;
 import com.gadarts.war.menu.console.commands.Commands;
-import com.gadarts.war.menu.console.commands.ProfilerCommand;
+import com.gadarts.war.menu.console.commands.types.BordersCommand;
+import com.gadarts.war.menu.console.commands.types.ProfilerCommand;
 import com.gadarts.war.sound.SoundPlayer;
 
 public abstract class BaseGameScreen implements Screen, ConsoleEventsSubscriber {
