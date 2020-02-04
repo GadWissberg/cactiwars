@@ -134,7 +134,7 @@ public class MapCreator extends MapModeler {
                 modelGroundRegion(map, tilesAtlas, row, col);
             }
         }
-        if (!RenderSettings.SKIP_DRAWING_MODE || !RenderSettings.SKIP_DRAWING_SURROUNDING_TERRAIN) {
+        if (!RenderSettings.SKIP_DRAWING_SURROUNDING_TERRAIN) {
             modelSurroundingGround();
         }
     }
