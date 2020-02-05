@@ -133,6 +133,7 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 	@Override
 	public void onEscPressed() {
 		resumeGame();
+		hud.getConsoleImpl().deactivate();
 	}
 
 	@Override

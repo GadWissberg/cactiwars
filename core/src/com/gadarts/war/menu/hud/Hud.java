@@ -26,6 +26,7 @@ public class Hud {
 	private final Stage stage;
 	private final RenderSystem renderSystem;
 	private final BaseGameScreen parentScreen;
+	private final ConsoleImpl consoleImpl;
 	private ShaderProgram blurShaderProgram;
 	private Profiler profiler;
 	private GameMenu menu;
@@ -47,9 +48,13 @@ public class Hud {
 		stage.setViewport(new ScreenViewport(stage.getCamera()));
 		profiler = new Profiler(stage, renderSystem);
 		initializeBlur();
-		ConsoleImpl consoleImpl = new ConsoleImpl();
+		consoleImpl = new ConsoleImpl();
 		consoleImpl.subscribeForEvents(parentScreen);
 		stage.addActor(consoleImpl);
+	}
+
+	public ConsoleImpl getConsoleImpl() {
+		return consoleImpl;
 	}
 
 	public void dispose() {
