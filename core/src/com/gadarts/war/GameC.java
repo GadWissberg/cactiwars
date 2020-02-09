@@ -85,7 +85,7 @@ public final class GameC {
     public final class Camera {
 
         public static final float MAX_X_FRONT_OFFSET = 5;
-        public static final float MAX_Z_FRONT_OFFSET = 8;
+        public static final float MAX_Z_FRONT_OFFSET = 10f;
         public static final float MIN_Z_FRONT_OFFSET = 5;
         public static final float MAX_ZOOM_DISTANCE = 150;
         public static final float MIN_ZOOM_DISTANCE = 50;
