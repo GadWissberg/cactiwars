@@ -2,7 +2,6 @@ package com.gadarts.war.systems;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -23,7 +22,7 @@ import static com.gadarts.war.systems.physics.PhysicsSystem.auxMatrix;
 /**
  * Defines the camera's movement and behaviour.
  */
-public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubscriber {
+public class CameraSystem extends GameEntitySystem implements PlayerSystemEventsSubscriber {
     private static Vector3 auxVector31 = new Vector3();
     private static Vector3 auxVector32 = new Vector3();
     private static Vector3 auxVector2 = new Vector3();
@@ -179,5 +178,10 @@ public class CameraSystem extends EntitySystem implements PlayerSystemEventsSubs
 
     public Entity getCameraEntity() {
         return cameraEntity;
+    }
+
+    @Override
+    public void onResize(int width, int height) {
+
     }
 }

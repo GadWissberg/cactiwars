@@ -18,6 +18,7 @@ import com.gadarts.war.menu.hud.Hud;
 import com.gadarts.war.sound.SFX;
 import com.gadarts.war.systems.CharacterSystem;
 import com.gadarts.war.systems.EnvironmentSystem;
+import com.gadarts.war.systems.GameEntitySystem;
 import com.gadarts.war.systems.SystemsHandler;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 import com.gadarts.war.systems.player.PlayerSystem;
@@ -106,6 +107,7 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 	@Override
 	public void resize(int width, int height) {
 		hud.resize(width, height);
+		entitiesEngine.getSystems().forEach(system -> ((GameEntitySystem) system).onResize(width, height));
 	}
 
 	@Override

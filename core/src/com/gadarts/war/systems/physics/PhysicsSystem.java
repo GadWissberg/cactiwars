@@ -1,6 +1,9 @@
 package com.gadarts.war.systems.physics;
 
-import com.badlogic.ashley.core.*;
+import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.EntityListener;
+import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
@@ -13,21 +16,22 @@ import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.physics.PhysicsComponent;
 import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.sound.SoundPlayer;
+import com.gadarts.war.systems.GameEntitySystem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhysicsSystem extends EntitySystem implements EntityListener, GameContactListenerEventsSubscriber {
-    public static Matrix4 auxMatrix = new Matrix4();
-    public static Vector3 auxVector = new Vector3();
-    public static Vector3 auxVector2 = new Vector3();
+public class PhysicsSystem extends GameEntitySystem implements EntityListener, GameContactListenerEventsSubscriber {
+	public static Matrix4 auxMatrix = new Matrix4();
+	public static Vector3 auxVector = new Vector3();
+	public static Vector3 auxVector2 = new Vector3();
 
-    private final SoundPlayer soundPlayer;
-    private PhysicsSystemBulletHandler bulletHandler = new PhysicsSystemBulletHandler();
-    private ImmutableArray<Entity> physicals;
+	private final SoundPlayer soundPlayer;
+	private PhysicsSystemBulletHandler bulletHandler = new PhysicsSystemBulletHandler();
+	private ImmutableArray<Entity> physicals;
 
-    @SuppressWarnings("FieldCanBeLocal")
-    private GameContactListener contactListener;
+	@SuppressWarnings("FieldCanBeLocal")
+	private GameContactListener contactListener;
 
     private List<PhysicsSystemEventsSubscriber> subscribers = new ArrayList<PhysicsSystemEventsSubscriber>();
 
@@ -120,14 +124,19 @@ public class PhysicsSystem extends EntitySystem implements EntityListener, GameC
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void environmentObjectStaticValueChanged(Entity entity, boolean newValue) {
-        for (PhysicsSystemEventsSubscriber subscriber : subscribers) {
-            subscriber.onEnvironmentObjectStaticValueChange(newValue, entity);
-        }
-    }
+	private void environmentObjectStaticValueChanged(Entity entity, boolean newValue) {
+		for (PhysicsSystemEventsSubscriber subscriber : subscribers) {
+			subscriber.onEnvironmentObjectStaticValueChange(newValue, entity);
+		}
+	}
 
-    public void subscribeForEvents(PhysicsSystemEventsSubscriber subscriber) {
-        if (subscribers.contains(subscriber)) return;
-        subscribers.add(subscriber);
-    }
+	public void subscribeForEvents(PhysicsSystemEventsSubscriber subscriber) {
+		if (subscribers.contains(subscriber)) return;
+		subscribers.add(subscriber);
+	}
+
+	@Override
+	public void onResize(int width, int height) {
+
+	}
 }

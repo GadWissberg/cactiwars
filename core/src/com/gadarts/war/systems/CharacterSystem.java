@@ -2,10 +2,8 @@ package com.gadarts.war.systems;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
@@ -26,7 +24,7 @@ import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 
-public class CharacterSystem extends EntitySystem implements HudEventsSubscriber {
+public class CharacterSystem extends GameEntitySystem implements HudEventsSubscriber {
 	private static Vector3 auxVector31 = new Vector3();
 	private static Vector3 auxVector32 = new Vector3();
 	private static Vector2 auxVector21 = new Vector2();
@@ -90,7 +88,6 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
 	}
 
 	private void handleMovement(Entity character) {
-		Gdx.app.log("TEST", "" + ComponentsMapper.physics.get(character).getBody().getLinearVelocity().len2());
 		takeStep(character);
 		handleAccelerating(character);
 		handleRotation(character);
@@ -204,5 +201,10 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
 			CharacterSoundData characterSoundData = ComponentsMapper.characters.get(character).getCharacterSoundData();
 			soundPlayer.resumeSound(characterSoundData.getEngineSound(), characterSoundData.getEngineSoundId());
 		}
+	}
+
+	@Override
+	public void onResize(int width, int height) {
+
 	}
 }

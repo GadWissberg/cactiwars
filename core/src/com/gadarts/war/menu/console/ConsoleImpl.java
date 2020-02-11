@@ -1,6 +1,9 @@
 package com.gadarts.war.menu.console;
 
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -31,7 +34,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	public static final int CURSOR_WIDTH = 10;
 	public static final int CURSOR_HEIGHT = 10;
 	public static final Interpolation.Pow INTERPOLATION = Interpolation.pow2;
-	public static final String NOT_RECOGNIZED = "\'%s\' is not recognized as a command.";
+	public static final String NOT_RECOGNIZED = "'%s' is not recognized as a command.";
 	private static final float INPUT_HEIGHT = 20f;
 	private static final float PADDING = 10f;
 	private static final Color TEXT_BACKGROUND_COLOR = new Color(0, 0.2f, 0, 0.8f);
@@ -39,9 +42,10 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	private static final String TEXT_LABEL_NAME = "text";
 	private static final Color INPUT_COLOR = Color.WHITE;
 	private static final float TRANSITION_DURATION = 0.5f;
-	private static final String PARAMETER_EXPECTED = "Failed to apply command! Parameter is expected at \'%s\'";
+	private static final String PARAMETER_EXPECTED = "Failed to apply command! Parameter is expected at '%s'";
 	private static final String PARAMETER_VALUE_EXPECTED = "Failed to apply command! Value is expected for " +
-			"parameter \'%s\'";
+			"parameter '%s'";
+	private static final Color CONSOLE_BACKGROUND_COLOR = new Color(0, 0.1f, 0, 1f);
 
 	private final BitmapFont font = new BitmapFont();
 	private Texture backgroundTexture;
@@ -55,6 +59,8 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	private CommandResult commandResult = new CommandResult();
 	private Stack<String> inputHistory = new Stack<>();
 	private Stack<String> inputHistoryAux = new Stack<>();
+	private Label.LabelStyle textStyle;
+	private Label textView;
 
 	public ConsoleImpl() {
 		setName(NAME);
@@ -73,12 +79,11 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	}
 
 	private void createBackgroundTexture(int height) {
-		Pixmap pixmap = new Pixmap(Gdx.files.getFileHandle("console.jpg", Files.FileType.Local));
-		Pixmap cropped = new Pixmap(Gdx.graphics.getWidth(), height, Format.RGBA8888);
-		cropped.drawPixmap(pixmap, 0, 0, 0, pixmap.getHeight() - height, pixmap.getWidth(), height);
-		backgroundTexture = new Texture(cropped);
+		Pixmap pixmap = new Pixmap(Gdx.graphics.getWidth(), height, Format.RGBA8888);
+		pixmap.setColor(CONSOLE_BACKGROUND_COLOR);
+		pixmap.fillRectangle(0, 0, Gdx.graphics.getWidth(), height);
+		backgroundTexture = new Texture(pixmap);
 		pixmap.dispose();
-		cropped.dispose();
 	}
 
 	private void createInputField(TextureRegionDrawable textBackgroundTexture) {
@@ -86,7 +91,9 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 				null, textBackgroundTexture);
 		TextField input = new TextField("", style);
 		input.setName(INPUT_NAME);
-		add(input).size(Gdx.graphics.getWidth() - PADDING * 2, INPUT_HEIGHT).pad(PADDING).row();
+		Label arrow = new Label(">", textStyle);
+		add(arrow).padBottom(PADDING).padLeft(PADDING).size(10f, INPUT_HEIGHT);
+		add(input).size(Gdx.graphics.getWidth() - PADDING * 3, INPUT_HEIGHT).padBottom(PADDING).padRight(PADDING).align(Align.left).row();
 		input.setFocusTraversal(false);
 		input.setTextFieldListener((textField, c) -> {
 			if (c == KeyMap.GRAVE.getAsciiValue()) {
@@ -167,15 +174,15 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	}
 
 	private void addTextView(TextureRegionDrawable textBackgroundTexture, int consoleHeight) {
-		Label.LabelStyle textStyle = new Label.LabelStyle(font, Color.WHITE);
+		textStyle = new Label.LabelStyle(font, Color.WHITE);
 		textStyle.background = textBackgroundTexture;
 		float width = Gdx.graphics.getWidth() - PADDING * 2;
-		float height = consoleHeight - (PADDING * 2 + INPUT_HEIGHT);
-		Label label = new Label(stringBuilder, textStyle);
-		label.setAlignment(Align.bottomLeft);
-		label.setName(TEXT_LABEL_NAME);
-		label.setWrap(true);
-		add(label).size(width, height).align(Align.bottomLeft).padRight(PADDING).padLeft(PADDING).row();
+		float height = consoleHeight - (INPUT_HEIGHT);
+		textView = new Label(stringBuilder, textStyle);
+		textView.setAlignment(Align.bottomLeft);
+		textView.setName(TEXT_LABEL_NAME);
+		textView.setWrap(true);
+		add(textView).colspan(2).size(width, height).align(Align.bottomLeft).padRight(PADDING).padLeft(PADDING).row();
 	}
 
 	private TextureRegionDrawable createTextBackgroundTexture() {
