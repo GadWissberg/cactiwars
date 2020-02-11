@@ -19,8 +19,10 @@ import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
 import com.gadarts.war.systems.CameraSystem;
+import com.gadarts.war.systems.render.CelRenderer;
+import com.gadarts.war.systems.render.CelRendererUser;
 
-public class FlyingCacti {
+public class FlyingCactiRenderer implements CelRendererUser {
 
 	private static Vector3 auxVector31 = new Vector3();
 	private static Vector3 auxVector32 = new Vector3();
@@ -31,6 +33,7 @@ public class FlyingCacti {
 	private PerspectiveCamera cam;
 	private CameraInputController debugInputProcessor;
 	private Array<CactusDec> flyingCacti = new Array<>();
+	private CelRenderer celRenderer;
 
 	public void initialize() {
 		cam = CameraSystem.createCamera();
@@ -43,6 +46,8 @@ public class FlyingCacti {
 		if (DefaultGameSettings.SPECTATOR) {
 			debugInputProcessor = CameraSystem.createAndSetDebugInputProcessor(cam);
 		}
+		celRenderer = new CelRenderer();
+		celRenderer.initialize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	}
 
 	private ModelInstance createCactusModelInstance(String fileName) {
@@ -79,7 +84,14 @@ public class FlyingCacti {
 	}
 
 	void render(float deltaTime) {
+		celRenderer.renderDepth(cam, this, deltaTime);
 		modelBatch.begin(cam);
+		renderCacti(modelBatch, deltaTime);
+		modelBatch.end();
+		celRenderer.renderOutline();
+	}
+
+	private void renderCacti(ModelBatch batch, float deltaTime) {
 		for (int i = 0; i < flyingCacti.size; i++) {
 			CactusDec cactus = flyingCacti.get(i);
 			Vector2 movingVector = cactus.getMovingVector();
@@ -113,13 +125,13 @@ public class FlyingCacti {
 			} else if (inside) {
 				cactus.setBeenInside(true);
 			}
-			modelBatch.render(modelInstance, environment);
+			batch.render(modelInstance, environment);
 		}
-		modelBatch.end();
 	}
 
 	public void dispose() {
 		modelBatch.dispose();
+		celRenderer.dispose();
 	}
 
 	private void resetCactus(CactusDec cactus) {
@@ -146,4 +158,12 @@ public class FlyingCacti {
 		cam.update();
 	}
 
+	public void onResize(int width, int height) {
+		celRenderer.onResize(width, height);
+	}
+
+	@Override
+	public void renderDepthWithInstances(ModelBatch depthBatchToRenderWith, float deltaTime) {
+		renderCacti(depthBatchToRenderWith, deltaTime);
+	}
 }

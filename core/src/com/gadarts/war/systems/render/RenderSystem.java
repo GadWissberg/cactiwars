@@ -9,15 +9,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.gadarts.shared.definitions.PointLightDefinition;
@@ -32,13 +29,11 @@ import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.systems.GameEntitySystem;
 import com.gadarts.war.systems.physics.CollisionShapesDebugDrawing;
 import com.gadarts.war.systems.physics.PhysicsSystemEventsSubscriber;
-import com.gadarts.war.systems.render.cel.CelDepthShaderProvider;
-import com.gadarts.war.systems.render.cel.CelLineShaderProgram;
 import com.gadarts.war.systems.render.shadow.ShadowRenderer;
 
 import java.util.List;
 
-public class RenderSystem extends GameEntitySystem implements PhysicsSystemEventsSubscriber, EntityListener {
+public class RenderSystem extends GameEntitySystem implements PhysicsSystemEventsSubscriber, EntityListener, CelRendererUser {
 	private static Vector3 auxVector31 = new Vector3();
 	private static Vector3 auxVector32 = new Vector3();
 	private static BoundingBox auxBoundingBox1 = new BoundingBox();
@@ -49,10 +44,7 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 	private Environment environment;
 	private ShadowRenderer shadowRenderer;
 	private RenderingDebugHandler renderingDebugHandler;
-	private FrameBuffer celShaderFbo;
-	private ModelBatch depthBatch = new ModelBatch(new CelDepthShaderProvider());
-	private SpriteBatch spriteBatch = new SpriteBatch();
-	private ShaderProgram lineShader = new CelLineShaderProgram();
+	private CelRenderer celRenderer;
 
 	public static void resetDisplay(Color color) {
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -64,6 +56,7 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 	@Override
 	public void addedToEngine(Engine engine) {
 		super.addedToEngine(engine);
+		celRenderer = new CelRenderer();
 		renderingDebugHandler = new RenderingDebugHandler();
 		GameShaderProvider shaderProvider = new GameShaderProvider();
 		modelBatch = new ModelBatch(shaderProvider, new MgsxRenderableSorter());
@@ -74,35 +67,17 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.1f, 0.1f, 0.1f, 1f));
 		shadowRenderer = new ShadowRenderer(environment);
 		engine.addEntityListener(this);
-		createCelShaderFbo(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		celRenderer.initialize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	}
 
-	private void createCelShaderFbo(int width, int height) {
-		if (DefaultGameSettings.CEL_SHADING) {
-			celShaderFbo = new FrameBuffer(Pixmap.Format.RGBA8888, width, height, true);
-		}
-	}
 
 	@Override
 	public void update(float deltaTime) {
 		if (!BattleScreen.isPaused()) {
 			super.update(deltaTime);
-			if (DefaultGameSettings.CEL_SHADING) {
-				celShaderFbo.begin();
-				resetDisplay(Color.CLEAR);
-				depthBatch.begin(camera);
-				renderInstances(depthBatch, true, null, deltaTime);
-				depthBatch.end();
-				celShaderFbo.end();
-			}
+			celRenderer.renderDepth(camera, this, deltaTime);
 			render(deltaTime, null);
-			if (DefaultGameSettings.CEL_SHADING) {
-				spriteBatch.setShader(lineShader);
-				spriteBatch.begin();
-				spriteBatch.draw(celShaderFbo.getColorBufferTexture(), 0, 0, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 1, 1, 0, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false, true);
-				spriteBatch.end();
-				spriteBatch.setShader(null);
-			}
+			celRenderer.renderOutline();
 		}
 	}
 
@@ -175,10 +150,7 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 		modelBatch.dispose();
 		shadowRenderer.dispose();
 		if (DefaultGameSettings.CEL_SHADING) {
-			depthBatch.dispose();
-			spriteBatch.dispose();
-			celShaderFbo.dispose();
-			lineShader.dispose();
+			celRenderer.dispose();
 		}
 	}
 
@@ -238,7 +210,11 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 
 	@Override
 	public void onResize(int width, int height) {
-		celShaderFbo.dispose();
-		createCelShaderFbo(width, height);
+		celRenderer.onResize(width, height);
+	}
+
+	@Override
+	public void renderDepthWithInstances(ModelBatch depthBatchToRenderWith, float deltaTime) {
+		renderInstances(depthBatchToRenderWith, true, null, deltaTime);
 	}
 }

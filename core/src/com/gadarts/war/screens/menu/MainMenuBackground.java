@@ -19,7 +19,7 @@ public class MainMenuBackground {
         auxVector.set(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
-    public void draw(Batch batch, float parentAlpha) {
+    public void draw(Batch batch) {
         batch.begin();
         batch.setShader(shaderProgram);
         time += 0.1f;

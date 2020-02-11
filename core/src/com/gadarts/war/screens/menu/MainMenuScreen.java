@@ -20,16 +20,22 @@ import java.io.File;
 public class MainMenuScreen extends BaseGameScreen {
 
 	private final Stage stage = new Stage();
-	private FlyingCacti flyingCacti = new FlyingCacti();
+	private FlyingCactiRenderer flyingCactiRenderer = new FlyingCactiRenderer();
 	private Profiler profiler;
 	private Texture background;
 	private ShaderProgram backgroundShaderProgram;
 	private MainMenuBackground backgroundObject;
 
 	@Override
+	public void resize(int i, int i1) {
+		super.resize(i, i1);
+		flyingCactiRenderer.onResize(i, i1);
+	}
+
+	@Override
 	public void show() {
 		super.show();
-		flyingCacti.initialize();
+		flyingCactiRenderer.initialize();
 		int width = Gdx.graphics.getWidth();
 		int height = Gdx.graphics.getHeight();
 		GameMenu menu = new GameMenu(this);
@@ -48,13 +54,14 @@ public class MainMenuScreen extends BaseGameScreen {
 		String fragmentShader = Gdx.files.internal("shaders" + File.separator + "fragment_main_menu_background.glsl").readString();
 		backgroundShaderProgram = new ShaderProgram(vertexShader, fragmentShader);
 		backgroundObject = new MainMenuBackground(background, backgroundShaderProgram);
+
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
 		stage.dispose();
-		flyingCacti.dispose();
+		flyingCactiRenderer.dispose();
 		background.dispose();
 		backgroundShaderProgram.dispose();
 	}
@@ -62,10 +69,10 @@ public class MainMenuScreen extends BaseGameScreen {
 	@Override
 	public void render(float deltaTime) {
 		super.render(deltaTime);
-		flyingCacti.update();
+		flyingCactiRenderer.update();
 		RenderSystem.resetDisplay(Color.BLACK);
-		backgroundObject.draw(stage.getBatch(), 1f);
-		flyingCacti.render(deltaTime);
+		backgroundObject.draw(stage.getBatch());
+		flyingCactiRenderer.render(deltaTime);
 		stage.act(deltaTime);
 		stage.draw();
 		profiler.update();

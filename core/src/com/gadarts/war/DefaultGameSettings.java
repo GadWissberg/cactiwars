@@ -17,6 +17,6 @@ public final class DefaultGameSettings {
     public static final boolean ALLOW_SOUND = false;
     public static final boolean MUTE_AMB_SOUNDS = false;
     public static final boolean MUTE_CHARACTERS_SOUNDS = false;
-    public static final Screens INITIAL_SCREEN = Screens.BATTLE;
+    public static final Screens INITIAL_SCREEN = Screens.MAIN_MENU;
 
 }
