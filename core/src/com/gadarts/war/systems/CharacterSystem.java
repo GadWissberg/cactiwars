@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
@@ -54,7 +55,7 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
 		if (!BattleScreen.isPaused()) {
 			super.update(deltaTime);
 			for (Entity character : characters) {
-				handleMovement(character, deltaTime);
+				handleMovement(character);
 				if (DefaultGameSettings.ALLOW_SOUND && !DefaultGameSettings.MUTE_CHARACTERS_SOUNDS)
 					handleCharacterSound(character);
 			}
@@ -88,40 +89,41 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
 		csd.getEngineSound().setPan(csd.getEngineSoundId(), pan, volume);
 	}
 
-	private void handleMovement(Entity character, float deltaTime) {
+	private void handleMovement(Entity character) {
+		Gdx.app.log("TEST", "" + ComponentsMapper.physics.get(character).getBody().getLinearVelocity().len2());
 		takeStep(character);
-		handleAccelerating(character, deltaTime);
-		handleRotation(character, deltaTime);
+		handleAccelerating(character);
+		handleRotation(character);
 	}
 
-	private void handleRotation(Entity character, float deltaTime) {
+	private void handleRotation(Entity character) {
 		CharacterComponent characterComponent = ComponentsMapper.characters.get(character);
 		if (characterComponent.isRotating() && characterComponent.getSpeed() != 0 && checkIfCharacterOnGround(character)) {
-			rotate(character, characterComponent, deltaTime);
+			rotate(character, characterComponent);
 		}
 	}
 
-	private void rotate(Entity character, CharacterComponent characterComponent, float deltaTime) {
-		float rotation = characterComponent.getRotation() * deltaTime * GameC.CHARACTER_ROTATION_MULTIPLIER_WITH_DT;
+	private void rotate(Entity character, CharacterComponent characterComponent) {
+		float rotation = characterComponent.getRotation() * GameC.CHARACTER_ROTATION_MULTIPLIER_WITH_DT;
 		characterComponent.setDirection(characterComponent.getDirection(auxVector21).rotate(-rotation));
 		PhysicsComponent physicsComponent = ComponentsMapper.physics.get(character);
 		physicsComponent.getBody().applyTorqueImpulse(auxVector31.set(Vector3.Y).scl(rotation));
 	}
 
-	private void handleAccelerating(Entity character, float deltaTime) {
+	private void handleAccelerating(Entity character) {
 		CharacterComponent characterComponent = ComponentsMapper.characters.get(character);
 		if (checkIfCharacterOnGround(character)) {
-			if (accelerateAccordingToMovementState(characterComponent, deltaTime)) return;
+			if (accelerateAccordingToMovementState(characterComponent)) return;
 		}
 		decelerate(characterComponent);
 	}
 
-	private boolean accelerateAccordingToMovementState(CharacterComponent characterComponent, float deltaTime) {
+	private boolean accelerateAccordingToMovementState(CharacterComponent characterComponent) {
 		if (characterComponent.getMovementState() == MovementState.ACCELERATING) {
-			accelerate(characterComponent, deltaTime);
+			accelerate(characterComponent);
 			return true;
 		} else if (characterComponent.getMovementState() == MovementState.REVERSE) {
-			reverse(characterComponent, deltaTime);
+			reverse(characterComponent);
 			return true;
 		}
 		return false;
@@ -153,22 +155,21 @@ public class CharacterSystem extends EntitySystem implements HudEventsSubscriber
 		}
 	}
 
-	private void reverse(CharacterComponent characterComponent, float deltaTime) {
+	private void reverse(CharacterComponent characterComponent) {
 		float speed = characterComponent.getSpeed();
 		float maxReverseSpeed = characterComponent.getMaxReverseSpeed();
 		if (speed > -maxReverseSpeed) {
-			float deltaTimeBalanced = deltaTime * GameC.CHARACTER_MOVING_MULTIPLIER_WITH_DT;
+			float deltaTimeBalanced = GameC.CHARACTER_MOVING_MULTIPLIER_WITH_DT;
 			float reverseAcc = characterComponent.getReverseAcceleration() * deltaTimeBalanced;
 			float newSpeed = Math.abs(maxReverseSpeed - speed) < reverseAcc ? -maxReverseSpeed : speed - reverseAcc;
 			characterComponent.setSpeed(newSpeed);
 		}
 	}
 
-	private void accelerate(CharacterComponent characterComponent, float deltaTime) {
+	private void accelerate(CharacterComponent characterComponent) {
 		float speed = characterComponent.getSpeed();
 		float maxFrontSpeed = characterComponent.getMaxFrontSpeed();
-		float deltaTimeBalanced = deltaTime * GameC.CHARACTER_MOVING_MULTIPLIER_WITH_DT;
-		float acceleration = characterComponent.getAcceleration() * deltaTimeBalanced;
+		float acceleration = characterComponent.getAcceleration();
 		if (speed < maxFrontSpeed) {
 			float newSpeed = Math.abs(maxFrontSpeed - speed) < acceleration ? maxFrontSpeed : speed + acceleration;
 			characterComponent.setSpeed(newSpeed);

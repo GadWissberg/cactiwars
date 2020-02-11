@@ -40,7 +40,7 @@ public class PhysicsSystem extends EntitySystem implements EntityListener, GameC
         if (!BattleScreen.isPaused()) {
             super.update(deltaTime);
             btDiscreteDynamicsWorld collisionWorld = bulletHandler.getCollisionWorld();
-            collisionWorld.stepSimulation(deltaTime, 5);
+            collisionWorld.stepSimulation(deltaTime, 5, 1f / DefaultGameSettings.FPS_TARGET);
         }
     }
 

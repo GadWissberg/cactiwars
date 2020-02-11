@@ -109,7 +109,7 @@ public final class GameC {
         public static final float REVERSE_ACCELERATION = 0.1f;
         public static final float ACCELERATION = 0.2f;
         public static final float DECELERATION = 0.05f;
-        public static final float ROTATION = 6;
+        public static final float ROTATION = 0.1f;
 
     }
 
