@@ -173,7 +173,7 @@ public class MapCreator extends MapModeler {
         String name = map.getUsedTiles().get(map.getPath()[row][col]).getTileName();
         if (materials.containsKey(name)) return materials.get(name);
         else {
-            Material material = createGroundMaterial(tilesAtlas, name);
+            Material material = obtainGroundMaterial(tilesAtlas, name);
             materials.put(name, material);
             return material;
         }
