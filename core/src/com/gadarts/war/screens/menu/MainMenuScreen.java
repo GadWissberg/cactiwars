@@ -10,11 +10,10 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.Profiler;
 import com.gadarts.war.menu.GameMenu;
-import com.gadarts.war.menu.console.commands.CommandResult;
 import com.gadarts.war.menu.console.commands.Commands;
+import com.gadarts.war.menu.console.commands.ConsoleCommandResult;
 import com.gadarts.war.screens.BaseGameScreen;
 import com.gadarts.war.systems.render.RenderSystem;
-
 import java.io.File;
 
 public class MainMenuScreen extends BaseGameScreen {
@@ -90,11 +89,11 @@ public class MainMenuScreen extends BaseGameScreen {
 
 	}
 
-	@Override
-	public boolean onCommandRun(Commands command, CommandResult commandResult) {
-		commandResult.setMessage(reactToCommand(command, profiler, stage));
-		return true;
-	}
+    @Override
+    public boolean onCommandRun(Commands command, ConsoleCommandResult consoleCommandResult) {
+        consoleCommandResult.setMessage(reactToCommand(command, profiler, stage));
+        return true;
+    }
 
 
 	@Override

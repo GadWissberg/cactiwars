@@ -2,11 +2,10 @@ package com.gadarts.war.menu.console.commands.types;
 
 import com.gadarts.war.menu.console.Console;
 import com.gadarts.war.menu.console.commands.CommandParameter;
-import com.gadarts.war.menu.console.commands.CommandResult;
 import com.gadarts.war.menu.console.commands.Commands;
 import com.gadarts.war.menu.console.commands.ConsoleCommand;
+import com.gadarts.war.menu.console.commands.ConsoleCommandResult;
 import com.gadarts.war.systems.render.RenderSettings;
-
 import java.util.Arrays;
 import java.util.Map;
 
@@ -14,16 +13,16 @@ public class SkipDrawingCommand extends ConsoleCommand {
 	private static final String SKIP_DRAWING = "%s objects drawing are skipped.";
 	private static final String DONT_SKIP_DRAWING = "%s objects drawing are not skipped.";
 
-	@Override
-	public CommandResult run(Console console, Map<String, String> parameters) {
-		CommandResult result = super.run(console, parameters);
-		parameters.forEach((key, value) -> Arrays.stream(getCommandEnumValue().getParameters()).forEach(parameter -> {
-			if (key.equalsIgnoreCase(parameter.getAlias())) {
-				parameter.run(value, console);
-			}
-		}));
-		return result;
-	}
+    @Override
+    public ConsoleCommandResult run(Console console, Map<String, String> parameters) {
+        ConsoleCommandResult result = super.run(console, parameters);
+        parameters.forEach((key, value) -> Arrays.stream(getCommandEnumValue().getParameters()).forEach(parameter -> {
+            if (key.equalsIgnoreCase(parameter.getAlias())) {
+                parameter.run(value, console);
+            }
+        }));
+        return result;
+    }
 
 	@Override
 	protected Commands getCommandEnumValue() {
