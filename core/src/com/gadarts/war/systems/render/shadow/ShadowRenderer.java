@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.gadarts.shared.SharedC;
 import com.gadarts.war.GameC;
 
+@SuppressWarnings("deprecation")
 public class ShadowRenderer {
     private static Vector3 auxVector31 = new Vector3();
 

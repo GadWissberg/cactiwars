@@ -24,7 +24,6 @@ import com.gadarts.war.menu.console.commands.CommandInvoke;
 import com.gadarts.war.menu.console.commands.CommandResult;
 import com.gadarts.war.menu.console.commands.Commands;
 import com.gadarts.war.systems.player.input.KeyMap;
-
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Stack;
@@ -60,7 +59,6 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	private Stack<String> inputHistory = new Stack<>();
 	private Stack<String> inputHistoryAux = new Stack<>();
 	private Label.LabelStyle textStyle;
-	private Label textView;
 
 	public ConsoleImpl() {
 		setName(NAME);
@@ -178,7 +176,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 		textStyle.background = textBackgroundTexture;
 		float width = Gdx.graphics.getWidth() - PADDING * 2;
 		float height = consoleHeight - (INPUT_HEIGHT);
-		textView = new Label(stringBuilder, textStyle);
+        Label textView = new Label(stringBuilder, textStyle);
 		textView.setAlignment(Align.bottomLeft);
 		textView.setName(TEXT_LABEL_NAME);
 		textView.setWrap(true);

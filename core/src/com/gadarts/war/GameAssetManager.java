@@ -18,11 +18,14 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.gadarts.shared.SharedC.AssetRelated;
 import com.gadarts.shared.definitions.AtlasDefinition;
 import com.gadarts.shared.definitions.Definitions;
-import com.gadarts.shared.par.*;
+import com.gadarts.shared.par.AssetManagerWrapper;
+import com.gadarts.shared.par.BaseGameAsset;
+import com.gadarts.shared.par.MainParLoadingFailureException;
+import com.gadarts.shared.par.ParInflater;
+import com.gadarts.shared.par.SectionType;
 import com.gadarts.shared.par.inflations.DefinitionType;
 import com.gadarts.war.GameC.Files;
 import com.gadarts.war.GameC.Files.Font;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -96,18 +99,16 @@ public class GameAssetManager extends AssetManagerWrapper {
         FreetypeFontLoader.FreeTypeFontLoaderParameter params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
         params.fontFileName = Font.FOLDER_PATH + "/" + "cactus." + Font.FORMAT;
         params.fontParameters.size = Font.Size.BIG;
-        params.fontParameters.color = new Color(0f, 64f, 0f, 1f);
-        params.fontParameters.borderColor = new Color(0f, 0, 0f, 0.8f);
-        params.fontParameters.borderWidth = 2f;
-        params.fontParameters.shadowColor = new Color(0f, 0, 0f, 0.5f);
-        params.fontParameters.shadowOffsetX = -2;
-        params.fontParameters.shadowOffsetY = 2;
-        params.fontParameters.borderStraight = true;
-        params.fontParameters.kerning = true;
+        defineFontParameters(params);
         gameAssetManager.load("cactus_big.ttf", BitmapFont.class, params);
         params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
         params.fontFileName = Font.FOLDER_PATH + "/" + "cactus." + Font.FORMAT;
         params.fontParameters.size = Font.Size.MED;
+        defineFontParameters(params);
+        gameAssetManager.load("cactus_med.ttf", BitmapFont.class, params);
+    }
+
+    private void defineFontParameters(FreetypeFontLoader.FreeTypeFontLoaderParameter params) {
         params.fontParameters.color = new Color(0f, 64f, 0f, 1f);
         params.fontParameters.borderColor = new Color(0f, 0, 0f, 0.8f);
         params.fontParameters.borderWidth = 2f;
@@ -116,7 +117,6 @@ public class GameAssetManager extends AssetManagerWrapper {
         params.fontParameters.shadowOffsetY = 2;
         params.fontParameters.borderStraight = true;
         params.fontParameters.kerning = true;
-        gameAssetManager.load("cactus_med.ttf", BitmapFont.class, params);
     }
 
 }
