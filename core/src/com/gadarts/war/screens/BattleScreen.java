@@ -25,16 +25,25 @@ import com.gadarts.war.systems.player.PlayerSystem;
 import com.gadarts.war.systems.player.input.GamePlayInputHandler;
 import com.gadarts.war.systems.render.RenderSystem;
 
+/**
+ * Screen of game-play.
+ */
 public class BattleScreen extends BaseGameScreen implements InGameScreen {
 	private static boolean paused;
 	private PooledEngine entitiesEngine;
 	private ActorFactory actorFactory;
 	private Hud hud;
 
+	/**
+	 * @return Whether game is paused.
+	 */
 	public static boolean isPaused() {
 		return paused;
 	}
 
+	/**
+	 * Pauses game and activates the menu.
+	 */
 	public void pauseGame() {
 		BattleScreen.paused = true;
 		hud.activateMenu();
@@ -58,18 +67,25 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 
 	@Override
 	public void show() {
-		if (!DefaultGameSettings.MUTE_AMB_SOUNDS) {
+		if (!DefaultGameSettings.MUTE_AMB_SOUNDS)
 			getSoundPlayer().play(GameAssetManager.getInstance().get(SFX.AMB_WIND.getFileName(), Sound.class), true);
-		}
+		initialize();
+	}
+
+	private void initialize() {
 		entitiesEngine = new PooledEngine();
 		createSystemsHandler();
 		actorFactory = new ActorFactory(entitiesEngine, getSoundPlayer());
 		createWorld();
 		initializeInput();
+		createHud();
+		if (DefaultGameSettings.MENU_ON_START) pauseGame();
+	}
+
+	private void createHud() {
 		hud = new Hud(entitiesEngine.getSystem(RenderSystem.class), this);
 		hud.subscribeForEvents(entitiesEngine.getSystem(CharacterSystem.class));
 		hud.subscribeForEvents(entitiesEngine.getSystem(EnvironmentSystem.class));
-		if (DefaultGameSettings.MENU_ON_START) pauseGame();
 	}
 
 	private void createSystemsHandler() {
@@ -143,11 +159,11 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 		paused = true;
 	}
 
-    @Override
-    public boolean onCommandRun(Commands command, ConsoleCommandResult consoleCommandResult) {
-        consoleCommandResult.setMessage(reactToCommand(command, hud.getProfiler(), getHudStage()));
-        return true;
-    }
+	@Override
+	public boolean onCommandRun(Commands command, ConsoleCommandResult consoleCommandResult) {
+		consoleCommandResult.setMessage(reactToCommand(command, hud.getProfiler(), getHudStage()));
+		return true;
+	}
 
 	@Override
 	public void onConsoleDeactivated() {
