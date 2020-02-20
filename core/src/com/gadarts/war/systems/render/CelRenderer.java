@@ -55,6 +55,7 @@ public class CelRenderer {
 	}
 
 	public void onResize(int width, int height) {
+		if (!DefaultGameSettings.CEL_SHADING) return;
 		celShaderFbo.dispose();
 		initialize(width, height);
 	}

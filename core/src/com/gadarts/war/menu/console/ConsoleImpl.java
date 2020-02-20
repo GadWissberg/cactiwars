@@ -51,13 +51,14 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
         createInputField(textBackgroundTextureRegionDrawable);
         setBackground(new TextureRegionDrawable(consoleTextures.getBackgroundTexture()));
         setSize(Gdx.graphics.getWidth(), consoleTextures.getBackgroundTexture().getHeight());
-        consoleInputHistoryHandler = new ConsoleInputHistoryHandler(getStage());
+        consoleInputHistoryHandler = new ConsoleInputHistoryHandler();
     }
 
     @Override
     protected void setStage(Stage stage) {
         super.setStage(stage);
         consoleTextData.setStage(stage);
+        consoleInputHistoryHandler.setStage(stage);
     }
 
     private void createInputField(TextureRegionDrawable textBackgroundTexture) {

@@ -98,7 +98,7 @@ public final class GameC {
         public static final String GL_SHADER_SWITCHES_STRING = "Shader Switches: ";
         public static final String GL_TEXTURE_BINDINGS_STRING = "Texture Bindings: ";
         public static final String GL_VERTEX_COUNT_STRING = "Vertex Count: ";
-        public static final String BATCH_UI_CALLS_STRING = "UI Batch Calls: ";
+        public static final String UI_BATCH_RENDER_CALLS_STRING = "UI Render Calls: ";
         public static final String VISIBLE_OBJECTS_STRING = "Visible Objects: ";
 
     }

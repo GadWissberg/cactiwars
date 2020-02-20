@@ -53,7 +53,7 @@ public class Profiler {
 	}
 
 	private void displayBatchCalls() {
-		displayLine(GameC.Profiler.BATCH_UI_CALLS_STRING, ((SpriteBatch) stage.getBatch()).renderCalls);
+		displayLine(GameC.Profiler.UI_BATCH_RENDER_CALLS_STRING, ((SpriteBatch) stage.getBatch()).renderCalls);
 	}
 
 	private void displayGlProfiling() {
