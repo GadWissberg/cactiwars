@@ -28,7 +28,7 @@ import com.gadarts.war.screens.BaseGameScreen;
 import com.gadarts.war.screens.BattleScreen;
 
 public class GameMenu extends Table implements MenuInputEventsSubscriber {
-    private final MenuOptionsTable menuOptionsTable;
+    private final MenuTable menuTable;
     private final BaseGameScreen parentScreen;
     private int selected;
     private Image leftCactusIcon;
@@ -37,9 +37,9 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
     public GameMenu(BaseGameScreen parentScreen) {
         this.parentScreen = parentScreen;
         addLogo();
-        menuOptionsTable = new MenuOptionsTable();
-        menuOptionsTable.setName(GameC.Menu.NAME_OPTIONS_TABLE);
-        add(menuOptionsTable).row();
+        menuTable = new MenuTable();
+        menuTable.setName(GameC.Menu.NAME_OPTIONS_TABLE);
+        add(menuTable).row();
         addCactusIcons();
     }
 
@@ -66,7 +66,9 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
     @Override
     protected void setStage(Stage stage) {
         super.setStage(stage);
-        setPosition(stage.getWidth() / 2, stage.getHeight() / 2);
+        if (stage != null) {
+            setPosition(stage.getWidth() / 2, stage.getHeight() / 2);
+        }
     }
 
     private void addCactusIcons() {
@@ -103,7 +105,7 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
     }
 
     public void update() {
-        menuOptionsTable.repositionCacti(selected, leftCactusIcon, rightCactusIcon);
+        menuTable.repositionCacti(selected, leftCactusIcon, rightCactusIcon);
     }
 
 
@@ -115,8 +117,8 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
         }
     }
 
-    public MenuOptionsTable getMenuOptionsTable() {
-        return menuOptionsTable;
+    public MenuTable getMenuTable() {
+        return menuTable;
     }
 
     private void createMenuTable(Stage stage) {
@@ -142,7 +144,7 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
         stage.addActor(new Label(GameC.General.GAME + " v" + GameC.General.VERSION, labelStyle));
         createMenuTable(stage);
         addMenuOptions(labelStyle);
-        menuOptionsTable.addIndicators(leftCactusIcon, rightCactusIcon);
+        menuTable.addIndicators(leftCactusIcon, rightCactusIcon);
         update();
         setVisible(BattleScreen.isPaused());
     }
@@ -152,7 +154,7 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
         for (GameMenuOptions option : options) {
             GameMenuOption menuOption = new GameMenuOption(option, labelStyle);
             menuOption.setName(option.name());
-            menuOptionsTable.addOption(menuOption);
+            menuTable.addOption(menuOption);
         }
     }
 

@@ -12,7 +12,7 @@ public class MenuArrowUpDefinition implements MenuInputDefinition {
         parentScreen.getSoundPlayer().play(GameAssetManager.getInstance().get(SFX.MENU_MOVE.getFileName(), Sound.class));
         int selected = gameMenu.getSelected();
         if (selected == 0) {
-            gameMenu.setSelected(gameMenu.getMenuOptionsTable().getNumberOfOptions() - 1);
+            gameMenu.setSelected(gameMenu.getMenuTable().getNumberOfOptions() - 1);
         } else {
             gameMenu.setSelected(selected - 1);
         }

@@ -11,13 +11,12 @@ buildscript {
     }
     dependencies {
 
-
     }
 }
 
 allprojects {
 
-    version = '1.0'
+    version = '0.1'
     ext {
         appName = "war"
         gdxVersion = '1.9.10'
@@ -52,6 +51,8 @@ project(":desktop") {
         api "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
         implementation "com.google.code.gson:gson:2.8.6"
         compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+        testCompile "junit:junit:4.12"
+        testCompile 'org.mockito:mockito-core:2.22.0'
     }
 }
 
