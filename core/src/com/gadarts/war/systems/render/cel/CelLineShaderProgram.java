@@ -2,10 +2,11 @@ package com.gadarts.war.systems.render.cel;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.gadarts.war.GameC.Files;
 
 public class CelLineShaderProgram extends ShaderProgram {
 	public CelLineShaderProgram() {
-		super(Gdx.files.internal("shaders/vertex_cel.glsl"), Gdx.files.internal("shaders/fragment_cel.glsl"));
+		super(Gdx.files.internal(Files.ASSETS_PATH + "shaders/vertex_cel.glsl"), Gdx.files.internal(Files.ASSETS_PATH + "shaders/fragment_cel.glsl"));
 	}
 
 	@Override

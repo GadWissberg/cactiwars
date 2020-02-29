@@ -67,8 +67,8 @@ public class Hud {
 
 	private void initializeBlur() {
 		regularShaderProgram = stage.getBatch().getShader();
-		String blurFragmentShader = Gdx.files.internal("shaders" + File.separator + "fragment_blur.glsl").readString();
-		String blurVertexShader = Gdx.files.internal("shaders" + File.separator + "vertex_blur.glsl").readString();
+		String blurFragmentShader = Gdx.files.internal(GameC.Files.ASSETS_PATH + "shaders" + File.separator + "fragment_blur.glsl").readString();
+		String blurVertexShader = Gdx.files.internal(GameC.Files.ASSETS_PATH + "shaders" + File.separator + "vertex_blur.glsl").readString();
 		blurShaderProgram = new ShaderProgram(blurVertexShader, blurFragmentShader);
 		blurFrameBuffer = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 		blurRadiusLocation = blurShaderProgram.getUniformLocation(GameC.Menu.BlurShaderKeys.BLUR_RADIUS);

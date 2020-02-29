@@ -8,12 +8,14 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gadarts.war.DefaultGameSettings;
+import com.gadarts.war.GameC.Files;
 import com.gadarts.war.Profiler;
 import com.gadarts.war.menu.GameMenu;
 import com.gadarts.war.menu.console.commands.Commands;
 import com.gadarts.war.menu.console.commands.ConsoleCommandResult;
 import com.gadarts.war.screens.BaseGameScreen;
 import com.gadarts.war.systems.render.RenderSystem;
+
 import java.io.File;
 
 public class MainMenuScreen extends BaseGameScreen {
@@ -48,9 +50,9 @@ public class MainMenuScreen extends BaseGameScreen {
 		pixmap.fillRectangle(0, 0, width, height);
 		background = new Texture(pixmap);
 		pixmap.dispose();
-		String vertexShader = Gdx.files.internal("shaders" + File.separator + "vertex_main_menu_background.glsl").readString();
+		String vertexShader = Gdx.files.internal(Files.ASSETS_PATH + "shaders" + File.separator + "vertex_main_menu_background.glsl").readString();
 		ShaderProgram.pedantic = false;
-		String fragmentShader = Gdx.files.internal("shaders" + File.separator + "fragment_main_menu_background.glsl").readString();
+		String fragmentShader = Gdx.files.internal(Files.ASSETS_PATH + "shaders" + File.separator + "fragment_main_menu_background.glsl").readString();
 		backgroundShaderProgram = new ShaderProgram(vertexShader, fragmentShader);
 		backgroundObject = new MainMenuBackground(background, backgroundShaderProgram);
 
@@ -89,11 +91,11 @@ public class MainMenuScreen extends BaseGameScreen {
 
 	}
 
-    @Override
-    public boolean onCommandRun(Commands command, ConsoleCommandResult consoleCommandResult) {
-        consoleCommandResult.setMessage(reactToCommand(command, profiler, stage));
-        return true;
-    }
+	@Override
+	public boolean onCommandRun(Commands command, ConsoleCommandResult consoleCommandResult) {
+		consoleCommandResult.setMessage(reactToCommand(command, profiler, stage));
+		return true;
+	}
 
 
 	@Override

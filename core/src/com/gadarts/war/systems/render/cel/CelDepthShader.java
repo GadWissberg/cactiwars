@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.shaders.DepthShader;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
+import com.gadarts.war.GameC;
 
 public class CelDepthShader extends DepthShader {
     public final int u_near = register("u_near");
@@ -23,8 +24,8 @@ public class CelDepthShader extends DepthShader {
     }
 
     public static class Config extends DepthShader.Config {
-        private static String defaultVertexShader = Gdx.files.internal("shaders/vertex_cel_depth.glsl").readString();
-        private static String defaultFragmentShader = Gdx.files.internal("shaders/fragment_cel_depth.glsl").readString();
+        private static String defaultVertexShader = Gdx.files.internal(GameC.Files.ASSETS_PATH + "shaders/vertex_cel_depth.glsl").readString();
+        private static String defaultFragmentShader = Gdx.files.internal(GameC.Files.ASSETS_PATH + "shaders/fragment_cel_depth.glsl").readString();
 
         public Config() {
             super(defaultVertexShader, defaultFragmentShader);

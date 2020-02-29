@@ -64,7 +64,7 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 		camera = ComponentsMapper.camera.get(cameraEntity).getCamera();
 		modelInstanceEntities = engine.getEntitiesFor(Family.all(ModelInstanceComponent.class).get());
 		environment = new Environment();
-		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.1f, 0.1f, 0.1f, 1f));
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.3f, 0.3f, 0.3f, 1f));
 		shadowRenderer = new ShadowRenderer(environment);
 		engine.addEntityListener(this);
 		celRenderer.initialize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
