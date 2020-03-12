@@ -2,12 +2,10 @@ package com.gadarts.war.systems.player.input.definitions.down;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.gdx.math.Vector3;
 import com.gadarts.war.InGameScreen;
 import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.sound.SFX;
-import com.gadarts.war.systems.physics.PhysicsSystem;
 import com.gadarts.war.systems.player.PlayerSystemEventsSubscriber;
 import com.gadarts.war.systems.player.input.InputEvent;
 

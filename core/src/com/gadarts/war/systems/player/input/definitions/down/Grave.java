@@ -1,4 +1,4 @@
-package com.gadarts.war.systems.player.input.definitions;
+package com.gadarts.war.systems.player.input.definitions.down;
 
 import com.badlogic.ashley.core.Entity;
 import com.gadarts.war.InGameScreen;

@@ -21,10 +21,7 @@ import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
 import com.gadarts.war.GameC.Tank;
-import com.gadarts.war.components.ComponentsMapper;
-import com.gadarts.war.components.EnvironmentObjectComponent;
-import com.gadarts.war.components.PlayerComponent;
-import com.gadarts.war.components.PointLightComponent;
+import com.gadarts.war.components.*;
 import com.gadarts.war.components.character.CharacterAdditional;
 import com.gadarts.war.components.character.CharacterComponent;
 import com.gadarts.war.components.character.CharacterSoundData;
@@ -232,4 +229,13 @@ public class ActorFactory {
         return env;
     }
 
+    public void createBullet(Vector3 worldTranslation) {
+        Entity bulletEntity = engine.createEntity();
+        BulletComponent bulletComponent = engine.createComponent(BulletComponent.class);
+        PhysicsComponent physicsComponent = engine.createComponent(PhysicsComponent.class);
+        bulletEntity.add(bulletComponent);
+        bulletEntity.add(physicsComponent);
+        physicsComponent.getBody().getMotionState().setWorldTransform(auxMatrix.setTranslation(worldTranslation));
+        engine.addEntity(bulletEntity);
+    }
 }

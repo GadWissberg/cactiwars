@@ -5,6 +5,12 @@
       "display_name": "Cactank",
       "collision_shapes": [],
       "model": "tank",
+      "weapon": "cannon_ball",
+      "bullet_position": [
+        0,
+        1,
+        0
+      ],
       "additional": [
         {
           "offset_parent_y": 0.9,
@@ -56,6 +62,13 @@
       "collision_shapes": [],
       "model": "rock_3",
       "static": true
+    }
+  ],
+  "weapons": [
+    {
+      "name": "cannon_ball",
+      "model": "cannon_ball",
+      "speed": 1
     }
   ]
 }
