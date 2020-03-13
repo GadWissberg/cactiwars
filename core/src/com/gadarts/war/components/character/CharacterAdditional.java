@@ -1,7 +1,7 @@
 package com.gadarts.war.components.character;
 
 import com.badlogic.gdx.utils.Pool;
-import com.gadarts.shared.definitions.CharacterAdditionalDefinition;
+import com.gadarts.shared.definitions.character.CharacterAdditionalDefinition;
 
 public class CharacterAdditional implements Pool.Poolable {
     private CharacterAdditionalDefinition definition;

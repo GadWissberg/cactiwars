@@ -3,6 +3,7 @@ package com.gadarts.war.components.character;
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
+import com.gadarts.shared.definitions.character.CharacterDefinition;
 
 public class CharacterComponent implements Component, Pool.Poolable {
 
@@ -13,6 +14,7 @@ public class CharacterComponent implements Component, Pool.Poolable {
     private float groundCrashThreshold;
     private CharacterSoundData characterSoundData = new CharacterSoundData();
     private CharacterAdditional additional;
+    private CharacterDefinition characterDefinition;
 
     public void init(float maxLinearVelocity, float acceleration, float maxReverseSpeed, float reverseAcceleration) {
         speedData.setMaxFrontSpeed(maxLinearVelocity);
@@ -131,5 +133,13 @@ public class CharacterComponent implements Component, Pool.Poolable {
 
     public CharacterAdditional getAdditional() {
         return additional;
+    }
+
+    public CharacterDefinition getCharacterDefinition() {
+        return characterDefinition;
+    }
+
+    public void setCharacterDefinition(CharacterDefinition characterDefinition) {
+        this.characterDefinition = characterDefinition;
     }
 }

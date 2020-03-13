@@ -25,9 +25,9 @@ import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 
 public class CharacterSystem extends GameEntitySystem implements HudEventsSubscriber {
+	public final static Vector2 auxVector2_1 = new Vector2();
 	private static Vector3 auxVector31 = new Vector3();
 	private static Vector3 auxVector32 = new Vector3();
-	private static Vector2 auxVector21 = new Vector2();
 	private static Vector3 rayFrom = new Vector3();
 	private static Vector3 rayTo = new Vector3();
 	private static Matrix4 auxMat = new Matrix4();
@@ -102,7 +102,7 @@ public class CharacterSystem extends GameEntitySystem implements HudEventsSubscr
 
 	private void rotate(Entity character, CharacterComponent characterComponent) {
 		float rotation = characterComponent.getRotation() * GameC.CHARACTER_ROTATION_MULTIPLIER_WITH_DT;
-		characterComponent.setDirection(characterComponent.getDirection(auxVector21).rotate(-rotation));
+		characterComponent.setDirection(characterComponent.getDirection(auxVector2_1).rotate(-rotation));
 		PhysicsComponent physicsComponent = ComponentsMapper.physics.get(character);
 		physicsComponent.getBody().applyTorqueImpulse(auxVector31.set(Vector3.Y).scl(rotation));
 	}
@@ -178,7 +178,7 @@ public class CharacterSystem extends GameEntitySystem implements HudEventsSubscr
 		float speed = characterComponent.getSpeed();
 		if (speed != 0) {
 			btRigidBody body = ComponentsMapper.physics.get(character).getBody();
-			characterComponent.getDirection(auxVector21).scl(speed);
+			characterComponent.getDirection(auxVector2_1).scl(speed);
 			ComponentsMapper.physics.get(character).getMotionState().getWorldTransform(auxMat);
 			body.setLinearVelocity(auxVector31.set(Vector3.X).rot(auxMat).scl(speed));
 			if (!body.isActive()) body.activate();

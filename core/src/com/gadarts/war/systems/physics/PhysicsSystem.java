@@ -23,8 +23,8 @@ import java.util.List;
 
 public class PhysicsSystem extends GameEntitySystem implements EntityListener, GameContactListenerEventsSubscriber {
 	public static Matrix4 auxMatrix = new Matrix4();
-	public static Vector3 auxVector = new Vector3();
-	public static Vector3 auxVector2 = new Vector3();
+	public static Vector3 auxVector3_1 = new Vector3();
+	public static Vector3 auxVector3_2 = new Vector3();
 
 	private final SoundPlayer soundPlayer;
 	private PhysicsSystemBulletHandler bulletHandler = new PhysicsSystemBulletHandler();
@@ -33,7 +33,7 @@ public class PhysicsSystem extends GameEntitySystem implements EntityListener, G
 	@SuppressWarnings("FieldCanBeLocal")
 	private GameContactListener contactListener;
 
-    private List<PhysicsSystemEventsSubscriber> subscribers = new ArrayList<PhysicsSystemEventsSubscriber>();
+	private List<PhysicsSystemEventsSubscriber> subscribers = new ArrayList<PhysicsSystemEventsSubscriber>();
 
     public PhysicsSystem(SoundPlayer soundPlayer) {
         this.soundPlayer = soundPlayer;

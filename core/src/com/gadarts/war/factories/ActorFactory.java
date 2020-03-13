@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.model.Node;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
@@ -15,8 +16,11 @@ import com.badlogic.gdx.physics.bullet.collision.btCylinderShape;
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.utils.Pools;
-import com.gadarts.shared.definitions.CharacterAdditionalDefinition;
+import com.gadarts.shared.definitions.Definitions;
 import com.gadarts.shared.definitions.PointLightDefinition;
+import com.gadarts.shared.definitions.character.CharacterAdditionalDefinition;
+import com.gadarts.shared.par.SectionType;
+import com.gadarts.shared.par.inflations.DefinitionType;
 import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
@@ -38,6 +42,7 @@ import com.gadarts.war.sound.SFX;
 import com.gadarts.war.sound.SoundPlayer;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.gadarts.war.systems.physics.PhysicsSystem.auxMatrix;
 
@@ -48,6 +53,7 @@ public class ActorFactory {
     private final ModelInstancesPool modelInstancePool;
     private final CollisionShapesPool collisionShapePool;
     private final SoundPlayer soundPlayer;
+    private final Map weaponsDefinitions;
     private BoundingBox auxBndBx = new BoundingBox();
 
     public ActorFactory(PooledEngine engine, SoundPlayer soundPlayer) {
@@ -55,6 +61,8 @@ public class ActorFactory {
         this.modelInstancePool = new ModelInstancesPool();
         this.collisionShapePool = new CollisionShapesPool();
         this.soundPlayer = soundPlayer;
+        GameAssetManager instance = GameAssetManager.getInstance();
+        weaponsDefinitions = instance.getGameAsset(SectionType.DEF, DefinitionType.TILES.name(), Definitions.class).getDefinitions();
     }
 
     public Entity createPlayer(PlayerProperties playerProperties) {
@@ -71,6 +79,7 @@ public class ActorFactory {
         player.add(mic);
         player.add(engine.createComponent(PlayerComponent.class));
         CharacterComponent characterComponent = createCharacterComponent();
+        characterComponent.setCharacterDefinition(pProps.getCharacterDefinition());
         player.add(characterComponent);
         player.add(createPlayerPhysicsComponent(model, pProps.getRotation(), player, mic));
         player.add(engine.createComponent(AnimationComponent.class).init(mic.getModelInstance()));
@@ -229,7 +238,9 @@ public class ActorFactory {
         return env;
     }
 
-    public void createBullet(Vector3 worldTranslation) {
+    public void createBullet(Vector2 direction, Vector3 worldTranslation, String weapon) {
+        if (!weaponsDefinitions.containsKey(weapon)) return;
+        Object weaponDefinition = weaponsDefinitions.get(weapon);
         Entity bulletEntity = engine.createEntity();
         BulletComponent bulletComponent = engine.createComponent(BulletComponent.class);
         PhysicsComponent physicsComponent = engine.createComponent(PhysicsComponent.class);

@@ -15,9 +15,9 @@ import java.util.List;
 public class Space implements InputEvent {
     @Override
     public boolean execute(Entity entity, List<PlayerSystemEventsSubscriber> subscribers, InGameScreen parentScreen) {
-        ComponentsMapper.physics.get(entity).getBody().applyTorqueImpulse(PhysicsSystem.auxVector.set(1, 0, 0).setLength(2000));
+        ComponentsMapper.physics.get(entity).getBody().applyTorqueImpulse(PhysicsSystem.auxVector3_1.set(1, 0, 0).setLength(2000));
         CameraComponent cameraComponent = ComponentsMapper.camera.get(parentScreen.getEntitiesEngine().getEntitiesFor(Family.all(CameraComponent.class).get()).first());
-        parentScreen.getSoundPlayer().play(SFX.HEAVY_METAL_CRASH_1, cameraComponent.getCamera(), PhysicsSystem.auxVector.set(10, 0, 0));
+        parentScreen.getSoundPlayer().play(SFX.HEAVY_METAL_CRASH_1, cameraComponent.getCamera(), PhysicsSystem.auxVector3_1.set(10, 0, 0));
         return true;
     }
 }
