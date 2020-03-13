@@ -6,7 +6,6 @@ import com.gadarts.shared.definitions.character.CharacterDefinition;
 import java.util.List;
 
 public class PlayerProperties {
-	private String modelFileName;
 	private float x;
 	private float y;
 	private float z;
@@ -20,14 +19,6 @@ public class PlayerProperties {
 
 	public void setCharacterDefinition(CharacterDefinition characterDefinition) {
 		this.characterDefinition = characterDefinition;
-	}
-
-	public String getModelFileName() {
-		return modelFileName;
-	}
-
-	public void setModelFileName(String modelFileName) {
-		this.modelFileName = modelFileName;
 	}
 
 	public float getX() {

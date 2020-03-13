@@ -1,6 +1,6 @@
 [
   {
-    "name": "character",
+    "type": "character",
     "dependent_on": "weapons",
     "entries": [
       {
@@ -28,7 +28,7 @@
     ]
   },
   {
-    "name": "environment",
+    "type": "environment",
     "entries": [
       {
         "name": "street_lamp",
@@ -72,7 +72,7 @@
     ]
   },
   {
-    "name": "weapons",
+    "type": "weapons",
     "entries": [
       {
         "name": "cannon_ball",

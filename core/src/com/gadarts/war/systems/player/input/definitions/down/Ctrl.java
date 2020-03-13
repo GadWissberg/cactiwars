@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.gadarts.shared.definitions.WeaponDefinition;
 import com.gadarts.war.InGameScreen;
 import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
@@ -23,7 +24,7 @@ public class Ctrl implements InputEvent {
 		if (!ComponentsMapper.players.has(entity)) return false;
 		Vector2 direction = ComponentsMapper.characters.get(entity).getDirection(CharacterSystem.auxVector2_1);
 		Vector3 worldTranslation = ComponentsMapper.physics.get(entity).getMotionState().getWorldTranslation(auxVector3_1);
-		String weapon = ComponentsMapper.characters.get(entity).getCharacterDefinition().getWeapon();
+		WeaponDefinition weapon = ComponentsMapper.characters.get(entity).getCharacterDefinition().getWeapon();
 		parentScreen.getActorFactory().createBullet(direction, worldTranslation, weapon);
 		ComponentsMapper.physics.get(entity).getBody().applyTorqueImpulse(auxVector3_1.set(1, 0, 0).setLength(2000));
 		CameraComponent cameraComponent = ComponentsMapper.camera.get(parentScreen.getEntitiesEngine().getEntitiesFor(Family.all(CameraComponent.class).get()).first());
