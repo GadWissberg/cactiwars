@@ -35,12 +35,12 @@ public class GameAssetManager extends AssetManagerWrapper {
 	}
 
 	void loadAssets() throws IOException, MainParLoadingFailureException {
-		ParInflater inflater = new ParInflater();
-		inflater.inflatePar(inflater.readPar(Gdx.files.internal(Files.ASSETS_PATH + "cactiwars.par").read()), this);
 		GameAssetManager gameAssetManager = GameAssetManager.getInstance();
 		loadModels(gameAssetManager);
 		loadSounds(gameAssetManager);
 		loadFonts(gameAssetManager);
+		ParInflater inflater = new ParInflater();
+		inflater.inflatePar(inflater.readPar(Gdx.files.internal(Files.ASSETS_PATH + "cactiwars.par").read()), this);
 		gameAssetManager.finishLoading();
 		createAtlases();
 	}

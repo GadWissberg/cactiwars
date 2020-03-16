@@ -1,0 +1,11 @@
+{
+  "inflation_order": [
+    "mdl",
+    "pix",
+    "snd",
+    "fnt",
+    "shd",
+    "def",
+    "map"
+  ]
+}
