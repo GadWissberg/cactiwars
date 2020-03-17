@@ -3,7 +3,6 @@ package com.gadarts.war.factories;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.Vector2;
@@ -24,7 +23,6 @@ import com.gadarts.shared.definitions.character.CharacterAdditionalDefinition;
 import com.gadarts.shared.definitions.character.CharacterDefinition;
 import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameAssetManager;
-import com.gadarts.war.GameC;
 import com.gadarts.war.GameC.Tank;
 import com.gadarts.war.components.*;
 import com.gadarts.war.components.character.CharacterAdditional;
@@ -129,9 +127,7 @@ public class ActorFactory {
 
 	private CharacterAdditional createCharacterAdditional(CharacterAdditionalDefinition additionalDefinition,
 														  ModelInstance parentModelInstance) {
-		String modelFileName = GameC.Files.MODELS_FOLDER_NAME + "/" + additionalDefinition.getModel() + ".g3dj";
-		Model model = GameAssetManager.getInstance().get(modelFileName, Model.class);
-		ModelInstance additionalModelInstance = modelInstancePool.obtain(modelFileName, model);
+		ModelInstance additionalModelInstance = modelInstancePool.obtain(additionalDefinition.getName(), additionalDefinition.getModel());
 		CharacterAdditional characterAdditional = Pools.obtain(CharacterAdditional.class);
 		Node additionalNode = new Node();
 		additionalNode.addChildren(additionalModelInstance.nodes);

@@ -1,5 +1,6 @@
 package com.gadarts.war;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.ModelLoader;
@@ -16,13 +17,13 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
-import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
+import com.badlogic.gdx.utils.JsonReader;
 import com.gadarts.shared.SharedC.AssetRelated;
 import com.gadarts.shared.definitions.AtlasDefinition;
 import com.gadarts.shared.definitions.Definitions;
 import com.gadarts.shared.par.*;
 import com.gadarts.shared.par.inflations.DefinitionType;
-import com.gadarts.war.GameC.Files;
 import com.gadarts.war.GameC.Files.Font;
 
 import java.io.IOException;
@@ -36,11 +37,11 @@ public class GameAssetManager extends AssetManagerWrapper {
 
 	void loadAssets() throws IOException, MainParLoadingFailureException {
 		GameAssetManager gameAssetManager = GameAssetManager.getInstance();
-		loadModels(gameAssetManager);
+		temp_loadModels(gameAssetManager);
 		loadSounds(gameAssetManager);
 		loadFonts(gameAssetManager);
 		ParInflater inflater = new ParInflater();
-		inflater.inflatePar(inflater.readPar(Gdx.files.internal(Files.ASSETS_PATH + "cactiwars.par").read()), this);
+		inflater.inflatePar(inflater.readPar(Gdx.files.internal(GameC.Files.ASSETS_PATH + "cactiwars.par").read()), this);
 		gameAssetManager.finishLoading();
 		createAtlases();
 	}
@@ -49,7 +50,7 @@ public class GameAssetManager extends AssetManagerWrapper {
 		String fileName = SectionType.DEF + AssetRelated.ASSET_NAME_SEPARATOR + DefinitionType.ATLASES.name().toLowerCase();
 		Definitions<AtlasDefinition> atlasesDef = getInstance().get(fileName, Definitions.class);
 		atlasesDef.getDefinitions().forEach((defName, atlasDefinition) -> {
-			PixmapPacker p = new PixmapPacker(Files.ATLAS_SIZE, Files.ATLAS_SIZE, Format.RGBA8888, 0, true);
+			PixmapPacker p = new PixmapPacker(GameC.Files.ATLAS_SIZE, GameC.Files.ATLAS_SIZE, Format.RGBA8888, 0, true);
 			p.setPageWidth(atlasDefinition.getWidth());
 			p.setPageHeight(atlasDefinition.getHeight());
 			atlasDefinition.getTextures().forEach(textureName -> {
@@ -65,27 +66,29 @@ public class GameAssetManager extends AssetManagerWrapper {
 		});
 	}
 
-	private void loadModels(GameAssetManager gameAssetManager) {
+	private void temp_loadModels(GameAssetManager gameAssetManager) {
 		ModelLoader.ModelParameters param = new ModelLoader.ModelParameters();
 		param.textureParameter.genMipMaps = true;
-		gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "tank.g3dj", Model.class, param);
-		gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "tank_head.g3dj", Model.class, param);
-		gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "tank_aux.g3dj", Model.class, param);
-		gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "street_lamp.g3dj", Model.class, param);
-		gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "rock_1.g3dj", Model.class, param);
-		gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "rock_2.g3dj", Model.class, param);
-		gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "rock_3.g3dj", Model.class, param);
-		gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "menu_dec_barrel.g3dj", Model.class, param);
-		gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "menu_dec_saguaro.g3dj", Model.class, param);
-		gameAssetManager.load(Files.MODELS_FOLDER_NAME + "/" + "menu_dec_prickly.g3dj", Model.class, param);
+		G3dModelLoader loader = new G3dModelLoader(new JsonReader());
+		gameAssetManager.addGameAsset(new GameAsset(SectionType.MDL + "/tank", loader.loadModel(Gdx.files.getFileHandle(GameC.Files.MODELS_FOLDER_NAME + "/" + "tank.g3dj", Files.FileType.Internal)), SectionType.MDL));
+		gameAssetManager.addGameAsset(new GameAsset(SectionType.MDL + "/tank_aux", loader.loadModel(Gdx.files.getFileHandle(GameC.Files.MODELS_FOLDER_NAME + "/" + "tank_aux.g3dj", Files.FileType.Internal)), SectionType.MDL));
+		gameAssetManager.addGameAsset(new GameAsset(SectionType.MDL + "/tank_head", loader.loadModel(Gdx.files.getFileHandle(GameC.Files.MODELS_FOLDER_NAME + "/" + "tank_head.g3dj", Files.FileType.Internal)), SectionType.MDL));
+		gameAssetManager.addGameAsset(new GameAsset(SectionType.MDL + "/street_lamp", loader.loadModel(Gdx.files.getFileHandle(GameC.Files.MODELS_FOLDER_NAME + "/" + "street_lamp.g3dj", Files.FileType.Internal)), SectionType.MDL));
+		gameAssetManager.addGameAsset(new GameAsset(SectionType.MDL + "/rock_1", loader.loadModel(Gdx.files.getFileHandle(GameC.Files.MODELS_FOLDER_NAME + "/" + "rock_1.g3dj", Files.FileType.Internal)), SectionType.MDL));
+		gameAssetManager.addGameAsset(new GameAsset(SectionType.MDL + "/rock_2", loader.loadModel(Gdx.files.getFileHandle(GameC.Files.MODELS_FOLDER_NAME + "/" + "rock_2.g3dj", Files.FileType.Internal)), SectionType.MDL));
+		gameAssetManager.addGameAsset(new GameAsset(SectionType.MDL + "/rock_3", loader.loadModel(Gdx.files.getFileHandle(GameC.Files.MODELS_FOLDER_NAME + "/" + "rock_3.g3dj", Files.FileType.Internal)), SectionType.MDL));
+		gameAssetManager.addGameAsset(new GameAsset(SectionType.MDL + "/menu_dec_barrel", loader.loadModel(Gdx.files.getFileHandle(GameC.Files.MODELS_FOLDER_NAME + "/" + "menu_dec_barrel.g3dj", Files.FileType.Internal)), SectionType.MDL));
+		gameAssetManager.addGameAsset(new GameAsset(SectionType.MDL + "/menu_dec_saguaro", loader.loadModel(Gdx.files.getFileHandle(GameC.Files.MODELS_FOLDER_NAME + "/" + "menu_dec_saguaro.g3dj", Files.FileType.Internal)), SectionType.MDL));
+		gameAssetManager.addGameAsset(new GameAsset(SectionType.MDL + "/menu_dec_prickly", loader.loadModel(Gdx.files.getFileHandle(GameC.Files.MODELS_FOLDER_NAME + "/" + "menu_dec_prickly.g3dj", Files.FileType.Internal)), SectionType.MDL));
+		gameAssetManager.addGameAsset(new GameAsset(SectionType.MDL + "/cannon_ball", loader.loadModel(Gdx.files.getFileHandle(GameC.Files.MODELS_FOLDER_NAME + "/" + "cannon_ball.g3dj", Files.FileType.Internal)), SectionType.MDL));
 	}
 
 	private void loadSounds(GameAssetManager gameAssetManager) {
-		FileHandle internal = Gdx.files.internal(Files.Sound.FOLDER_PATH);
+		FileHandle internal = Gdx.files.internal(GameC.Files.Sound.FOLDER_PATH);
 		for (FileHandle file : internal.list()) {
 			String[] split = file.name().split("\\.");
-			if (!split[split.length - 1].equals(Files.Sound.FORMAT)) continue;
-			gameAssetManager.load(Files.Sound.FOLDER_PATH + "/" + file.name(), Sound.class);
+			if (!split[split.length - 1].equals(GameC.Files.Sound.FORMAT)) continue;
+			gameAssetManager.load(GameC.Files.Sound.FOLDER_PATH + "/" + file.name(), Sound.class);
 		}
 	}
 
