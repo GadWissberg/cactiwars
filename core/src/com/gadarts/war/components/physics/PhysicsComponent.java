@@ -17,10 +17,18 @@ public class PhysicsComponent implements Component, Pool.Poolable {
     private btCollisionShape collisionShape;
 
     public void init(int mass, btCollisionShape collisionShape, Matrix4 transform) {
+        this.init(mass, collisionShape, transform, false);
+    }
+
+    public void init(int mass,
+                     btCollisionShape collisionShape,
+                     Matrix4 transform,
+                     boolean updateModelInstanceTranslationOnly) {
         this.mass = mass;
         this.collisionShape = collisionShape;
         Vector3 translation = transform.getTranslation(ActorFactory.auxVctr);
         motionState.setTransformationObject(transform.setToTranslation(translation));
+        motionState.setUpdateTranslationOnly(updateModelInstanceTranslationOnly);
         if (mass == 0) localInertia.setZero();
         else collisionShape.calculateLocalInertia(mass, localInertia);
         initializeBody(mass, collisionShape);
@@ -67,11 +75,11 @@ public class PhysicsComponent implements Component, Pool.Poolable {
         return mass;
     }
 
-    public void setStatic(boolean b) {
-        staticState = b;
-    }
-
     public boolean isStatic() {
         return staticState;
+    }
+
+    public void setStatic(boolean b) {
+        staticState = b;
     }
 }

@@ -142,7 +142,10 @@ public class ActorFactory {
 	}
 
 
-	private PhysicsComponent createPhysicsComponent(ActorDefinition def, Entity userData, ModelInstance modelInstance, int mass) {
+	private PhysicsComponent createPhysicsComponent(ActorDefinition def,
+													Entity userData,
+													ModelInstance modelInstance,
+													int mass) {
 		PhysicsComponent physicsComponent = engine.createComponent(PhysicsComponent.class);
 		btCompoundShape collisionShape = obtainBtCompoundShape(def.getName());
 		physicsComponent.init(mass, collisionShape, modelInstance.transform);
@@ -233,15 +236,23 @@ public class ActorFactory {
 		return env;
 	}
 
-	public void createBullet(Matrix4 rotation, Vector3 worldTranslation, WeaponDefinition weapon) {
+	public void createBullet(Matrix4 rotation, Vector3 worldTrans, WeaponDefinition weapon) {
 		Entity bulletEntity = engine.createEntity();
 		bulletEntity.add(engine.createComponent(BulletComponent.class));
 		Vector3 forwardVector = auxVector3_2.set(1, 0, 0).rot(rotation);
-		worldTranslation.add(forwardVector.x, forwardVector.y, forwardVector.z);
-		ModelInstanceComponent modelComponent = createModelInstanceComponent(weapon, worldTranslation);
+		ModelInstanceComponent modelComponent = createBulletModelInstanceComponent(worldTrans, weapon, forwardVector);
 		bulletEntity.add(createBulletPhysics(weapon, bulletEntity, modelComponent, forwardVector));
 		bulletEntity.add(modelComponent);
 		engine.addEntity(bulletEntity);
+	}
+
+	private ModelInstanceComponent createBulletModelInstanceComponent(Vector3 worldTranslation,
+																	  WeaponDefinition weapon,
+																	  Vector3 forwardVector) {
+		worldTranslation.add(forwardVector.x, forwardVector.y, forwardVector.z);
+		ModelInstanceComponent modelComponent = createModelInstanceComponent(weapon, worldTranslation);
+		modelComponent.getModelInstance().transform.rotate(Vector3.X, forwardVector);
+		return modelComponent;
 	}
 
 	private PhysicsComponent createBulletPhysics(WeaponDefinition weapon,
@@ -249,6 +260,7 @@ public class ActorFactory {
 												 ModelInstanceComponent modelCmp,
 												 Vector3 direction) {
 		PhysicsComponent physicsComponent = createPhysicsComponent(weapon, bulletEntity, modelCmp.getModelInstance(), 1);
+		physicsComponent.getMotionState().setUpdateTranslationOnly(true);
 		btRigidBody body = defineBulletPhysicsBody(physicsComponent);
 		defineBulletShape(body);
 		Vector3 impulse = auxVector3_1.set(direction.x, direction.y, direction.z);

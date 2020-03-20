@@ -6,7 +6,9 @@ import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
 
 public class MotionState extends btMotionState {
 
+    private final static Vector3 auxVector = new Vector3();
     private Matrix4 transform;
+    private boolean updateTranslationOnly;
 
     public MotionState(Matrix4 transform) {
         super();
@@ -17,6 +19,14 @@ public class MotionState extends btMotionState {
         this(new Matrix4());
     }
 
+    public boolean isUpdateTranslationOnly() {
+        return updateTranslationOnly;
+    }
+
+    public void setUpdateTranslationOnly(boolean updateTranslationOnly) {
+        this.updateTranslationOnly = updateTranslationOnly;
+    }
+
     @Override
     public void getWorldTransform(Matrix4 worldTrans) {
         worldTrans.set(transform);
@@ -24,7 +34,11 @@ public class MotionState extends btMotionState {
 
     @Override
     public void setWorldTransform(Matrix4 worldTrans) {
-        transform.set(worldTrans);
+        if (updateTranslationOnly) {
+            transform.setTranslation(worldTrans.getTranslation(auxVector));
+        } else {
+            transform.set(worldTrans);
+        }
     }
 
     public void setWorldTranslation(Vector3 position) {
@@ -39,5 +53,4 @@ public class MotionState extends btMotionState {
     public void setTransformationObject(Matrix4 transform) {
         this.transform = transform;
     }
-
 }
