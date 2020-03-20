@@ -102,7 +102,6 @@ public class CharacterSystem extends GameEntitySystem implements HudEventsSubscr
 
 	private void rotate(Entity character, CharacterComponent characterComponent) {
 		float rotation = characterComponent.getRotation() * GameC.CHARACTER_ROTATION_MULTIPLIER_WITH_DT;
-		characterComponent.setDirection(characterComponent.getDirection(auxVector2_1).rotate(-rotation));
 		PhysicsComponent physicsComponent = ComponentsMapper.physics.get(character);
 		physicsComponent.getBody().applyTorqueImpulse(auxVector31.set(Vector3.Y).scl(rotation));
 	}
@@ -178,7 +177,6 @@ public class CharacterSystem extends GameEntitySystem implements HudEventsSubscr
 		float speed = characterComponent.getSpeed();
 		if (speed != 0) {
 			btRigidBody body = ComponentsMapper.physics.get(character).getBody();
-			characterComponent.getDirection(auxVector2_1).scl(speed);
 			ComponentsMapper.physics.get(character).getMotionState().getWorldTransform(auxMat);
 			body.setLinearVelocity(auxVector31.set(Vector3.X).rot(auxMat).scl(speed));
 			if (!body.isActive()) body.activate();

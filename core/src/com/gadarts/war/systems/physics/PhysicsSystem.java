@@ -6,6 +6,7 @@ import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
@@ -22,9 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PhysicsSystem extends GameEntitySystem implements EntityListener, GameContactListenerEventsSubscriber {
-	public static Matrix4 auxMatrix = new Matrix4();
-	public static Vector3 auxVector3_1 = new Vector3();
-	public static Vector3 auxVector3_2 = new Vector3();
+	public final static Matrix4 auxMatrix = new Matrix4();
+	public final static Vector3 auxVector3_1 = new Vector3();
+	public final static Vector3 auxVector3_2 = new Vector3();
+	public final static Quaternion auxQuaternion = new Quaternion();
 
 	private final SoundPlayer soundPlayer;
 	private PhysicsSystemBulletHandler bulletHandler = new PhysicsSystemBulletHandler();
