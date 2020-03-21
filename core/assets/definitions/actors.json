@@ -9,6 +9,7 @@
         "collision_shapes": [],
         "model": "tank",
         "weapon": "cannon_ball",
+        "animation_id": "body|shake",
         "bullet_position": [
           0,
           1,
@@ -17,7 +18,8 @@
         "additional": [
           {
             "offset_parent_y": 0.9,
-            "model": "tank_head"
+            "model": "tank_head",
+            "animation_id": "cannon_shoot"
           },
           {
             "model": "tank_aux",

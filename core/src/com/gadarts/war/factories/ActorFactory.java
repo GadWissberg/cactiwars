@@ -79,7 +79,7 @@ public class ActorFactory {
 		characterComponent.setCharacterDefinition(pProps.getCharacterDefinition());
 		player.add(characterComponent);
 		player.add(createPlayerPhysicsComponent(pProps.getCharacterDefinition(), pProps.getRotation(), player, mic));
-		player.add(engine.createComponent(AnimationComponent.class).init(mic.getModelInstance()));
+		player.add(engine.createComponent(AnimationComponent.class).init(mic.getModelInstance(), pProps.getAnimationId()));
 	}
 
 	private PhysicsComponent createPlayerPhysicsComponent(CharacterDefinition def, float rotation, Entity player,

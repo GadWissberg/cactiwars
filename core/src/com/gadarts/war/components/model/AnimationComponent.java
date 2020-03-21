@@ -6,30 +6,30 @@ import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.utils.Pool;
 
 public class AnimationComponent implements Component, Pool.Poolable {
-    private AnimationController animationController;
+	private AnimationController animationController;
 
-    @Override
-    public void reset() {
+	@Override
+	public void reset() {
 
-    }
+	}
 
-    public AnimationComponent init(ModelInstance modelInstance) {
-        animationController = new AnimationController(modelInstance);
-        animationController.setAnimation("body|shake", -1, 0.5f, new AnimationController.AnimationListener() {
-            @Override
-            public void onEnd(AnimationController.AnimationDesc animationDesc) {
+	public AnimationComponent init(ModelInstance modelInstance, String animationId) {
+		animationController = new AnimationController(modelInstance);
+		animationController.setAnimation(animationId, -1, 0.5f, new AnimationController.AnimationListener() {
+			@Override
+			public void onEnd(AnimationController.AnimationDesc animationDesc) {
 
-            }
+			}
 
-            @Override
-            public void onLoop(AnimationController.AnimationDesc animationDesc) {
+			@Override
+			public void onLoop(AnimationController.AnimationDesc animationDesc) {
 
-            }
-        });
-        return this;
-    }
+			}
+		});
+		return this;
+	}
 
-    public AnimationController getController() {
-        return animationController;
-    }
+	public AnimationController getController() {
+		return animationController;
+	}
 }

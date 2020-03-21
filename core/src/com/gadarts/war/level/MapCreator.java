@@ -257,6 +257,7 @@ public class MapCreator extends MapModeler {
 				playerProperties.setY(position.y - origin.y);
 				playerProperties.setZ(position.z - origin.z);
 				playerProperties.setRotation(actor.getRotation());
+				playerProperties.setAnimationId(actorDefinition.getAnimationId());
 				playerProperties.setAdditionals(additionals);
 				playerProperties.setCharacterDefinition((CharacterDefinition) actorDefinition);
 				Entity player = actorFactory.createPlayer(playerProperties);

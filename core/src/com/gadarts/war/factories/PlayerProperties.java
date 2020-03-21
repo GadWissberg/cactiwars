@@ -12,6 +12,7 @@ public class PlayerProperties {
 	private float rotation;
 	private List<CharacterAdditionalDefinition> additionals;
 	private CharacterDefinition characterDefinition;
+	private String animationId;
 
 	public CharacterDefinition getCharacterDefinition() {
 		return characterDefinition;
@@ -59,5 +60,13 @@ public class PlayerProperties {
 
 	public void setAdditionals(List<CharacterAdditionalDefinition> additionals) {
 		this.additionals = additionals;
+	}
+
+	public String getAnimationId() {
+		return animationId;
+	}
+
+	public void setAnimationId(String animationId) {
+		this.animationId = animationId;
 	}
 }
