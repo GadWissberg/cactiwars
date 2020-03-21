@@ -79,8 +79,8 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 
     private void initialize() {
         entitiesEngine = new PooledEngine();
-        createSystemsHandler();
         actorFactory = new ActorFactory(entitiesEngine, getSoundPlayer());
+        createSystemsHandler();
         createWorld();
         initializeInput();
         createHud();

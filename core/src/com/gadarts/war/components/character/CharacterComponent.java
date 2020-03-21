@@ -2,6 +2,7 @@ package com.gadarts.war.components.character;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.Timer;
 import com.gadarts.shared.definitions.character.CharacterDefinition;
 
 public class CharacterComponent implements Component, Pool.Poolable {
@@ -13,6 +14,14 @@ public class CharacterComponent implements Component, Pool.Poolable {
     private CharacterSoundData characterSoundData = new CharacterSoundData();
     private CharacterAdditional additional;
     private CharacterDefinition characterDefinition;
+    private boolean shooting;
+    private boolean reloading;
+    private Timer.Task finishReloadTask = new Timer.Task() {
+        @Override
+        public void run() {
+            setReloading(false);
+        }
+    };
 
     public void init(float maxLinearVelocity, float acceleration, float maxReverseSpeed, float reverseAcceleration) {
         speedData.setMaxFrontSpeed(maxLinearVelocity);
@@ -131,5 +140,25 @@ public class CharacterComponent implements Component, Pool.Poolable {
 
     public void setCharacterDefinition(CharacterDefinition characterDefinition) {
         this.characterDefinition = characterDefinition;
+    }
+
+    public boolean isShooting() {
+        return shooting;
+    }
+
+    public void setShooting(boolean shooting) {
+        this.shooting = shooting;
+    }
+
+    public boolean isReloading() {
+        return reloading;
+    }
+
+    public void setReloading(boolean reloading) {
+        this.reloading = reloading;
+    }
+
+    public Timer.Task getFinishReloadTask() {
+        return finishReloadTask;
     }
 }

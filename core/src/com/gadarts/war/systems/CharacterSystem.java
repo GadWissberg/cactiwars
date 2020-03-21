@@ -7,10 +7,11 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
+import com.badlogic.gdx.utils.Timer;
+import com.gadarts.shared.definitions.WeaponDefinition;
 import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameC;
 import com.gadarts.war.components.CameraComponent;
@@ -18,27 +19,35 @@ import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.character.CharacterComponent;
 import com.gadarts.war.components.character.CharacterSoundData;
 import com.gadarts.war.components.character.MovementState;
+import com.gadarts.war.components.physics.MotionState;
 import com.gadarts.war.components.physics.PhysicsComponent;
+import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.menu.hud.HudEventsSubscriber;
 import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 
+import static com.gadarts.war.systems.physics.PhysicsSystem.auxMatrix;
+import static com.gadarts.war.systems.physics.PhysicsSystem.auxVector3_1;
+
 public class CharacterSystem extends GameEntitySystem implements HudEventsSubscriber {
-	public final static Vector2 auxVector2_1 = new Vector2();
-	private static Vector3 auxVector31 = new Vector3();
-	private static Vector3 auxVector32 = new Vector3();
-	private static Vector3 rayFrom = new Vector3();
-	private static Vector3 rayTo = new Vector3();
-	private static Matrix4 auxMat = new Matrix4();
+	private final static Vector3 auxVector31 = new Vector3();
+	private final static Vector3 auxVector32 = new Vector3();
+	private final static Vector3 rayFrom = new Vector3();
+	private final static Vector3 rayTo = new Vector3();
+	private final static Matrix4 auxMat = new Matrix4();
+
 	private final SoundPlayer soundPlayer;
+	private final ActorFactory actorFactory;
 
 	private ImmutableArray<Entity> characters;
 	private ClosestRayResultCallback callback = new ClosestRayResultCallback(rayFrom, rayTo);
 	private Entity camera;
+	private Timer timer = new Timer();
 
-	public CharacterSystem(SoundPlayer soundPlayer) {
+	public CharacterSystem(SoundPlayer soundPlayer, ActorFactory actorFactory) {
 		this.soundPlayer = soundPlayer;
+		this.actorFactory = actorFactory;
 	}
 
 	@Override
@@ -53,11 +62,35 @@ public class CharacterSystem extends GameEntitySystem implements HudEventsSubscr
 		if (!BattleScreen.isPaused()) {
 			super.update(deltaTime);
 			for (Entity character : characters) {
-				handleMovement(character);
-				if (DefaultGameSettings.ALLOW_SOUND && !DefaultGameSettings.MUTE_CHARACTERS_SOUNDS)
-					handleCharacterSound(character);
+				updateCharacter(character);
 			}
 		}
+	}
+
+	private void updateCharacter(Entity character) {
+		handleMovement(character);
+		if (DefaultGameSettings.ALLOW_SOUND && !DefaultGameSettings.MUTE_CHARACTERS_SOUNDS)
+			handleCharacterSound(character);
+		handleShooting(character);
+	}
+
+	private void handleShooting(Entity character) {
+		CharacterComponent characterComponent = ComponentsMapper.characters.get(character);
+		if (characterComponent.isShooting()) {
+			if (!characterComponent.isReloading()) {
+				shoot(character, characterComponent);
+			}
+		}
+	}
+
+	private void shoot(Entity character, CharacterComponent characterComponent) {
+		MotionState motionState = ComponentsMapper.physics.get(character).getMotionState();
+		Vector3 worldTranslation = motionState.getWorldTranslation(auxVector3_1);
+		WeaponDefinition weapon = characterComponent.getCharacterDefinition().getWeapon();
+		motionState.getWorldTransform(PhysicsSystem.auxMatrix);
+		actorFactory.createBullet(auxMatrix, worldTranslation.add(0, 1, 0), weapon);
+		characterComponent.setReloading(true);
+		timer.scheduleTask(characterComponent.getFinishReloadTask(), 1);
 	}
 
 	private void handleCharacterSound(Entity character) {
