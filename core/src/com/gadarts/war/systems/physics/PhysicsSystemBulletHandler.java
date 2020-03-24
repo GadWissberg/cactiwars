@@ -72,7 +72,7 @@ public class PhysicsSystemBulletHandler {
 
     private void initializeCollisionWorld() {
         collisionWorld = new btDiscreteDynamicsWorld(dispatcher, broadPhase, solver, collisionConfiguration);
-        collisionWorld.setGravity(new Vector3(0, -20, 0));
+        collisionWorld.setGravity(new Vector3(0, -9.8f, 0));
     }
 
     public void dispose() {

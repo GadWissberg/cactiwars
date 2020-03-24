@@ -16,5 +16,6 @@ public class ComponentsMapper {
     public static final ComponentMapper<PointLightComponent> pointLights = ComponentMapper.getFor(PointLightComponent.class);
     public static final ComponentMapper<AnimationComponent> animations = ComponentMapper.getFor(AnimationComponent.class);
     public static final ComponentMapper<PlayerComponent> players = ComponentMapper.getFor(PlayerComponent.class);
+	public static final ComponentMapper<BulletComponent> bullets = ComponentMapper.getFor(BulletComponent.class);
 
 }

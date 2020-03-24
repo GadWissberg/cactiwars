@@ -32,6 +32,7 @@ public class PhysicsComponent implements Component, Pool.Poolable {
         if (mass == 0) localInertia.setZero();
         else collisionShape.calculateLocalInertia(mass, localInertia);
         initializeBody(mass, collisionShape);
+		body.setWorldTransform(transform);
     }
 
     public void recalculateLocalInertia() {

@@ -16,6 +16,7 @@ import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameC;
 import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
+import com.gadarts.war.components.character.CharacterAdditional;
 import com.gadarts.war.components.character.CharacterComponent;
 import com.gadarts.war.components.character.CharacterSoundData;
 import com.gadarts.war.components.character.MovementState;
@@ -25,12 +26,15 @@ import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.menu.hud.HudEventsSubscriber;
 import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.sound.SoundPlayer;
+import com.gadarts.war.systems.physics.GameContactListenerEventsSubscriber;
 import com.gadarts.war.systems.physics.PhysicsSystem;
+
+import java.util.List;
 
 import static com.gadarts.war.systems.physics.PhysicsSystem.auxMatrix;
 import static com.gadarts.war.systems.physics.PhysicsSystem.auxVector3_1;
 
-public class CharacterSystem extends GameEntitySystem implements HudEventsSubscriber {
+public class CharacterSystem extends GameEntitySystem implements HudEventsSubscriber, GameContactListenerEventsSubscriber {
 	private final static Vector3 auxVector31 = new Vector3();
 	private final static Vector3 auxVector32 = new Vector3();
 	private final static Vector3 rayFrom = new Vector3();
@@ -55,6 +59,7 @@ public class CharacterSystem extends GameEntitySystem implements HudEventsSubscr
 		super.addedToEngine(engine);
 		this.camera = getEngine().getEntitiesFor(Family.all(CameraComponent.class).get()).first();
 		characters = engine.getEntitiesFor(Family.all(CharacterComponent.class).get());
+		engine.getSystem(PhysicsSystem.class).subscribeForCollisionEvents(this);
 	}
 
 	@Override
@@ -62,35 +67,43 @@ public class CharacterSystem extends GameEntitySystem implements HudEventsSubscr
 		if (!BattleScreen.isPaused()) {
 			super.update(deltaTime);
 			for (Entity character : characters) {
-				updateCharacter(character);
+				updateCharacter(character, deltaTime);
 			}
 		}
 	}
 
-	private void updateCharacter(Entity character) {
+	private void updateCharacter(Entity character, float deltaTime) {
 		handleMovement(character);
 		if (DefaultGameSettings.ALLOW_SOUND && !DefaultGameSettings.MUTE_CHARACTERS_SOUNDS)
 			handleCharacterSound(character);
-		handleShooting(character);
+		handleShooting(character, deltaTime);
+		List<CharacterAdditional> additionals = ComponentsMapper.characters.get(character).getAdditionals();
+		if (additionals != null) for (CharacterAdditional additional : additionals) {
+			additional.update(deltaTime);
+		}
 	}
 
-	private void handleShooting(Entity character) {
+	private void handleShooting(Entity character, float deltaTime) {
 		CharacterComponent characterComponent = ComponentsMapper.characters.get(character);
 		if (characterComponent.isShooting()) {
 			if (!characterComponent.isReloading()) {
-				shoot(character, characterComponent);
+				shoot(character, characterComponent, deltaTime);
 			}
 		}
 	}
 
-	private void shoot(Entity character, CharacterComponent characterComponent) {
+	private void shoot(Entity character, CharacterComponent characterComponent, float deltaTime) {
 		MotionState motionState = ComponentsMapper.physics.get(character).getMotionState();
 		Vector3 worldTranslation = motionState.getWorldTranslation(auxVector3_1);
 		WeaponDefinition weapon = characterComponent.getCharacterDefinition().getWeapon();
 		motionState.getWorldTransform(PhysicsSystem.auxMatrix);
-		actorFactory.createBullet(auxMatrix, worldTranslation.add(0, 1, 0), weapon);
+		actorFactory.createBullet(auxMatrix, worldTranslation.add(characterComponent.getCharacterDefinition().getBulletPosition(auxVector31)), weapon);
 		characterComponent.setReloading(true);
 		timer.scheduleTask(characterComponent.getFinishReloadTask(), 1);
+		List<CharacterAdditional> additionals = ComponentsMapper.characters.get(character).getAdditionals();
+		if (additionals != null) for (CharacterAdditional additional : additionals) {
+			additional.onShoot();
+		}
 	}
 
 	private void handleCharacterSound(Entity character) {
@@ -237,5 +250,20 @@ public class CharacterSystem extends GameEntitySystem implements HudEventsSubscr
 	@Override
 	public void onResize(int width, int height) {
 
+	}
+
+	@Override
+	public void onStaticEnvironmentObjectHardCollision(Entity entity) {
+
+	}
+
+	@Override
+	public void onBulletWithEnvironmentObject(Entity bullet, Entity env) {
+		getEngine().removeEntity(bullet);
+	}
+
+	@Override
+	public void onBulletWithGround(Entity bullet, Entity ground) {
+		getEngine().removeEntity(bullet);
 	}
 }

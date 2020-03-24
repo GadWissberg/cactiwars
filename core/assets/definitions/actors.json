@@ -12,14 +12,14 @@
         "animation_id": "body|shake",
         "bullet_position": [
           0,
-          1,
+          1.1,
           0
         ],
         "additional": [
           {
             "offset_parent_y": 0.9,
             "model": "tank_head",
-            "animation_id": "cannon_shoot"
+            "on_shoot_animation_id": "cannon_shoot"
           },
           {
             "model": "tank_aux",

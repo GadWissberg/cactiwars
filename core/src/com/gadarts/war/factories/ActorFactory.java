@@ -85,7 +85,7 @@ public class ActorFactory {
 	private PhysicsComponent createPlayerPhysicsComponent(CharacterDefinition def, float rotation, Entity player,
 														  ModelInstanceComponent modelInstanceComponent) {
 		PhysicsComponent physicsComponent = createPhysicsComponent(def, player, modelInstanceComponent.getModelInstance(),
-				400);
+				800);
 		createPlayerPhysicsBody(rotation, physicsComponent);
 		return physicsComponent;
 	}
@@ -137,7 +137,7 @@ public class ActorFactory {
 		additionalNode.translation.add(offsetCoords.x, offsetCoords.y, offsetCoords.z);
 		parentModelInstance.nodes.add(additionalNode);
 		parentModelInstance.calculateTransforms();
-		characterAdditional.init(additionalDefinition);
+		characterAdditional.init(additionalDefinition, additionalModelInstance);
 		return characterAdditional;
 	}
 
@@ -200,7 +200,7 @@ public class ActorFactory {
 		ModelInstanceComponent modelInstanceComponent = createModelInstanceComponent(environmentObjectDefinition, position.x, position.y, position.z);
 		env.add(engine.createComponent(EnvironmentObjectComponent.class));
 		env.add(modelInstanceComponent);
-		PhysicsComponent physicsComponent = createPhysicsComponent(environmentObjectDefinition, env, modelInstanceComponent.getModelInstance(), isStatic ? 0 : 10);
+		PhysicsComponent physicsComponent = createPhysicsComponent(environmentObjectDefinition, env, modelInstanceComponent.getModelInstance(), isStatic ? 0 : 100);
 		physicsComponent.setStatic(true);
 		btRigidBody body = physicsComponent.getBody();
 		btCompoundShape collisionShape = (btCompoundShape) body.getCollisionShape();
@@ -239,7 +239,7 @@ public class ActorFactory {
 	public void createBullet(Matrix4 rotation, Vector3 worldTrans, WeaponDefinition weapon) {
 		Entity bulletEntity = engine.createEntity();
 		bulletEntity.add(engine.createComponent(BulletComponent.class));
-		Vector3 forwardVector = auxVector3_2.set(1, 0, 0).rot(rotation);
+		Vector3 forwardVector = auxVector3_2.set(1.1f, 0, 0).rot(rotation);
 		ModelInstanceComponent modelComponent = createBulletModelInstanceComponent(worldTrans, weapon, forwardVector);
 		bulletEntity.add(createBulletPhysics(weapon, bulletEntity, modelComponent, forwardVector));
 		bulletEntity.add(modelComponent);
@@ -264,13 +264,13 @@ public class ActorFactory {
 		btRigidBody body = defineBulletPhysicsBody(physicsComponent);
 		defineBulletShape(body);
 		Vector3 impulse = auxVector3_1.set(direction.x, direction.y, direction.z);
-		physicsComponent.getBody().applyCentralImpulse(impulse.setLength2(2000f));
+		physicsComponent.getBody().applyCentralImpulse(impulse.setLength2(800));
 		return physicsComponent;
 	}
 
 	private btRigidBody defineBulletPhysicsBody(PhysicsComponent physicsComponent) {
 		btRigidBody body = physicsComponent.getBody();
-		defineBodyPhysicsCallbacks(body, CollisionFilterGroups.DebrisFilter, CollisionFilterGroups.DebrisFilter);
+		defineBodyPhysicsCallbacks(body, CollisionFilterGroups.CharacterFilter | CollisionFilterGroups.KinematicFilter, CollisionFilterGroups.CharacterFilter);
 		body.setGravity(auxVector3_1.setZero());
 		body.activate();
 		body.setDamping(0, 0);
