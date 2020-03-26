@@ -4,6 +4,7 @@ import com.gadarts.war.menu.console.Console;
 import com.gadarts.war.menu.console.commands.Commands;
 import com.gadarts.war.menu.console.commands.ConsoleCommand;
 import com.gadarts.war.menu.console.commands.ConsoleCommandResult;
+
 import java.util.Map;
 
 public class BordersCommand extends ConsoleCommand {
@@ -13,7 +14,6 @@ public class BordersCommand extends ConsoleCommand {
     @Override
     public ConsoleCommandResult run(Console console, Map<String, String> parameters) {
         ConsoleCommandResult result = super.run(console, parameters);
-        console.insertNewLog(result.getMessage(), false);
         return result;
     }
 

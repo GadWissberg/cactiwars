@@ -19,15 +19,16 @@ public class CelRenderer {
 	private ModelBatch depthBatch = new ModelBatch(new CelDepthShaderProvider());
 	private SpriteBatch spriteBatch = new SpriteBatch();
 	private ShaderProgram lineShader = new CelLineShaderProgram();
+	private boolean enabled = DefaultGameSettings.CEL_SHADING;
 
 	public void initialize(int width, int height) {
-		if (DefaultGameSettings.CEL_SHADING) {
+		if (enabled) {
 			celShaderFbo = new FrameBuffer(Pixmap.Format.RGBA8888, width, height, true);
 		}
 	}
 
 	public void renderDepth(PerspectiveCamera camera, CelRendererUser celRendererUser, float deltaTime) {
-		if (DefaultGameSettings.CEL_SHADING) {
+		if (enabled) {
 			celShaderFbo.begin();
 			resetDisplay(Color.CLEAR);
 			depthBatch.begin(camera);
@@ -38,7 +39,7 @@ public class CelRenderer {
 	}
 
 	public void renderOutline() {
-		if (DefaultGameSettings.CEL_SHADING) {
+		if (enabled) {
 			spriteBatch.setShader(lineShader);
 			spriteBatch.begin();
 			spriteBatch.draw(celShaderFbo.getColorBufferTexture(), 0, 0, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 1, 1, 0, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false, true);
@@ -55,8 +56,16 @@ public class CelRenderer {
 	}
 
 	public void onResize(int width, int height) {
-		if (!DefaultGameSettings.CEL_SHADING) return;
+		if (!enabled) return;
 		celShaderFbo.dispose();
 		initialize(width, height);
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 }

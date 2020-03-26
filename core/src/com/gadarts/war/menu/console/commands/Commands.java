@@ -3,6 +3,7 @@ package com.gadarts.war.menu.console.commands;
 import com.gadarts.war.menu.console.ConsoleImpl;
 import com.gadarts.war.menu.console.InputParsingFailureException;
 import com.gadarts.war.menu.console.commands.types.BordersCommand;
+import com.gadarts.war.menu.console.commands.types.CelShaderCommand;
 import com.gadarts.war.menu.console.commands.types.ProfilerCommand;
 import com.gadarts.war.menu.console.commands.types.SkipDrawingCommand;
 
@@ -16,7 +17,8 @@ public enum Commands {
 			new SkipDrawingCommand.GroundParameter("ground"),
 			new SkipDrawingCommand.CharactersParameter("characters"),
 			new SkipDrawingCommand.EnvironmentParameter("environment"),
-			new SkipDrawingCommand.ShadowsParameter("shadows"));
+			new SkipDrawingCommand.ShadowsParameter("shadows")),
+	CEL_SHADER("cel_shading", new CelShaderCommand());
 
 	private final ConsoleCommand command;
 	private final String alias;

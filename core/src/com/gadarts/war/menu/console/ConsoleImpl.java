@@ -87,7 +87,8 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
         try {
             CommandInvoke commandToInvoke;
             commandToInvoke = parseCommandFromInput(inputCommand);
-            commandToInvoke.getCommand().getCommandImpl().run(this, commandToInvoke.getParameters());
+            ConsoleCommandResult result = commandToInvoke.getCommand().getCommandImpl().run(this, commandToInvoke.getParameters());
+            insertNewLog(result.getMessage(), false);
         } catch (InputParsingFailureException e) {
             insertNewLog(e.getMessage(), false);
         }
@@ -117,6 +118,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 
     @Override
     public void insertNewLog(String text, boolean logTime) {
+        if (text == null) return;
         consoleTextData.insertNewLog(text, logTime);
     }
 

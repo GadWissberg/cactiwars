@@ -18,13 +18,15 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.gadarts.shared.definitions.PointLightDefinition;
-import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameShaderProvider;
 import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.EnvironmentObjectComponent;
 import com.gadarts.war.components.PointLightComponent;
 import com.gadarts.war.components.model.ModelInstanceComponent;
+import com.gadarts.war.menu.console.ConsoleEventsSubscriber;
+import com.gadarts.war.menu.console.commands.Commands;
+import com.gadarts.war.menu.console.commands.ConsoleCommandResult;
 import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.systems.GameEntitySystem;
 import com.gadarts.war.systems.physics.CollisionShapesDebugDrawing;
@@ -33,7 +35,9 @@ import com.gadarts.war.systems.render.shadow.ShadowRenderer;
 
 import java.util.List;
 
-public class RenderSystem extends GameEntitySystem implements PhysicsSystemEventsSubscriber, EntityListener, CelRendererUser {
+public class RenderSystem extends GameEntitySystem implements PhysicsSystemEventsSubscriber, EntityListener, CelRendererUser, ConsoleEventsSubscriber {
+	private static final String CEL_SHADING_ACTIVATED = "Cel-shading enabled.";
+	private static final String CEL_SHADING_DEACTIVATED = "Cel-shading disabled.";
 	private static Vector3 auxVector31 = new Vector3();
 	private static Vector3 auxVector32 = new Vector3();
 	private static BoundingBox auxBoundingBox1 = new BoundingBox();
@@ -149,9 +153,7 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 	public void dispose() {
 		modelBatch.dispose();
 		shadowRenderer.dispose();
-		if (DefaultGameSettings.CEL_SHADING) {
-			celRenderer.dispose();
-		}
+		celRenderer.dispose();
 	}
 
 	public int getNumberOfVisible() {
@@ -216,5 +218,25 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 	@Override
 	public void renderDepthWithInstances(ModelBatch depthBatchToRenderWith, float deltaTime) {
 		renderInstances(depthBatchToRenderWith, true, null, deltaTime);
+	}
+
+	@Override
+	public void onConsoleActivated() {
+
+	}
+
+	@Override
+	public boolean onCommandRun(Commands command, ConsoleCommandResult consoleCommandResult) {
+		if (command == Commands.CEL_SHADER) {
+			celRenderer.setEnabled(!celRenderer.isEnabled());
+			String msg = celRenderer.isEnabled() ? CEL_SHADING_ACTIVATED : CEL_SHADING_DEACTIVATED;
+			consoleCommandResult.setMessage(msg);
+		}
+		return true;
+	}
+
+	@Override
+	public void onConsoleDeactivated() {
+
 	}
 }
