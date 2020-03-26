@@ -48,7 +48,7 @@ public final class GameC {
 	}
 
 	public final class General {
-		public static final String VERSION = "0.1";
+		public static final String VERSION = "0.1.1";
 		public static final String GAME = "CactiWars";
 
 	}

@@ -6,7 +6,7 @@ import com.gadarts.war.screens.Screens;
 public final class DefaultGameSettings {
 	public static final boolean SPECTATOR = false;
 	public static final int LOG_LEVEL = Gdx.app.LOG_DEBUG;
-	public static final boolean FULL_SCREEN = false;
+	public static final boolean FULL_SCREEN = true;
 	public static final boolean SHOW_GL_PROFILING = true;
 	public static final boolean SHOW_AXIS = false;
 	public static final boolean DRAW_COLLISION_SHAPES = false;
@@ -14,7 +14,7 @@ public final class DefaultGameSettings {
 	public static final boolean DRAW_TABLES_BORDERS = false;
 	public static final int FPS_TARGET = 60;
 	public static final boolean CEL_SHADING = true;
-	public static final boolean ALLOW_SOUND = false;
+	public static final boolean ALLOW_SOUND = true;
 	public static final boolean MUTE_AMB_SOUNDS = false;
 	public static final boolean MUTE_CHARACTERS_SOUNDS = false;
 	public static final Screens INITIAL_SCREEN = Screens.BATTLE;
