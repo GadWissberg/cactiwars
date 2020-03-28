@@ -3,35 +3,35 @@ package com.gadarts.war.menu.console;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.utils.Array;
 
 import java.util.Stack;
 
 public class ConsoleInputHistoryHandler {
 	private Stage stage;
-	private Stack<String> inputHistory = new Stack<>();
+	private Array<String> inputHistory = new Array<>();
 	private Stack<String> inputHistoryAux = new Stack<>();
+	private int current;
 
 	public void applyInput(String inputCommand) {
-		if (!inputHistoryAux.empty()) inputHistoryAux.insertElementAt(inputCommand, 0);
-		else inputHistory.push(inputCommand);
+		inputHistory.insert(inputHistory.size, inputCommand);
+		current = inputHistory.size;
 	}
 
 	public void onKeyDown(int keycode) {
 		if (keycode == Input.Keys.DOWN) {
-			manipulateInputHistory(inputHistoryAux, inputHistory);
+			current = Math.min(inputHistory.size - 1, current + 1);
+			updateInputByHistory();
 		} else if (keycode == Input.Keys.UP) {
-			manipulateInputHistory(inputHistory, inputHistoryAux);
+			current = Math.max(0, current - 1);
+			updateInputByHistory();
 		}
 	}
 
-	private boolean manipulateInputHistory(Stack<String> takeFrom, Stack<String> putIn) {
-		if (takeFrom.empty()) return true;
+	private void updateInputByHistory() {
 		TextField input = stage.getRoot().findActor(ConsoleImpl.INPUT_FIELD_NAME);
-		String pop = takeFrom.pop();
-		input.setText(pop);
+		input.setText(inputHistory.get(current));
 		input.setCursorPosition(input.getText().length());
-		putIn.push(pop);
-		return true;
 	}
 
 	public void setStage(Stage stage) {

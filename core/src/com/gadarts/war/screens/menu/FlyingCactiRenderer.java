@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
+import com.gadarts.shared.par.SectionType;
 import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
@@ -51,7 +52,7 @@ public class FlyingCactiRenderer implements CelRendererUser {
 	}
 
 	private ModelInstance createCactusModelInstance(String fileName) {
-		ModelInstance modelInstance = new ModelInstance(GameAssetManager.getInstance().get(fileName, Model.class));
+		ModelInstance modelInstance = new ModelInstance(GameAssetManager.getInstance().getGameAsset(SectionType.MDL, fileName, Model.class));
 		Matrix4 transform = modelInstance.transform;
 		transform.rotate(Vector3.X, MathUtils.random() * 360f);
 		transform.rotate(Vector3.Y, MathUtils.random() * 360f);
@@ -74,11 +75,11 @@ public class FlyingCactiRenderer implements CelRendererUser {
 		int dice = MathUtils.random(2);
 		String result;
 		if (dice == 0) {
-			result = GameC.Files.MODELS_FOLDER_NAME + "/" + "menu_dec_barrel.g3dj";
+			result = "menu_dec_barrel";
 		} else if (dice == 1) {
-			result = GameC.Files.MODELS_FOLDER_NAME + "/" + "menu_dec_saguaro.g3dj";
+			result = "menu_dec_saguaro";
 		} else {
-			result = GameC.Files.MODELS_FOLDER_NAME + "/" + "menu_dec_prickly.g3dj";
+			result = "menu_dec_prickly";
 		}
 		return result;
 	}
