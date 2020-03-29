@@ -11,6 +11,7 @@ import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameC.Files;
 import com.gadarts.war.Profiler;
 import com.gadarts.war.menu.GameMenu;
+import com.gadarts.war.menu.console.commands.CommandParameter;
 import com.gadarts.war.menu.console.commands.Commands;
 import com.gadarts.war.menu.console.commands.ConsoleCommandResult;
 import com.gadarts.war.screens.BaseGameScreen;
@@ -93,6 +94,11 @@ public class MainMenuScreen extends BaseGameScreen {
 
 	@Override
 	public boolean onCommandRun(Commands command, ConsoleCommandResult consoleCommandResult) {
+		return onCommandRun(command, consoleCommandResult, null);
+	}
+
+	@Override
+	public boolean onCommandRun(Commands command, ConsoleCommandResult consoleCommandResult, CommandParameter parameter) {
 		consoleCommandResult.setMessage(reactToCommand(command, profiler, stage));
 		return true;
 	}

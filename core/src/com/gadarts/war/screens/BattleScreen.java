@@ -12,6 +12,7 @@ import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.InGameScreen;
 import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.level.MapCreator;
+import com.gadarts.war.menu.console.commands.CommandParameter;
 import com.gadarts.war.menu.console.commands.Commands;
 import com.gadarts.war.menu.console.commands.ConsoleCommandResult;
 import com.gadarts.war.menu.hud.Hud;
@@ -167,6 +168,11 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 
 	@Override
 	public boolean onCommandRun(Commands command, ConsoleCommandResult consoleCommandResult) {
+		return onCommandRun(command, consoleCommandResult, null);
+	}
+
+	@Override
+	public boolean onCommandRun(Commands command, ConsoleCommandResult consoleCommandResult, CommandParameter parameter) {
 		consoleCommandResult.setMessage(reactToCommand(command, hud.getProfiler(), getHudStage()));
 		return true;
 	}

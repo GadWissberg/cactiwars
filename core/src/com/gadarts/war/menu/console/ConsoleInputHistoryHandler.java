@@ -5,12 +5,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Array;
 
-import java.util.Stack;
-
 public class ConsoleInputHistoryHandler {
 	private Stage stage;
 	private Array<String> inputHistory = new Array<>();
-	private Stack<String> inputHistoryAux = new Stack<>();
 	private int current;
 
 	public void applyInput(String inputCommand) {

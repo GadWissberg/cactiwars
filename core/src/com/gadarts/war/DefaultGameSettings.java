@@ -21,6 +21,5 @@ public final class DefaultGameSettings {
 	public static final boolean SKIP_GROUND_DRAWING = false;
 	public static final boolean SKIP_CHARACTER_DRAWING = false;
 	public static final boolean SKIP_ENV_OBJECT_DRAWING = false;
-	public static final boolean SKIP_DRAWING_SURROUNDING_TERRAIN = false;
 	public static final boolean SKIP_DRAW_SHADOWS = false;
 }

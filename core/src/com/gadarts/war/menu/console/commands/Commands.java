@@ -14,10 +14,10 @@ public enum Commands {
 	PROFILER(new ProfilerCommand()),
 	BORDERS(new BordersCommand()),
 	SKIP_DRAWING("skip_draw", new SkipDrawingCommand(),
-			new SkipDrawingCommand.GroundParameter("ground"),
-			new SkipDrawingCommand.CharactersParameter("characters"),
-			new SkipDrawingCommand.EnvironmentParameter("environment"),
-			new SkipDrawingCommand.ShadowsParameter("shadows")),
+			new SkipDrawingCommand.GroundParameter(),
+			new SkipDrawingCommand.CharactersParameter(),
+			new SkipDrawingCommand.EnvironmentParameter(),
+			new SkipDrawingCommand.ShadowsParameter()),
 	CEL_SHADER("cel_shading", new CelShaderCommand());
 
 	private final ConsoleCommand command;

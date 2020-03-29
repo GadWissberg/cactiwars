@@ -3,15 +3,17 @@ package com.gadarts.war.menu.console.commands;
 import com.gadarts.war.menu.console.Console;
 
 public abstract class CommandParameter {
-	private final String alias;
+	private boolean parameterValue;
 
-	public CommandParameter(String alias) {
-		this.alias = alias;
+	public boolean getParameterValue() {
+		return parameterValue;
 	}
 
-	public String getAlias() {
-		return alias;
+	protected void setParameterValue(boolean result) {
+		this.parameterValue = result;
 	}
 
-	public abstract boolean run(String value, Console console);
+	public abstract String getAlias();
+
+	public abstract void run(String value, Console console);
 }
