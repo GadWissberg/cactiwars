@@ -25,6 +25,7 @@ import com.gadarts.war.components.physics.PhysicsComponent;
 import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.menu.hud.HudEventsSubscriber;
 import com.gadarts.war.screens.BattleScreen;
+import com.gadarts.war.sound.SFX;
 import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.systems.physics.GameContactListenerEventsSubscriber;
 import com.gadarts.war.systems.physics.PhysicsSystem;
@@ -76,23 +77,23 @@ public class CharacterSystem extends GameEntitySystem implements HudEventsSubscr
 		handleMovement(character);
 		if (DefaultGameSettings.ALLOW_SOUND && !DefaultGameSettings.MUTE_CHARACTERS_SOUNDS)
 			handleCharacterSound(character);
-		handleShooting(character, deltaTime);
+		handleShooting(character);
 		List<CharacterAdditional> additionals = ComponentsMapper.characters.get(character).getAdditionals();
 		if (additionals != null) for (CharacterAdditional additional : additionals) {
 			additional.update(deltaTime);
 		}
 	}
 
-	private void handleShooting(Entity character, float deltaTime) {
+	private void handleShooting(Entity character) {
 		CharacterComponent characterComponent = ComponentsMapper.characters.get(character);
 		if (characterComponent.isShooting()) {
 			if (!characterComponent.isReloading()) {
-				shoot(character, characterComponent, deltaTime);
+				shoot(character, characterComponent);
 			}
 		}
 	}
 
-	private void shoot(Entity character, CharacterComponent characterComponent, float deltaTime) {
+	private void shoot(Entity character, CharacterComponent characterComponent) {
 		MotionState motionState = ComponentsMapper.physics.get(character).getMotionState();
 		Vector3 worldTranslation = motionState.getWorldTranslation(auxVector3_1);
 		WeaponDefinition weapon = characterComponent.getCharacterDefinition().getWeapon();
@@ -103,6 +104,9 @@ public class CharacterSystem extends GameEntitySystem implements HudEventsSubscr
 		List<CharacterAdditional> additionals = ComponentsMapper.characters.get(character).getAdditionals();
 		if (additionals != null) for (CharacterAdditional additional : additionals) {
 			additional.onShoot();
+		}
+		if (!DefaultGameSettings.MUTE_CHARACTERS_SOUNDS) {
+			soundPlayer.play(MathUtils.randomBoolean() ? SFX.CANNON_SHOOT_1 : SFX.CANNON_SHOOT_2, ComponentsMapper.camera.get(camera).getCamera(), ComponentsMapper.physics.get(character).getMotionState().getWorldTranslation(auxVector31));
 		}
 	}
 
