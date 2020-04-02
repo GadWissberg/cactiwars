@@ -7,7 +7,7 @@ public final class DefaultGameSettings {
 	public static final boolean SPECTATOR = false;
 	public static final int LOG_LEVEL = Gdx.app.LOG_DEBUG;
 	public static final boolean FULL_SCREEN = false;
-	public static final boolean SHOW_GL_PROFILING = true;
+	public static final boolean SHOW_GL_PROFILING = false;
 	public static final boolean SHOW_AXIS = false;
 	public static final boolean DRAW_COLLISION_SHAPES = false;
 	public static final boolean MENU_ON_START = false;
@@ -17,7 +17,7 @@ public final class DefaultGameSettings {
 	public static final boolean ALLOW_SOUND = true;
 	public static final boolean MUTE_AMB_SOUNDS = false;
 	public static final boolean MUTE_CHARACTERS_SOUNDS = false;
-	public static final Screens INITIAL_SCREEN = Screens.BATTLE;
+	public static final Screens INITIAL_SCREEN = Screens.MAIN_MENU;
 	public static final boolean SKIP_GROUND_DRAWING = false;
 	public static final boolean SKIP_CHARACTER_DRAWING = false;
 	public static final boolean SKIP_ENV_OBJECT_DRAWING = false;

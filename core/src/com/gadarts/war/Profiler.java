@@ -27,6 +27,7 @@ public class Profiler {
 	public Profiler(Stage stage, RenderSystem renderSystem) {
 		this.stage = stage;
 		this.renderSystem = renderSystem;
+		glProfiler = new GLProfiler(Gdx.graphics);
 		stringBuilder = new StringBuilder();
 		Label.LabelStyle style = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
 		label = new Label(stringBuilder, style);
@@ -37,7 +38,6 @@ public class Profiler {
 
 	private void setGlProfiler() {
 		if (Gdx.app.getLogLevel() == Application.LOG_DEBUG && DefaultGameSettings.SHOW_GL_PROFILING) {
-			glProfiler = new GLProfiler(Gdx.graphics);
 			glProfiler.enable();
 		}
 	}
