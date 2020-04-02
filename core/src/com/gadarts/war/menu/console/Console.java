@@ -10,4 +10,10 @@ public interface Console {
 	ConsoleCommandResult notifyCommandExecution(Commands command);
 
 	ConsoleCommandResult notifyCommandExecution(Commands command, CommandParameter parameter);
+
+	void activate();
+
+	void deactivate();
+
+	boolean isActive();
 }

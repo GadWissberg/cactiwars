@@ -23,7 +23,7 @@ import com.gadarts.war.components.character.MovementState;
 import com.gadarts.war.components.physics.MotionState;
 import com.gadarts.war.components.physics.PhysicsComponent;
 import com.gadarts.war.factories.ActorFactory;
-import com.gadarts.war.menu.hud.HudEventsSubscriber;
+import com.gadarts.war.menu.hud.MenuEventsSubscriber;
 import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.sound.SFX;
 import com.gadarts.war.sound.SoundPlayer;
@@ -35,7 +35,7 @@ import java.util.List;
 import static com.gadarts.war.systems.physics.PhysicsSystem.auxMatrix;
 import static com.gadarts.war.systems.physics.PhysicsSystem.auxVector3_1;
 
-public class CharacterSystem extends GameEntitySystem implements HudEventsSubscriber, GameContactListenerEventsSubscriber {
+public class CharacterSystem extends GameEntitySystem implements MenuEventsSubscriber, GameContactListenerEventsSubscriber {
 	private final static Vector3 auxVector31 = new Vector3();
 	private final static Vector3 auxVector32 = new Vector3();
 	private final static Vector3 rayFrom = new Vector3();

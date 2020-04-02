@@ -5,6 +5,8 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveByAction;
@@ -42,6 +44,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	private ConsoleTextData consoleTextData;
 	private ConsoleCommandResult consoleCommandResult = new ConsoleCommandResult();
 	private ConsoleInputHistoryHandler consoleInputHistoryHandler;
+	private TextField input;
 
 	public ConsoleImpl() {
 		consoleTextData = new ConsoleTextData();
@@ -51,10 +54,34 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 		consoleTextures.init((int) height);
 		TextureRegionDrawable textBackgroundTextureRegionDrawable = new TextureRegionDrawable(consoleTextures.getTextBackgroundTexture());
 		addTextView(textBackgroundTextureRegionDrawable, (int) height);
-		createInputField(textBackgroundTextureRegionDrawable);
+		addInputField(textBackgroundTextureRegionDrawable);
 		setBackground(new TextureRegionDrawable(consoleTextures.getBackgroundTexture()));
 		setSize(Gdx.graphics.getWidth(), consoleTextures.getBackgroundTexture().getHeight());
 		consoleInputHistoryHandler = new ConsoleInputHistoryHandler();
+		InputMultiplexer multiplexer = (InputMultiplexer) Gdx.input.getInputProcessor();
+		multiplexer.addProcessor(this);
+		input.setTextFieldListener((textField, c) -> {
+			if (c == KeyMap.GRAVE.getAsciiValue()) {
+				textField.setText(null);
+				if (!ConsoleImpl.this.hasActions()) if (isActive()) deactivate();
+			}
+			if (active) {
+				if (c == '\r' || c == '\n') {
+					applyInput(input);
+				}
+			}
+		});
+		input.addCaptureListener(new InputListener() {
+			@Override
+			public boolean keyDown(InputEvent event, int keycode) {
+				boolean result = false;
+				if (active) {
+					consoleInputHistoryHandler.onKeyDown(keycode);
+					result = true;
+				}
+				return result;
+			}
+		});
 	}
 
 	@Override
@@ -64,23 +91,15 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 		consoleInputHistoryHandler.setStage(stage);
 	}
 
-	private void createInputField(TextureRegionDrawable textBackgroundTexture) {
+	private void addInputField(TextureRegionDrawable textBackgroundTexture) {
 		TextField.TextFieldStyle style = new TextField.TextFieldStyle(consoleTextData.getFont(), INPUT_COLOR, new TextureRegionDrawable(consoleTextures.getCursorTexture()),
 				null, textBackgroundTexture);
-		TextField input = new TextField("", style);
+		input = new TextField("", style);
 		input.setName(INPUT_FIELD_NAME);
 		Label arrow = new Label(">", consoleTextData.getTextStyle());
 		add(arrow).padBottom(PADDING).padLeft(PADDING).size(10f, INPUT_HEIGHT);
 		add(input).size(Gdx.graphics.getWidth() - PADDING * 3, INPUT_HEIGHT).padBottom(PADDING).padRight(PADDING).align(Align.left).row();
 		input.setFocusTraversal(false);
-		input.setTextFieldListener((textField, c) -> {
-			if (c == KeyMap.GRAVE.getAsciiValue()) {
-				textField.setText(null);
-				if (!ConsoleImpl.this.hasActions()) if (isActive()) deactivate();
-			} else if (c == '\r' || c == '\n') {
-				applyInput(textField);
-			}
-		});
 	}
 
 	private void applyInput(TextField textField) {
@@ -160,10 +179,10 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	}
 
 
+	@Override
 	public void activate() {
 		if (active) return;
 		getStage().setKeyboardFocus(getStage().getRoot().findActor(INPUT_FIELD_NAME));
-		initializeInput();
 		active = true;
 		float amountY = -Gdx.graphics.getHeight() / 3f;
 		addAction(Actions.moveBy(0, amountY, TRANSITION_DURATION, INTERPOLATION));
@@ -171,12 +190,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 		subscribers.forEach(ConsoleEventsSubscriber::onConsoleActivated);
 	}
 
-	private void initializeInput() {
-		InputMultiplexer inputProcessor = (InputMultiplexer) Gdx.input.getInputProcessor();
-		inputProcessor.addProcessor(this);
-		inputProcessor.addProcessor(getStage());
-	}
-
+	@Override
 	public void deactivate() {
 		if (!active) return;
 		active = false;
@@ -185,15 +199,9 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 		addAction(Actions.sequence(move, Actions.visible(false)));
 		subscribers.forEach(ConsoleEventsSubscriber::onConsoleDeactivated);
 		getStage().unfocusAll();
-		detachInput();
 	}
 
-	private void detachInput() {
-		InputMultiplexer inputProcessor = (InputMultiplexer) Gdx.input.getInputProcessor();
-		inputProcessor.removeProcessor(this);
-		inputProcessor.removeProcessor(getStage());
-	}
-
+	@Override
 	public boolean isActive() {
 		return active;
 	}
@@ -209,16 +217,21 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	}
 
 	@Override
-	public boolean keyDown(int keycode) {
-		consoleInputHistoryHandler.onKeyDown(keycode);
-		return false;
+	public boolean keyDown(int key) {
+		boolean result = false;
+		if (key == KeyMap.GRAVE.getKeyCode()) {
+			if (!active) {
+				activate();
+			}
+			result = true;
+		}
+		return result;
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
 		return false;
 	}
-
 
 	@Override
 	public boolean keyTyped(char character) {

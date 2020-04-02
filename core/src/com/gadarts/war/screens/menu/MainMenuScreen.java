@@ -5,12 +5,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameC.Files;
 import com.gadarts.war.Profiler;
-import com.gadarts.war.menu.GameMenu;
 import com.gadarts.war.menu.console.commands.CommandParameter;
 import com.gadarts.war.menu.console.commands.Commands;
 import com.gadarts.war.menu.console.commands.ConsoleCommandResult;
@@ -21,7 +19,6 @@ import java.io.File;
 
 public class MainMenuScreen extends BaseGameScreen {
 
-	private final Stage stage = new Stage();
 	private FlyingCactiRenderer flyingCactiRenderer = new FlyingCactiRenderer();
 	private Profiler profiler;
 	private Texture background;
@@ -37,12 +34,10 @@ public class MainMenuScreen extends BaseGameScreen {
 	@Override
 	public void show() {
 		super.show();
+		activateMenu();
 		flyingCactiRenderer.initialize();
 		int width = Gdx.graphics.getWidth();
 		int height = Gdx.graphics.getHeight();
-		GameMenu menu = new GameMenu(this);
-		menu.initialize(stage);
-		menu.setVisible(true);
 		stage.setDebugAll(DefaultGameSettings.DRAW_TABLES_BORDERS);
 		stage.setViewport(new ScreenViewport(stage.getCamera()));
 		profiler = new Profiler(stage);
@@ -56,7 +51,6 @@ public class MainMenuScreen extends BaseGameScreen {
 		String fragmentShader = Gdx.files.internal(Files.ASSETS_PATH + "shaders" + File.separator + "fragment_main_menu_background.glsl").readString();
 		backgroundShaderProgram = new ShaderProgram(vertexShader, fragmentShader);
 		backgroundObject = new MainMenuBackground(background, backgroundShaderProgram);
-
 	}
 
 	@Override

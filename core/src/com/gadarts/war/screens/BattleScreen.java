@@ -47,12 +47,12 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 	 */
 	public void pauseGame() {
 		BattleScreen.paused = true;
-		hud.activateMenu();
+		activateMenu();
 	}
 
 	@Override
 	public Stage getHudStage() {
-		return hud.getStage();
+		return stage;
 	}
 
 	@Override
@@ -68,11 +68,12 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 	@Override
 	public void resumeGame() {
 		BattleScreen.paused = false;
-		hud.deactivate();
+		deactivateMenu();
 	}
 
 	@Override
 	public void show() {
+		super.show();
 		if (!DefaultGameSettings.MUTE_AMB_SOUNDS)
 			getSoundPlayer().play(GameAssetManager.getInstance().get(SFX.AMB_WIND.getFileName(), Sound.class), true);
 		initialize();
@@ -89,10 +90,10 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 	}
 
 	private void createHud() {
-		hud = new Hud(entitiesEngine.getSystem(RenderSystem.class), this);
-		hud.subscribeForEvents(entitiesEngine.getSystem(CharacterSystem.class));
-		hud.subscribeForEvents(entitiesEngine.getSystem(EnvironmentSystem.class));
-		hud.getConsoleImpl().subscribeForEvents(entitiesEngine.getSystem(RenderSystem.class));
+		hud = new Hud(entitiesEngine.getSystem(RenderSystem.class), this, stage);
+		subscribeForMenuEvents(entitiesEngine.getSystem(CharacterSystem.class));
+		subscribeForMenuEvents(entitiesEngine.getSystem(EnvironmentSystem.class));
+		getConsoleImpl().subscribeForEvents(entitiesEngine.getSystem(RenderSystem.class));
 	}
 
 	private void createSystemsHandler() {
@@ -102,7 +103,7 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 
 	private void initializeInput() {
 		if (!DefaultGameSettings.SPECTATOR) {
-			InputMultiplexer multiplexer = new InputMultiplexer();
+			InputMultiplexer multiplexer = (InputMultiplexer) Gdx.input.getInputProcessor();
 			GamePlayInputHandler processor = new GamePlayInputHandler();
 			multiplexer.addProcessor(processor);
 			Gdx.input.setInputProcessor(multiplexer);
@@ -158,7 +159,7 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 	@Override
 	public void onEscPressed() {
 		resumeGame();
-		hud.getConsoleImpl().deactivate();
+		getConsoleImpl().deactivate();
 	}
 
 	@Override
