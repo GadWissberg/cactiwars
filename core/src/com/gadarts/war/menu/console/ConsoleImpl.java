@@ -1,6 +1,7 @@
 package com.gadarts.war.menu.console;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
@@ -8,14 +9,14 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveByAction;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Scaling;
 import com.gadarts.war.menu.console.commands.CommandInvoke;
 import com.gadarts.war.menu.console.commands.CommandParameter;
 import com.gadarts.war.menu.console.commands.Commands;
@@ -25,18 +26,19 @@ import com.gadarts.war.systems.player.input.KeyMap;
 import java.util.Optional;
 
 public class ConsoleImpl extends Table implements Console, InputProcessor {
+	public static final Color INPUT_COLOR = Color.WHITE;
 	public static final String NAME = "console";
 	public static final Interpolation.Pow INTERPOLATION = Interpolation.pow2;
 	public static final String NOT_RECOGNIZED = "'%s' is not recognized as a command.";
 	public static final String INPUT_FIELD_NAME = "input";
-	public static final Color INPUT_COLOR = Color.WHITE;
-	static final String TEXT_LABEL_NAME = "text";
+	public static final String INPUT_SIGN = ">";
 	private static final float INPUT_HEIGHT = 20f;
 	private static final float PADDING = 10f;
 	private static final float TRANSITION_DURATION = 0.5f;
 	private static final String PARAMETER_EXPECTED = "Failed to apply command! Parameter is expected at '%s'";
 	private static final String PARAMETER_VALUE_EXPECTED = "Failed to apply command! Value is expected for " +
 			"parameter '%s'";
+	static final String TEXT_VIEW_NAME = "text";
 
 	private ConsoleTextures consoleTextures = new ConsoleTextures();
 	private boolean active;
@@ -45,12 +47,17 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	private ConsoleCommandResult consoleCommandResult = new ConsoleCommandResult();
 	private ConsoleInputHistoryHandler consoleInputHistoryHandler;
 	private TextField input;
+	private ScrollPane scrollPane;
+	private boolean scrollToEnd = true;
+	private Image arrow;
 
 	public ConsoleImpl() {
 		consoleTextData = new ConsoleTextData();
 		setName(NAME);
-		float height = Gdx.graphics.getHeight() * 2f / 3f;
-		setPosition(0, Gdx.graphics.getHeight());
+		int screenHeight = Gdx.graphics.getHeight();
+		float height = screenHeight / 3f;
+		setVisible(false);
+		setPosition(0, screenHeight);
 		consoleTextures.init((int) height);
 		TextureRegionDrawable textBackgroundTextureRegionDrawable = new TextureRegionDrawable(consoleTextures.getTextBackgroundTexture());
 		addTextView(textBackgroundTextureRegionDrawable, (int) height);
@@ -76,10 +83,17 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 			public boolean keyDown(InputEvent event, int keycode) {
 				boolean result = false;
 				if (active) {
-					consoleInputHistoryHandler.onKeyDown(keycode);
 					result = true;
+					if (keycode == Input.Keys.PAGE_UP) scroll(-consoleTextData.getFontHeight() * 2);
+					else if (keycode == Input.Keys.PAGE_DOWN) scroll(consoleTextData.getFontHeight() * 2);
+					else consoleInputHistoryHandler.onKeyDown(keycode);
 				}
 				return result;
+			}
+
+			private void scroll(float step) {
+				scrollPane.setScrollY(scrollPane.getScrollY() + step);
+				scrollToEnd = false;
 			}
 		});
 	}
@@ -96,7 +110,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 				null, textBackgroundTexture);
 		input = new TextField("", style);
 		input.setName(INPUT_FIELD_NAME);
-		Label arrow = new Label(">", consoleTextData.getTextStyle());
+		Label arrow = new Label(INPUT_SIGN, consoleTextData.getTextStyle());
 		add(arrow).padBottom(PADDING).padLeft(PADDING).size(10f, INPUT_HEIGHT);
 		add(input).size(Gdx.graphics.getWidth() - PADDING * 3, INPUT_HEIGHT).padBottom(PADDING).padRight(PADDING).align(Align.left).row();
 		input.setFocusTraversal(false);
@@ -142,7 +156,23 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	public void insertNewLog(String text, boolean logTime) {
 		if (text == null) return;
 		consoleTextData.insertNewLog(text, logTime);
+		scrollToEnd = true;
+		arrow.setVisible(false);
 	}
+
+	@Override
+	public void act(float delta) {
+		super.act(delta);
+		if (!active) return;
+		if (scrollToEnd || scrollPane.isBottomEdge()) {
+			scrollToEnd = true;
+			scrollPane.setScrollPercentY(1);
+			arrow.setVisible(false);
+		} else if (!arrow.isVisible()) {
+			arrow.setVisible(true);
+		}
+	}
+
 
 	@Override
 	public ConsoleCommandResult notifyCommandExecution(Commands command) {
@@ -173,9 +203,18 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 		float height = consoleHeight - (INPUT_HEIGHT);
 		Label textView = new Label(consoleTextData.getStringBuilder(), textStyle);
 		textView.setAlignment(Align.bottomLeft);
-		textView.setName(TEXT_LABEL_NAME);
+		textView.setName(TEXT_VIEW_NAME);
 		textView.setWrap(true);
-		add(textView).colspan(2).size(width, height).align(Align.bottomLeft).padRight(PADDING).padLeft(PADDING).row();
+		scrollPane = new ScrollPane(textView);
+		scrollPane.setTouchable(Touchable.disabled);
+		Stack textWindowStack = new Stack(scrollPane);
+		arrow = new Image(consoleTextures.getArrowTexture());
+		arrow.setAlign(Align.bottomRight);
+		textWindowStack.add(arrow);
+		arrow.setScaling(Scaling.none);
+		arrow.setFillParent(false);
+		arrow.setVisible(false);
+		add(textWindowStack).colspan(2).size(width, height).align(Align.bottomLeft).padRight(PADDING).padLeft(PADDING).row();
 	}
 
 
