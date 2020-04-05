@@ -7,7 +7,7 @@ public final class DefaultGameSettings {
 	public static final boolean SPECTATOR = false;
 	public static final int LOG_LEVEL = Gdx.app.LOG_DEBUG;
 	public static final boolean FULL_SCREEN = false;
-	public static final boolean SHOW_GL_PROFILING = false;
+	public static final boolean SHOW_GL_PROFILING = true;
 	public static final boolean SHOW_AXIS = false;
 	public static final boolean DRAW_COLLISION_SHAPES = false;
 	public static final boolean MENU_ON_START = false;

@@ -2,36 +2,39 @@ package com.gadarts.war.menu.console.commands;
 
 import com.gadarts.war.menu.console.ConsoleImpl;
 import com.gadarts.war.menu.console.InputParsingFailureException;
-import com.gadarts.war.menu.console.commands.types.BordersCommand;
-import com.gadarts.war.menu.console.commands.types.CelShaderCommand;
-import com.gadarts.war.menu.console.commands.types.ProfilerCommand;
-import com.gadarts.war.menu.console.commands.types.SkipDrawingCommand;
+import com.gadarts.war.menu.console.commands.types.*;
 
 import java.util.Arrays;
 import java.util.Optional;
 
 public enum Commands {
-	PROFILER(new ProfilerCommand()),
-	BORDERS(new BordersCommand()),
+	PROFILER(new ProfilerCommand(), "Toggles profiler and GL operations stats."),
+	BORDERS(new BordersCommand(), "Toggles UI components borders."),
 	SKIP_DRAWING("skip_draw", new SkipDrawingCommand(),
+			"Toggles drawing skipping mode for given categories.",
 			new SkipDrawingCommand.GroundParameter(),
 			new SkipDrawingCommand.CharactersParameter(),
 			new SkipDrawingCommand.EnvironmentParameter(),
 			new SkipDrawingCommand.ShadowsParameter()),
-	CEL_SHADER("cel_shading", new CelShaderCommand());
+	CEL_SHADER("cel_shading", new CelShaderCommand(), "Toggles out-line effect."),
+	HELP("?", new HelpCommand(), "Displays commands list.");
 
+	public static final String DESCRIPTION_PARAMETERS = " Parameters:%s";
 	private final ConsoleCommand command;
 	private final String alias;
 	private final CommandParameter[] parameters;
+	private String description;
 
-	Commands(ConsoleCommand command) {
-		this(null, command);
+	Commands(ConsoleCommand command, String description) {
+		this(null, command, description);
 	}
 
-	Commands(String alias, ConsoleCommand command, CommandParameter... parameters) {
+	Commands(String alias, ConsoleCommand command, String description, CommandParameter... parameters) {
 		this.alias = alias;
 		this.command = command;
 		this.parameters = parameters;
+		this.description = description;
+		extendDescriptionWithParameters(parameters);
 	}
 
 	public static Commands findCommandByNameOrAlias(String input) throws InputParsingFailureException {
@@ -50,6 +53,19 @@ public enum Commands {
 		return result.get();
 	}
 
+	private void extendDescriptionWithParameters(CommandParameter[] parameters) {
+		if (parameters.length > 0) {
+			StringBuilder stringBuilder = new StringBuilder();
+			Arrays.stream(parameters).forEach(parameter -> stringBuilder
+					.append("\n")
+					.append("   * ")
+					.append(parameter.getAlias())
+					.append(": ")
+					.append(parameter.getDescription()));
+			this.description += String.format(DESCRIPTION_PARAMETERS, stringBuilder);
+		}
+	}
+
 	public String getAlias() {
 		return alias;
 	}
@@ -60,5 +76,9 @@ public enum Commands {
 
 	public CommandParameter[] getParameters() {
 		return parameters;
+	}
+
+	public String getDescription() {
+		return description;
 	}
 }

@@ -52,10 +52,10 @@ public class SkipDrawingCommand extends ConsoleCommand {
 	public static class GroundParameter extends SkipDrawingParameter {
 
 		public static final String ALIAS = "ground";
+		private static final String DESCRIPTION = "0 - Draws ground. 1 - Skips.";
 
-		@Override
-		public String getAlias() {
-			return ALIAS;
+		public GroundParameter() {
+			super(DESCRIPTION, ALIAS);
 		}
 
 	}
@@ -63,37 +63,42 @@ public class SkipDrawingCommand extends ConsoleCommand {
 	public static class CharactersParameter extends SkipDrawingParameter {
 
 		public static final String ALIAS = "characters";
+		private static final String DESCRIPTION = "0 - Draws characters. 1 - Skips.";
 
-		@Override
-		public String getAlias() {
-			return ALIAS;
+		public CharactersParameter() {
+			super(DESCRIPTION, ALIAS);
 		}
-
 	}
 
 	public static class EnvironmentParameter extends SkipDrawingParameter {
 
 		public static final String ALIAS = "environment";
+		private static final String DESCRIPTION = "0 - Draws environment objects. 1 - Skips.";
 
-		@Override
-		public String getAlias() {
-			return ALIAS;
+		public EnvironmentParameter() {
+			super(DESCRIPTION, ALIAS);
 		}
+
 
 	}
 
 	public static class ShadowsParameter extends SkipDrawingParameter {
 
 		public static final String ALIAS = "shadows";
+		private static final String DESCRIPTION = "0 - Draws shadows. 1 - Skips.";
 
-		@Override
-		public String getAlias() {
-			return ALIAS;
+		public ShadowsParameter() {
+			super(DESCRIPTION, ALIAS);
 		}
 
 	}
 
 	public abstract static class SkipDrawingParameter extends CommandParameter {
+
+
+		public SkipDrawingParameter(String description, String alias) {
+			super(description, alias);
+		}
 
 		protected boolean defineSkipDrawingParameter(String value, Console console) {
 			boolean result;
