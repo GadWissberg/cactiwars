@@ -21,7 +21,6 @@ import com.gadarts.war.menu.console.commands.CommandInvoke;
 import com.gadarts.war.menu.console.commands.CommandParameter;
 import com.gadarts.war.menu.console.commands.Commands;
 import com.gadarts.war.menu.console.commands.ConsoleCommandResult;
-import com.gadarts.war.systems.player.input.KeyMap;
 
 import java.util.Optional;
 
@@ -39,6 +38,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	private static final String PARAMETER_VALUE_EXPECTED = "Failed to apply command! Value is expected for " +
 			"parameter '%s'";
 	static final String TEXT_VIEW_NAME = "text";
+	public static final char GRAVE_ASCII = '`';
 
 	private ConsoleTextures consoleTextures = new ConsoleTextures();
 	private boolean active;
@@ -68,7 +68,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 		InputMultiplexer multiplexer = (InputMultiplexer) Gdx.input.getInputProcessor();
 		multiplexer.addProcessor(this);
 		input.setTextFieldListener((textField, c) -> {
-			if (c == KeyMap.GRAVE.getAsciiValue()) {
+			if (c == GRAVE_ASCII) {
 				textField.setText(null);
 				if (!ConsoleImpl.this.hasActions()) if (isActive()) deactivate();
 			}
@@ -86,6 +86,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 					result = true;
 					if (keycode == Input.Keys.PAGE_UP) scroll(-consoleTextData.getFontHeight() * 2);
 					else if (keycode == Input.Keys.PAGE_DOWN) scroll(consoleTextData.getFontHeight() * 2);
+					else if (keycode == Input.Keys.ESCAPE) deactivate();
 					else consoleInputHistoryHandler.onKeyDown(keycode);
 				}
 				return result;
@@ -220,7 +221,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 
 	@Override
 	public void activate() {
-		if (active) return;
+		if (active && !getActions().isEmpty()) return;
 		getStage().setKeyboardFocus(getStage().getRoot().findActor(INPUT_FIELD_NAME));
 		active = true;
 		float amountY = -Gdx.graphics.getHeight() / 3f;
@@ -231,7 +232,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 
 	@Override
 	public void deactivate() {
-		if (!active) return;
+		if (!active && !getActions().isEmpty()) return;
 		active = false;
 		float amountY = Gdx.graphics.getHeight() / 3f;
 		MoveByAction move = Actions.moveBy(0, amountY, TRANSITION_DURATION, Interpolation.pow2);
@@ -258,7 +259,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	@Override
 	public boolean keyDown(int key) {
 		boolean result = false;
-		if (key == KeyMap.GRAVE.getKeyCode()) {
+		if (key == Input.Keys.GRAVE) {
 			if (!active) {
 				activate();
 			}

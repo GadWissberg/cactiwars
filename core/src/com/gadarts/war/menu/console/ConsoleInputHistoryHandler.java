@@ -26,6 +26,7 @@ public class ConsoleInputHistoryHandler {
 	}
 
 	private void updateInputByHistory() {
+		if (inputHistory.isEmpty()) return;
 		TextField input = stage.getRoot().findActor(ConsoleImpl.INPUT_FIELD_NAME);
 		input.setText(inputHistory.get(current));
 		input.setCursorPosition(input.getText().length());

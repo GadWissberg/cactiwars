@@ -158,7 +158,11 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 
 	@Override
 	public void onEscPressed() {
-		resumeGame();
+		if (BattleScreen.paused) {
+			resumeGame();
+		} else {
+			pauseGame();
+		}
 		getConsoleImpl().deactivate();
 	}
 
@@ -180,6 +184,7 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 
 	@Override
 	public void onConsoleDeactivated() {
+		if (menu.isVisible()) return;
 		paused = false;
 	}
 }
