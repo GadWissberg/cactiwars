@@ -34,7 +34,6 @@ public class Hud {
 		this.stage = stage;
 		this.renderSystem = renderSystem;
 		this.parentScreen = parentScreen;
-		stage = new Stage();
 		stage.setDebugAll(DefaultGameSettings.DRAW_TABLES_BORDERS);
 		stage.setViewport(new ScreenViewport(stage.getCamera()));
 		profiler = new Profiler(stage, renderSystem);

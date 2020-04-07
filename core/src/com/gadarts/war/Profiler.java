@@ -33,6 +33,7 @@ public class Profiler {
 		label = new Label(stringBuilder, style);
 		label.setPosition(0, Gdx.graphics.getHeight() - 90);
 		stage.addActor(label);
+		label.setZIndex(0);
 		setGlProfiler();
 	}
 

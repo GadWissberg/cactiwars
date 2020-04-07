@@ -36,6 +36,7 @@ public abstract class BaseGameScreen implements Screen, ConsoleEventsSubscriber 
 		consoleImpl = new ConsoleImpl();
 		consoleImpl.subscribeForEvents(this);
 		stage.addActor(consoleImpl);
+		consoleImpl.toFront();
 	}
 
 	public void subscribeForMenuEvents(MenuEventsSubscriber subscriber) {
