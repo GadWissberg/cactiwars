@@ -1,6 +1,5 @@
 package com.gadarts.war.menu.console;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -22,7 +21,7 @@ public class ConsoleTextData implements Disposable {
 	private Label.LabelStyle textStyle;
 
 	public ConsoleTextData() {
-		textStyle = new Label.LabelStyle(font, Color.WHITE);
+		textStyle = new Label.LabelStyle(font, ConsoleImpl.OUTPUT_COLOR);
 		GlyphLayout layout = new GlyphLayout();
 		layout.setText(font, "test");
 		fontHeight = layout.height;

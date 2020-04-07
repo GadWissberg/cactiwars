@@ -25,7 +25,8 @@ import com.gadarts.war.menu.console.commands.ConsoleCommandResult;
 import java.util.Optional;
 
 public class ConsoleImpl extends Table implements Console, InputProcessor {
-	public static final Color INPUT_COLOR = Color.WHITE;
+	public static final Color INPUT_COLOR = Color.YELLOW;
+	public static final Color OUTPUT_COLOR = Color.WHITE;
 	public static final String NAME = "console";
 	public static final Interpolation.Pow INTERPOLATION = Interpolation.pow2;
 	public static final String NOT_RECOGNIZED = "'%s' is not recognized as a command.";
