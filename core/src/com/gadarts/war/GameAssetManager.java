@@ -25,6 +25,7 @@ import com.gadarts.shared.definitions.Definitions;
 import com.gadarts.shared.par.*;
 import com.gadarts.shared.par.inflations.DefinitionType;
 import com.gadarts.war.GameC.Files.Font;
+import com.gadarts.war.menu.console.ConsoleImpl;
 
 import java.io.IOException;
 
@@ -35,15 +36,20 @@ public class GameAssetManager extends AssetManagerWrapper {
 		return instance;
 	}
 
-	void loadAssets() throws IOException, MainParLoadingFailureException {
+	void loadAssets(ConsoleImpl consoleImpl) throws IOException, MainParLoadingFailureException {
 		GameAssetManager gameAssetManager = GameAssetManager.getInstance();
+		tempLoading(gameAssetManager);
+		ParInflater inflater = new ParInflater();
+		String path = GameC.Files.ASSETS_PATH + "cactiwars.par";
+		inflater.inflatePar(inflater.readPar(Gdx.files.internal(path).read()), this, consoleImpl);
+		gameAssetManager.finishLoading();
+		createAtlases();
+	}
+
+	private void tempLoading(GameAssetManager gameAssetManager) {
 		temp_loadModels(gameAssetManager);
 		loadSounds(gameAssetManager);
 		loadFonts(gameAssetManager);
-		ParInflater inflater = new ParInflater();
-		inflater.inflatePar(inflater.readPar(Gdx.files.internal(GameC.Files.ASSETS_PATH + "cactiwars.par").read()), this);
-		gameAssetManager.finishLoading();
-		createAtlases();
 	}
 
 	private void createAtlases() {

@@ -3,6 +3,7 @@ package com.gadarts.war;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.Screen;
 import com.gadarts.shared.par.MainParLoadingFailureException;
 import com.gadarts.war.menu.GameMenu;
 import com.gadarts.war.menu.console.ConsoleImpl;
@@ -13,37 +14,43 @@ import java.io.IOException;
 
 public class WarGame extends Game {
 	protected GameMenu menu;
-	private BaseGameScreen screen;
 	private ConsoleImpl consoleImpl;
 	private SoundPlayer soundPlayer = new SoundPlayer();
 
 	@Override
 	public void create() {
 		try {
-			GameAssetManager.getInstance().loadAssets();
 			InputMultiplexer processor = new InputMultiplexer();
 			Gdx.input.setInputProcessor(processor);
-			createMenu();
 			consoleImpl = new ConsoleImpl();
-			createScreen(processor);
-		} catch (IOException | MainParLoadingFailureException | IllegalAccessException | InstantiationException e) {
+			BaseGameScreen gameScreen = DefaultGameSettings.INITIAL_SCREEN.getScreenClass().newInstance();
+			gameScreen.getStage().addActor(consoleImpl);
+			GameAssetManager.getInstance().loadAssets(consoleImpl);
+			createMenu();
+			setScreen(gameScreen);
+		} catch (IOException | IllegalAccessException | InstantiationException e) {
+			e.printStackTrace();
+		} catch (MainParLoadingFailureException e) {
+			consoleImpl.insertNewLog(e.getMessage(), true);
 			e.printStackTrace();
 		}
 	}
 
-	private void createScreen(InputMultiplexer processor) throws InstantiationException, IllegalAccessException {
-		screen = DefaultGameSettings.INITIAL_SCREEN.getScreenClass().newInstance();
-		initializeScreen();
-		menu.initialize(screen);
-		processor.addProcessor(screen.getStage());
+	@Override
+	public void setScreen(Screen screen) {
+		BaseGameScreen gameScreen = (BaseGameScreen) screen;
+		initializeScreen(gameScreen);
+		menu.initialize(gameScreen);
+		InputMultiplexer multiplexer = (InputMultiplexer) Gdx.input.getInputProcessor();
+		multiplexer.addProcessor(gameScreen.getStage());
 		consoleImpl.toFront();
-		setScreen(screen);
+		super.setScreen(screen);
 	}
 
-	private void initializeScreen() {
+
+	private void initializeScreen(BaseGameScreen screen) {
 		screen.setMenu(menu);
 		screen.setSoundPlayer(soundPlayer);
-		screen.getStage().addActor(consoleImpl);
 		consoleImpl.subscribeForEvents(screen);
 	}
 
