@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.gadarts.shared.console.CommandParameter;
 import com.gadarts.shared.console.Commands;
 import com.gadarts.shared.console.ConsoleCommandResult;
@@ -15,6 +14,7 @@ import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.InGameScreen;
 import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.level.MapCreator;
+import com.gadarts.war.menu.console.ConsoleImpl;
 import com.gadarts.war.menu.hud.Hud;
 import com.gadarts.war.sound.SFX;
 import com.gadarts.war.systems.CharacterSystem;
@@ -51,11 +51,6 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 	}
 
 	@Override
-	public Stage getHudStage() {
-		return stage;
-	}
-
-	@Override
 	public PooledEngine getEntitiesEngine() {
 		return entitiesEngine;
 	}
@@ -73,7 +68,6 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 
 	@Override
 	public void show() {
-		super.show();
 		if (!DefaultGameSettings.MUTE_AMB_SOUNDS)
 			getSoundPlayer().play(GameAssetManager.getInstance().get(SFX.AMB_WIND.getFileName(), Sound.class), true);
 		initialize();
@@ -90,10 +84,11 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 	}
 
 	private void createHud() {
-		hud = new Hud(entitiesEngine.getSystem(RenderSystem.class), this, stage);
+		hud = new Hud(entitiesEngine.getSystem(RenderSystem.class), this, getStage());
 		subscribeForMenuEvents(entitiesEngine.getSystem(CharacterSystem.class));
 		subscribeForMenuEvents(entitiesEngine.getSystem(EnvironmentSystem.class));
-		getConsoleImpl().subscribeForEvents(entitiesEngine.getSystem(RenderSystem.class));
+		ConsoleImpl actor = getStage().getRoot().findActor(ConsoleImpl.NAME);
+		actor.subscribeForEvents(entitiesEngine.getSystem(RenderSystem.class));
 	}
 
 	private void createSystemsHandler() {
@@ -163,7 +158,8 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 		} else {
 			pauseGame();
 		}
-		getConsoleImpl().deactivate();
+		ConsoleImpl actor = getStage().getRoot().findActor(ConsoleImpl.NAME);
+		actor.deactivate();
 	}
 
 	@Override
@@ -178,14 +174,14 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 
 	@Override
 	public boolean onCommandRun(Commands command, ConsoleCommandResult consoleCommandResult, CommandParameter parameter) {
-		consoleCommandResult.setMessage(reactToCommand(command, hud.getProfiler(), getHudStage()));
+		consoleCommandResult.setMessage(reactToCommand(command, hud.getProfiler(), getStage()));
 		return true;
 	}
 
 
 	@Override
 	public void onConsoleDeactivated() {
-		if (menu.isVisible()) return;
+		if (getMenu().isVisible()) return;
 		paused = false;
 	}
 }

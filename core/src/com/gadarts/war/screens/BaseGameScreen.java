@@ -1,7 +1,5 @@
 package com.gadarts.war.screens;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.gadarts.shared.console.Commands;
@@ -21,24 +19,9 @@ import java.util.List;
 
 public abstract class BaseGameScreen implements Screen, ConsoleEventsSubscriber {
 	private SoundPlayer soundPlayer;
-	protected GameMenu menu;
-	protected Stage stage;
-	private ConsoleImpl consoleImpl;
 	private List<MenuEventsSubscriber> subscribers = new ArrayList<>();
-
-	@Override
-	public void show() {
-		InputMultiplexer processor = new InputMultiplexer();
-		Gdx.input.setInputProcessor(processor);
-		stage = new Stage();
-		processor.addProcessor(stage);
-		menu = new GameMenu(this);
-		menu.initialize(stage);
-		consoleImpl = new ConsoleImpl();
-		consoleImpl.subscribeForEvents(this);
-		stage.addActor(consoleImpl);
-		consoleImpl.toFront();
-	}
+	private GameMenu menu;
+	private Stage stage = new Stage();
 
 	public void subscribeForMenuEvents(MenuEventsSubscriber subscriber) {
 		if (subscribers.contains(subscriber)) return;
@@ -59,10 +42,6 @@ public abstract class BaseGameScreen implements Screen, ConsoleEventsSubscriber 
 		for (MenuEventsSubscriber subscriber : subscribers) {
 			subscriber.onMenuDeactivated();
 		}
-	}
-
-	public ConsoleImpl getConsoleImpl() {
-		return consoleImpl;
 	}
 
 	public SoundPlayer getSoundPlayer() {
@@ -102,6 +81,7 @@ public abstract class BaseGameScreen implements Screen, ConsoleEventsSubscriber 
 	public void dispose() {
 		ConsoleImpl consoleImpl = stage.getRoot().findActor(ConsoleImpl.NAME);
 		consoleImpl.dispose();
+		stage.dispose();
 	}
 
 	public abstract void onEscPressed();
@@ -128,5 +108,17 @@ public abstract class BaseGameScreen implements Screen, ConsoleEventsSubscriber 
 			msg = commandDrawBordersExecuted(stage);
 		}
 		return msg;
+	}
+
+	public Stage getStage() {
+		return stage;
+	}
+
+	public GameMenu getMenu() {
+		return menu;
+	}
+
+	public void setMenu(GameMenu menu) {
+		this.menu = menu;
 	}
 }

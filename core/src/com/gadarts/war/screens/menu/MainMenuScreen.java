@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gadarts.shared.console.CommandParameter;
 import com.gadarts.shared.console.Commands;
@@ -33,11 +34,11 @@ public class MainMenuScreen extends BaseGameScreen {
 
 	@Override
 	public void show() {
-		super.show();
 		activateMenu();
 		flyingCactiRenderer.initialize();
 		int width = Gdx.graphics.getWidth();
 		int height = Gdx.graphics.getHeight();
+		Stage stage = getStage();
 		stage.setDebugAll(DefaultGameSettings.DRAW_TABLES_BORDERS);
 		stage.setViewport(new ScreenViewport(stage.getCamera()));
 		profiler = new Profiler(stage);
@@ -56,7 +57,6 @@ public class MainMenuScreen extends BaseGameScreen {
 	@Override
 	public void dispose() {
 		super.dispose();
-		stage.dispose();
 		flyingCactiRenderer.dispose();
 		background.dispose();
 		backgroundShaderProgram.dispose();
@@ -67,10 +67,10 @@ public class MainMenuScreen extends BaseGameScreen {
 		super.render(deltaTime);
 		flyingCactiRenderer.update();
 		RenderSystem.resetDisplay(Color.BLACK);
-		backgroundObject.draw(stage.getBatch());
+		backgroundObject.draw(getStage().getBatch());
 		flyingCactiRenderer.render(deltaTime);
-		stage.act(deltaTime);
-		stage.draw();
+		getStage().act(deltaTime);
+		getStage().draw();
 		profiler.update();
 		profiler.reset();
 	}
@@ -93,7 +93,7 @@ public class MainMenuScreen extends BaseGameScreen {
 
 	@Override
 	public boolean onCommandRun(Commands command, ConsoleCommandResult consoleCommandResult, CommandParameter parameter) {
-		consoleCommandResult.setMessage(reactToCommand(command, profiler, stage));
+		consoleCommandResult.setMessage(reactToCommand(command, profiler, getStage()));
 		return true;
 	}
 

@@ -28,19 +28,24 @@ import com.gadarts.war.screens.BattleScreen;
 
 public class GameMenu extends Table implements MenuInputEventsSubscriber {
 	private final MenuTable menuTable;
-	private final BaseGameScreen parentScreen;
+	private final Label.LabelStyle labelStyle;
+	private BaseGameScreen parentScreen;
 	private int selected;
 	private Image leftCactusIcon;
 	private Image rightCactusIcon;
 	private MenuInputHandler menuInputHandler;
 
-	public GameMenu(BaseGameScreen parentScreen) {
-		this.parentScreen = parentScreen;
+	public GameMenu() {
 		addLogo();
 		menuTable = new MenuTable();
 		menuTable.setName(GameC.Menu.NAME_OPTIONS_TABLE);
 		add(menuTable).row();
 		addCactusIcons();
+		createMenuTable();
+		BitmapFont font = GameAssetManager.getInstance().get("cactus_med.ttf", BitmapFont.class);
+		labelStyle = new Label.LabelStyle(font, Color.WHITE);
+		addMenuOptions(labelStyle);
+		menuTable.addIndicators(leftCactusIcon, rightCactusIcon);
 	}
 
 	public MenuInputHandler getMenuInputHandler() {
@@ -125,23 +130,19 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
 		return menuTable;
 	}
 
-	private void createMenuTable(Stage stage) {
+	private void createMenuTable() {
 		menuInputHandler = new MenuInputHandler();
 		menuInputHandler.subscribeForInputEvents(this);
 		if (!DefaultGameSettings.SPECTATOR) {
 			InputMultiplexer multiplexer = (InputMultiplexer) Gdx.input.getInputProcessor();
 			multiplexer.addProcessor(menuInputHandler);
 		}
-		stage.addActor(this);
 	}
 
-	public void initialize(Stage stage) {
-		BitmapFont font = GameAssetManager.getInstance().get("cactus_med.ttf", BitmapFont.class);
-		Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
-		stage.addActor(new Label(GameC.General.GAME + " v" + GameC.General.VERSION, labelStyle));
-		createMenuTable(stage);
-		addMenuOptions(labelStyle);
-		menuTable.addIndicators(leftCactusIcon, rightCactusIcon);
+	public void initialize(BaseGameScreen screen) {
+		this.parentScreen = screen;
+		screen.getStage().addActor(this);
+		screen.getStage().addActor(new Label(GameC.General.GAME + " v" + GameC.General.VERSION, labelStyle));
 		update();
 		setVisible(BattleScreen.isPaused());
 	}
