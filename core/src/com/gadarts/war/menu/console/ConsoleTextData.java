@@ -1,5 +1,6 @@
 package com.gadarts.war.menu.console;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -10,8 +11,10 @@ import com.badlogic.gdx.utils.TimeUtils;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Optional;
 
 public class ConsoleTextData implements Disposable {
+	private static final String TIME_COLOR = "SKY";
 	private final BitmapFont font = new BitmapFont();
 	private final float fontHeight;
 	private Stage stage;
@@ -21,7 +24,8 @@ public class ConsoleTextData implements Disposable {
 	private Label.LabelStyle textStyle;
 
 	public ConsoleTextData() {
-		textStyle = new Label.LabelStyle(font, ConsoleImpl.OUTPUT_COLOR);
+		font.getData().markupEnabled = true;
+		textStyle = new Label.LabelStyle(font, Color.WHITE);
 		GlyphLayout layout = new GlyphLayout();
 		layout.setText(font, "test");
 		fontHeight = layout.height;
@@ -43,14 +47,21 @@ public class ConsoleTextData implements Disposable {
 		return font;
 	}
 
-	public void insertNewLog(String text, boolean logTime) {
+	public void insertNewLog(String text, boolean logTime, String color) {
 		timeStamp.setTime(TimeUtils.millis());
+		String colorText = Optional.ofNullable(color).isPresent() ? color : ConsoleImpl.OUTPUT_COLOR;
 		if (logTime) {
-			stringBuilder.append(" [").append(date.format(timeStamp)).append("]: ").append(text).append('\n');
-		} else {
-			stringBuilder.append(text).append('\n');
-		}
+			appendTextWithTime(text, colorText);
+		} else stringBuilder.append(colorText).append(text).append('\n');
+		stringBuilder.append(ConsoleImpl.OUTPUT_COLOR);
 		((Label) stage.getRoot().findActor(ConsoleImpl.TEXT_VIEW_NAME)).setText(stringBuilder);
+	}
+
+	private void appendTextWithTime(String text, String colorText) {
+		stringBuilder.append("[").append(TIME_COLOR).append("]")
+				.append(" [").append(date.format(timeStamp)).append("]: ")
+				.append(colorText)
+				.append(text).append('\n');
 	}
 
 	@Override

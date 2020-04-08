@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.gadarts.shared.console.Console;
 import com.gadarts.shared.par.MainParLoadingFailureException;
 import com.gadarts.war.menu.GameMenu;
 import com.gadarts.war.menu.console.ConsoleImpl;
@@ -31,7 +32,7 @@ public class WarGame extends Game {
 		} catch (IOException | IllegalAccessException | InstantiationException e) {
 			e.printStackTrace();
 		} catch (MainParLoadingFailureException e) {
-			consoleImpl.insertNewLog(e.getMessage(), true);
+			consoleImpl.insertNewLog(e.getMessage(), true, Console.ERROR_COLOR);
 			e.printStackTrace();
 		}
 	}

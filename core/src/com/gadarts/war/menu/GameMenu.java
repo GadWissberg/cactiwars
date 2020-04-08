@@ -1,7 +1,9 @@
 package com.gadarts.war.menu;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -20,20 +22,17 @@ import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
 import com.gadarts.war.GameC.Menu.CactusIcons;
 import com.gadarts.war.GameC.Menu.MainMenu;
-import com.gadarts.war.menu.input.MenuInputEventsSubscriber;
-import com.gadarts.war.menu.input.MenuInputHandler;
 import com.gadarts.war.menu.input.definitions.MenuInputDefinitions;
 import com.gadarts.war.screens.BaseGameScreen;
 import com.gadarts.war.screens.BattleScreen;
 
-public class GameMenu extends Table implements MenuInputEventsSubscriber {
+public class GameMenu extends Table implements InputProcessor {
 	private final MenuTable menuTable;
 	private final Label.LabelStyle labelStyle;
 	private BaseGameScreen parentScreen;
 	private int selected;
 	private Image leftCactusIcon;
 	private Image rightCactusIcon;
-	private MenuInputHandler menuInputHandler;
 
 	public GameMenu() {
 		addLogo();
@@ -46,10 +45,6 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
 		labelStyle = new Label.LabelStyle(font, Color.WHITE);
 		addMenuOptions(labelStyle);
 		menuTable.addIndicators(leftCactusIcon, rightCactusIcon);
-	}
-
-	public MenuInputHandler getMenuInputHandler() {
-		return menuInputHandler;
 	}
 
 	private void addLogo() {
@@ -118,24 +113,14 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
 	}
 
 
-	@Override
-	public void onKeyDown(int key) {
-		MenuInputDefinitions event = MenuInputDefinitions.findByKey(key);
-		if (event != null) {
-			event.getDef().execute(this, parentScreen);
-		}
-	}
-
 	public MenuTable getMenuTable() {
 		return menuTable;
 	}
 
 	private void createMenuTable() {
-		menuInputHandler = new MenuInputHandler();
-		menuInputHandler.subscribeForInputEvents(this);
 		if (!DefaultGameSettings.SPECTATOR) {
 			InputMultiplexer multiplexer = (InputMultiplexer) Gdx.input.getInputProcessor();
-			multiplexer.addProcessor(menuInputHandler);
+			multiplexer.addProcessor(this);
 		}
 	}
 
@@ -157,4 +142,49 @@ public class GameMenu extends Table implements MenuInputEventsSubscriber {
 	}
 
 
+	@Override
+	public boolean keyDown(int keycode) {
+		boolean result = false;
+		if (isVisible() || keycode == Input.Keys.ESCAPE) {
+			result = true;
+			MenuInputDefinitions event = MenuInputDefinitions.findByKey(keycode);
+			if (event != null) event.getDef().execute(this, parentScreen);
+		}
+		return result;
+	}
+
+	@Override
+	public boolean keyUp(int keycode) {
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		return false;
+	}
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		return false;
+	}
+
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		return false;
+	}
+
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		return false;
+	}
+
+	@Override
+	public boolean mouseMoved(int screenX, int screenY) {
+		return false;
+	}
+
+	@Override
+	public boolean scrolled(int amount) {
+		return false;
+	}
 }

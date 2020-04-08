@@ -11,6 +11,10 @@ import java.util.Optional;
 
 public enum CommandsImpl implements Commands {
 	PROFILER(new ProfilerCommand(), "Toggles profiler and GL operations stats."),
+	PROFILER_2(new ProfilerCommand(), "Toggles profiler and GL operations stats."),
+	PROFILER_3(new ProfilerCommand(), "Toggles profiler and GL operations stats."),
+	PROFILER_4(new ProfilerCommand(), "Toggles profiler and GL operations stats."),
+	PROFILER_5(new ProfilerCommand(), "Toggles profiler and GL operations stats."),
 	BORDERS(new BordersCommand(), "Toggles UI components borders."),
 	SKIP_DRAWING("skip_draw", new SkipDrawingCommand(),
 			"Toggles drawing skipping mode for given categories.",

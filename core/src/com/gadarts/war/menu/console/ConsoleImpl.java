@@ -31,8 +31,8 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 
 public class ConsoleImpl extends Table implements Console, InputProcessor {
-	public static final Color INPUT_COLOR = Color.YELLOW;
-	public static final Color OUTPUT_COLOR = Color.WHITE;
+	public static final String INPUT_COLOR = "[YELLOW]";
+	public static final String OUTPUT_COLOR = "[LIGHT_GRAY]";
 	public static final String NAME = "console";
 	public static final Interpolation.Pow INTERPOLATION = Interpolation.pow2;
 	public static final String NOT_RECOGNIZED = "'%s' is not recognized as a command.";
@@ -40,13 +40,14 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	public static final String INPUT_SIGN = ">";
 	public static final char GRAVE_ASCII = '`';
 	public static final String OPTIONS_DELIMITER = " | ";
+	public static final String WARNING_COLOR = "FFFF00FF";
+	static final String TEXT_VIEW_NAME = "text";
 	private static final float INPUT_HEIGHT = 20f;
 	private static final float PADDING = 10f;
 	private static final float TRANSITION_DURATION = 0.5f;
 	private static final String PARAMETER_EXPECTED = "Failed to apply command! Parameter is expected at '%s'";
 	private static final String PARAMETER_VALUE_EXPECTED = "Failed to apply command! Value is expected for " +
 			"parameter '%s'";
-	static final String TEXT_VIEW_NAME = "text";
 	private static final String MSG_SUGGESTED = "Possible options:\n%s";
 	private ConsoleTextures consoleTextures = new ConsoleTextures();
 	private boolean active;
@@ -134,7 +135,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	}
 
 	private void addInputField(TextureRegionDrawable textBackgroundTexture) {
-		TextField.TextFieldStyle style = new TextField.TextFieldStyle(consoleTextData.getFont(), INPUT_COLOR, new TextureRegionDrawable(consoleTextures.getCursorTexture()),
+		TextField.TextFieldStyle style = new TextField.TextFieldStyle(consoleTextData.getFont(), Color.YELLOW, new TextureRegionDrawable(consoleTextures.getCursorTexture()),
 				null, textBackgroundTexture);
 		input = new TextField("", style);
 		input.setName(INPUT_FIELD_NAME);
@@ -145,7 +146,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	}
 
 	private void applyInput(TextField textField) {
-		insertNewLog(textField.getText(), true);
+		insertNewLog(textField.getText(), true, ConsoleImpl.INPUT_COLOR);
 		String inputCommand = textField.getText();
 		consoleInputHistoryHandler.applyInput(inputCommand);
 		try {
@@ -182,8 +183,13 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 
 	@Override
 	public void insertNewLog(String text, boolean logTime) {
+		insertNewLog(text, logTime, null);
+	}
+
+	@Override
+	public void insertNewLog(String text, boolean logTime, String color) {
 		if (text == null) return;
-		consoleTextData.insertNewLog(text, logTime);
+		consoleTextData.insertNewLog(text, logTime, color);
 		scrollToEnd = true;
 		arrow.setVisible(false);
 	}
@@ -247,7 +253,8 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 
 	@Override
 	public void activate() {
-		if (active && !getActions().isEmpty()) return;
+		if (active || !getActions().isEmpty()) return;
+		Gdx.app.log("!", "ACTIVATE");
 		getStage().setKeyboardFocus(getStage().getRoot().findActor(INPUT_FIELD_NAME));
 		active = true;
 		float amountY = -Gdx.graphics.getHeight() / 3f;
@@ -258,7 +265,8 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 
 	@Override
 	public void deactivate() {
-		if (!active && !getActions().isEmpty()) return;
+		if (!active || !getActions().isEmpty()) return;
+		Gdx.app.log("!", "DEACTIVATE");
 		active = false;
 		float amountY = Gdx.graphics.getHeight() / 3f;
 		MoveByAction move = Actions.moveBy(0, amountY, TRANSITION_DURATION, Interpolation.pow2);

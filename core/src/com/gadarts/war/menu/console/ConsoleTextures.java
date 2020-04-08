@@ -27,7 +27,7 @@ public class ConsoleTextures implements Disposable {
 
 	private void generateCursorTexture() {
 		Pixmap cursorPixmap = new Pixmap(CURSOR_WIDTH, CURSOR_HEIGHT, Pixmap.Format.RGBA8888);
-		cursorPixmap.setColor(ConsoleImpl.INPUT_COLOR);
+		cursorPixmap.setColor(Color.YELLOW);
 		cursorPixmap.fill();
 		cursorTexture = new Texture(cursorPixmap);
 		cursorPixmap.dispose();
