@@ -40,7 +40,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	public static final String INPUT_SIGN = ">";
 	public static final char GRAVE_ASCII = '`';
 	public static final String OPTIONS_DELIMITER = " | ";
-	public static final String WARNING_COLOR = "FFFF00FF";
+	public static final String WARNING_COLOR = "[GOLD]";
 	static final String TEXT_VIEW_NAME = "text";
 	private static final float INPUT_HEIGHT = 20f;
 	private static final float PADDING = 10f;

@@ -4,7 +4,6 @@ import com.badlogic.gdx.utils.StringBuilder;
 import com.gadarts.shared.console.CommandParameter;
 import com.gadarts.shared.console.Console;
 import com.gadarts.shared.console.ConsoleCommandResult;
-import com.gadarts.war.menu.console.ConsoleImpl;
 import com.gadarts.war.menu.console.commands.CommandsImpl;
 import com.gadarts.war.menu.console.commands.ConsoleCommand;
 
@@ -108,7 +107,7 @@ public class SkipDrawingCommand extends ConsoleCommand {
 			} catch (NumberFormatException e) {
 				result = false;
 			}
-			console.insertNewLog(String.format(result ? SKIP_DRAWING : DONT_SKIP_DRAWING, getAlias()), false, ConsoleImpl.WARNING_COLOR);
+			console.insertNewLog(String.format(result ? SKIP_DRAWING : DONT_SKIP_DRAWING, getAlias()), false);
 			setParameterValue(result);
 			return result;
 		}
