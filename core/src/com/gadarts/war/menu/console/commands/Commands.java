@@ -47,7 +47,7 @@ public enum Commands {
 					Optional.ofNullable(command.getAlias()).isPresent() &&
 							command.getAlias().equalsIgnoreCase(input)).findFirst();
 			if (!result.isPresent()) {
-				throw new InputParsingFailureException(String.format(ConsoleImpl.NOT_RECOGNIZED, input));
+				throw new InputParsingFailureException(String.format(ConsoleImpl.NOT_RECOGNIZED, input.toLowerCase()));
 			}
 		}
 		return result.get();

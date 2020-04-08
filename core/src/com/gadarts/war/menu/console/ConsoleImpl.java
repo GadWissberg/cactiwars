@@ -17,12 +17,16 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.StringBuilder;
 import com.gadarts.war.menu.console.commands.CommandInvoke;
 import com.gadarts.war.menu.console.commands.CommandParameter;
 import com.gadarts.war.menu.console.commands.Commands;
 import com.gadarts.war.menu.console.commands.ConsoleCommandResult;
 
+import java.util.Arrays;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 public class ConsoleImpl extends Table implements Console, InputProcessor {
 	public static final Color INPUT_COLOR = Color.YELLOW;
@@ -32,6 +36,8 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	public static final String NOT_RECOGNIZED = "'%s' is not recognized as a command.";
 	public static final String INPUT_FIELD_NAME = "input";
 	public static final String INPUT_SIGN = ">";
+	public static final char GRAVE_ASCII = '`';
+	public static final String OPTIONS_DELIMITER = " | ";
 	private static final float INPUT_HEIGHT = 20f;
 	private static final float PADDING = 10f;
 	private static final float TRANSITION_DURATION = 0.5f;
@@ -39,8 +45,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	private static final String PARAMETER_VALUE_EXPECTED = "Failed to apply command! Value is expected for " +
 			"parameter '%s'";
 	static final String TEXT_VIEW_NAME = "text";
-	public static final char GRAVE_ASCII = '`';
-
+	private static final String MSG_SUGGESTED = "Possible options:\n%s";
 	private ConsoleTextures consoleTextures = new ConsoleTextures();
 	private boolean active;
 	private Array<ConsoleEventsSubscriber> subscribers = new Array<>();
@@ -51,6 +56,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	private ScrollPane scrollPane;
 	private boolean scrollToEnd = true;
 	private Image arrow;
+	private StringBuilder stringBuilder = new StringBuilder();
 
 	public ConsoleImpl() {
 		consoleTextData = new ConsoleTextData();
@@ -87,10 +93,28 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 					result = true;
 					if (keycode == Input.Keys.PAGE_UP) scroll(-consoleTextData.getFontHeight() * 2);
 					else if (keycode == Input.Keys.PAGE_DOWN) scroll(consoleTextData.getFontHeight() * 2);
+					else if (keycode == Input.Keys.TAB) tryFindingCommand();
 					else if (keycode == Input.Keys.ESCAPE) deactivate();
 					else consoleInputHistoryHandler.onKeyDown(keycode);
 				}
 				return result;
+			}
+
+			private void tryFindingCommand() {
+				if (input.getText().isEmpty()) return;
+				java.util.List<Commands> options = Arrays.stream(Commands.values())
+						.filter(command -> command.name().startsWith(input.getText().toUpperCase()))
+						.collect(toList());
+				if (options.size() == 1) {
+					input.setText(options.get(0).name().toLowerCase());
+					input.setCursorPosition(input.getText().length());
+				} else if (options.size() > 1) logSuggestedCommands(options);
+			}
+
+			private void logSuggestedCommands(java.util.List<Commands> options) {
+				stringBuilder.clear();
+				options.forEach(command -> stringBuilder.append(command.name().toLowerCase()).append(OPTIONS_DELIMITER));
+				insertNewLog(String.format(MSG_SUGGESTED, stringBuilder), false);
 			}
 
 			private void scroll(float step) {
