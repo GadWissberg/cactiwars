@@ -1,11 +1,11 @@
 package com.gadarts.war.menu.console.commands.types;
 
 import com.badlogic.gdx.utils.StringBuilder;
-import com.gadarts.war.menu.console.Console;
-import com.gadarts.war.menu.console.commands.CommandParameter;
-import com.gadarts.war.menu.console.commands.Commands;
+import com.gadarts.shared.console.CommandParameter;
+import com.gadarts.shared.console.Console;
+import com.gadarts.shared.console.ConsoleCommandResult;
+import com.gadarts.war.menu.console.commands.CommandsImpl;
 import com.gadarts.war.menu.console.commands.ConsoleCommand;
-import com.gadarts.war.menu.console.commands.ConsoleCommandResult;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -45,8 +45,8 @@ public class SkipDrawingCommand extends ConsoleCommand {
 	}
 
 	@Override
-	protected Commands getCommandEnumValue() {
-		return Commands.SKIP_DRAWING;
+	protected CommandsImpl getCommandEnumValue() {
+		return CommandsImpl.SKIP_DRAWING;
 	}
 
 	public static class GroundParameter extends SkipDrawingParameter {
@@ -115,7 +115,7 @@ public class SkipDrawingCommand extends ConsoleCommand {
 		@Override
 		public void run(String value, Console console) {
 			defineSkipDrawingParameter(value, console);
-			console.notifyCommandExecution(Commands.SKIP_DRAWING, this);
+			console.notifyCommandExecution(CommandsImpl.SKIP_DRAWING, this);
 		}
 	}
 }

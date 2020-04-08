@@ -6,12 +6,12 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.gadarts.shared.console.CommandParameter;
+import com.gadarts.shared.console.Commands;
+import com.gadarts.shared.console.ConsoleCommandResult;
 import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameC.Files;
 import com.gadarts.war.Profiler;
-import com.gadarts.war.menu.console.commands.CommandParameter;
-import com.gadarts.war.menu.console.commands.Commands;
-import com.gadarts.war.menu.console.commands.ConsoleCommandResult;
 import com.gadarts.war.screens.BaseGameScreen;
 import com.gadarts.war.systems.render.RenderSystem;
 

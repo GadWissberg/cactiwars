@@ -1,16 +1,16 @@
 package com.gadarts.war.menu.console.commands.types;
 
-import com.gadarts.war.menu.console.Console;
-import com.gadarts.war.menu.console.commands.Commands;
+import com.gadarts.shared.console.Console;
+import com.gadarts.shared.console.ConsoleCommandResult;
+import com.gadarts.war.menu.console.commands.CommandsImpl;
 import com.gadarts.war.menu.console.commands.ConsoleCommand;
-import com.gadarts.war.menu.console.commands.ConsoleCommandResult;
 
 import java.util.Map;
 
 public class CelShaderCommand extends ConsoleCommand {
 	@Override
-	protected Commands getCommandEnumValue() {
-		return Commands.CEL_SHADER;
+	protected CommandsImpl getCommandEnumValue() {
+		return CommandsImpl.CEL_SHADER;
 	}
 
 	@Override

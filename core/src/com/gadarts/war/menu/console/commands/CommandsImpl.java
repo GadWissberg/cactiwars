@@ -1,5 +1,7 @@
 package com.gadarts.war.menu.console.commands;
 
+import com.gadarts.shared.console.CommandParameter;
+import com.gadarts.shared.console.Commands;
 import com.gadarts.war.menu.console.ConsoleImpl;
 import com.gadarts.war.menu.console.InputParsingFailureException;
 import com.gadarts.war.menu.console.commands.types.*;
@@ -7,7 +9,7 @@ import com.gadarts.war.menu.console.commands.types.*;
 import java.util.Arrays;
 import java.util.Optional;
 
-public enum Commands {
+public enum CommandsImpl implements Commands {
 	PROFILER(new ProfilerCommand(), "Toggles profiler and GL operations stats."),
 	BORDERS(new BordersCommand(), "Toggles UI components borders."),
 	SKIP_DRAWING("skip_draw", new SkipDrawingCommand(),
@@ -25,11 +27,11 @@ public enum Commands {
 	private final CommandParameter[] parameters;
 	private String description;
 
-	Commands(ConsoleCommand command, String description) {
+	CommandsImpl(ConsoleCommand command, String description) {
 		this(null, command, description);
 	}
 
-	Commands(String alias, ConsoleCommand command, String description, CommandParameter... parameters) {
+	CommandsImpl(String alias, ConsoleCommand command, String description, CommandParameter... parameters) {
 		this.alias = alias;
 		this.command = command;
 		this.parameters = parameters;
@@ -37,12 +39,12 @@ public enum Commands {
 		extendDescriptionWithParameters(parameters);
 	}
 
-	public static Commands findCommandByNameOrAlias(String input) throws InputParsingFailureException {
-		Optional<Commands> result;
+	public static CommandsImpl findCommandByNameOrAlias(String input) throws InputParsingFailureException {
+		Optional<CommandsImpl> result;
 		try {
 			result = Optional.of(valueOf(input));
 		} catch (IllegalArgumentException e) {
-			Commands[] values = values();
+			CommandsImpl[] values = values();
 			result = Arrays.stream(values).filter(command ->
 					Optional.ofNullable(command.getAlias()).isPresent() &&
 							command.getAlias().equalsIgnoreCase(input)).findFirst();

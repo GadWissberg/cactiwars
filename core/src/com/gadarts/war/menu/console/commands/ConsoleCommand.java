@@ -1,6 +1,9 @@
 package com.gadarts.war.menu.console.commands;
 
-import com.gadarts.war.menu.console.Console;
+import com.gadarts.shared.console.Commands;
+import com.gadarts.shared.console.Console;
+import com.gadarts.shared.console.ConsoleCommandResult;
+
 import java.util.Map;
 
 public abstract class ConsoleCommand {

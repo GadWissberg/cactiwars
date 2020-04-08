@@ -18,10 +18,12 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.StringBuilder;
+import com.gadarts.shared.console.CommandParameter;
+import com.gadarts.shared.console.Commands;
+import com.gadarts.shared.console.Console;
+import com.gadarts.shared.console.ConsoleCommandResult;
 import com.gadarts.war.menu.console.commands.CommandInvoke;
-import com.gadarts.war.menu.console.commands.CommandParameter;
-import com.gadarts.war.menu.console.commands.Commands;
-import com.gadarts.war.menu.console.commands.ConsoleCommandResult;
+import com.gadarts.war.menu.console.commands.CommandsImpl;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -102,7 +104,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 
 			private void tryFindingCommand() {
 				if (input.getText().isEmpty()) return;
-				java.util.List<Commands> options = Arrays.stream(Commands.values())
+				java.util.List<CommandsImpl> options = Arrays.stream(CommandsImpl.values())
 						.filter(command -> command.name().startsWith(input.getText().toUpperCase()))
 						.collect(toList());
 				if (options.size() == 1) {
@@ -111,7 +113,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 				} else if (options.size() > 1) logSuggestedCommands(options);
 			}
 
-			private void logSuggestedCommands(java.util.List<Commands> options) {
+			private void logSuggestedCommands(java.util.List<CommandsImpl> options) {
 				stringBuilder.clear();
 				options.forEach(command -> stringBuilder.append(command.name().toLowerCase()).append(OPTIONS_DELIMITER));
 				insertNewLog(String.format(MSG_SUGGESTED, stringBuilder), false);
@@ -162,7 +164,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 		String[] entries = text.toUpperCase().split(" ");
 		String commandName = entries[0];
 		CommandInvoke command;
-		command = new CommandInvoke(Commands.findCommandByNameOrAlias(commandName));
+		command = new CommandInvoke(CommandsImpl.findCommandByNameOrAlias(commandName));
 		parseParameters(entries, command);
 		return command;
 	}
@@ -187,6 +189,27 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	}
 
 	@Override
+	public ConsoleCommandResult notifyCommandExecution(Commands command) {
+		return notifyCommandExecution(command, null);
+	}
+
+	@Override
+	public ConsoleCommandResult notifyCommandExecution(Commands command, CommandParameter commandParameter) {
+		boolean result = false;
+		consoleCommandResult.clear();
+		Optional<CommandParameter> optional = Optional.ofNullable(commandParameter);
+		for (ConsoleEventsSubscriber sub : subscribers) {
+			if (optional.isPresent()) {
+				result |= sub.onCommandRun(command, consoleCommandResult, optional.get());
+			} else {
+				result |= sub.onCommandRun(command, consoleCommandResult);
+			}
+		}
+		consoleCommandResult.setResult(result);
+		return consoleCommandResult;
+	}
+
+	@Override
 	public void act(float delta) {
 		super.act(delta);
 		if (!active) return;
@@ -197,28 +220,6 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 		} else if (!arrow.isVisible()) {
 			arrow.setVisible(true);
 		}
-	}
-
-
-	@Override
-	public ConsoleCommandResult notifyCommandExecution(Commands command) {
-		return notifyCommandExecution(command, null);
-	}
-
-	@Override
-	public ConsoleCommandResult notifyCommandExecution(Commands command, CommandParameter parameter) {
-		boolean result = false;
-		consoleCommandResult.clear();
-		Optional<CommandParameter> optional = Optional.ofNullable(parameter);
-		for (ConsoleEventsSubscriber sub : subscribers) {
-			if (optional.isPresent()) {
-				result |= sub.onCommandRun(command, consoleCommandResult, optional.get());
-			} else {
-				result |= sub.onCommandRun(command, consoleCommandResult);
-			}
-		}
-		consoleCommandResult.setResult(result);
-		return consoleCommandResult;
 	}
 
 

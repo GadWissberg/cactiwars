@@ -17,6 +17,9 @@ import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
+import com.gadarts.shared.console.CommandParameter;
+import com.gadarts.shared.console.Commands;
+import com.gadarts.shared.console.ConsoleCommandResult;
 import com.gadarts.shared.definitions.PointLightDefinition;
 import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameShaderProvider;
@@ -26,9 +29,7 @@ import com.gadarts.war.components.EnvironmentObjectComponent;
 import com.gadarts.war.components.PointLightComponent;
 import com.gadarts.war.components.model.ModelInstanceComponent;
 import com.gadarts.war.menu.console.ConsoleEventsSubscriber;
-import com.gadarts.war.menu.console.commands.CommandParameter;
-import com.gadarts.war.menu.console.commands.Commands;
-import com.gadarts.war.menu.console.commands.ConsoleCommandResult;
+import com.gadarts.war.menu.console.commands.CommandsImpl;
 import com.gadarts.war.menu.console.commands.types.SkipDrawingCommand;
 import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.systems.GameEntitySystem;
@@ -235,15 +236,16 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 
 	@Override
 	public boolean onCommandRun(Commands command, ConsoleCommandResult consoleCommandResult, CommandParameter parameter) {
-		if (command == Commands.CEL_SHADER) {
+		if (command == CommandsImpl.CEL_SHADER) {
 			celRenderer.setEnabled(!celRenderer.isEnabled());
 			String msg = celRenderer.isEnabled() ? CEL_SHADING_ACTIVATED : CEL_SHADING_DEACTIVATED;
 			consoleCommandResult.setMessage(msg);
-		} else if (command == Commands.SKIP_DRAWING) {
+		} else if (command == CommandsImpl.SKIP_DRAWING) {
 			handleSkipDrawing(parameter);
 		}
 		return true;
 	}
+
 
 	private void handleSkipDrawing(CommandParameter parameter) {
 		if (Optional.ofNullable(parameter).isPresent()) {

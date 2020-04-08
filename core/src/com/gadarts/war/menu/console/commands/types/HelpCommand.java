@@ -1,11 +1,11 @@
 package com.gadarts.war.menu.console.commands.types;
 
 import com.badlogic.gdx.utils.StringBuilder;
+import com.gadarts.shared.console.Console;
+import com.gadarts.shared.console.ConsoleCommandResult;
 import com.gadarts.war.GameC;
-import com.gadarts.war.menu.console.Console;
-import com.gadarts.war.menu.console.commands.Commands;
+import com.gadarts.war.menu.console.commands.CommandsImpl;
 import com.gadarts.war.menu.console.commands.ConsoleCommand;
-import com.gadarts.war.menu.console.commands.ConsoleCommandResult;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -19,8 +19,8 @@ public class HelpCommand extends ConsoleCommand {
 	private static String output;
 
 	@Override
-	protected Commands getCommandEnumValue() {
-		return Commands.HELP;
+	protected CommandsImpl getCommandEnumValue() {
+		return CommandsImpl.HELP;
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class HelpCommand extends ConsoleCommand {
 
 	private void initializeMessage() {
 		StringBuilder builder = new StringBuilder();
-		Arrays.stream(Commands.values()).forEach(command -> {
+		Arrays.stream(CommandsImpl.values()).forEach(command -> {
 			builder.append(" - ").append(command.name().toLowerCase());
 			if (Optional.ofNullable(command.getAlias()).isPresent()) {
 				builder.append(" (also '").append(command.getAlias()).append("')");

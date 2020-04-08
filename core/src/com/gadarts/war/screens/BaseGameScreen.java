@@ -4,11 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.gadarts.shared.console.Commands;
 import com.gadarts.war.Profiler;
 import com.gadarts.war.menu.GameMenu;
 import com.gadarts.war.menu.console.ConsoleEventsSubscriber;
 import com.gadarts.war.menu.console.ConsoleImpl;
-import com.gadarts.war.menu.console.commands.Commands;
+import com.gadarts.war.menu.console.commands.CommandsImpl;
 import com.gadarts.war.menu.console.commands.types.BordersCommand;
 import com.gadarts.war.menu.console.commands.types.ProfilerCommand;
 import com.gadarts.war.menu.hud.MenuEventsSubscriber;
@@ -121,9 +122,9 @@ public abstract class BaseGameScreen implements Screen, ConsoleEventsSubscriber 
 
 	protected String reactToCommand(Commands command, Profiler profiler, Stage stage) {
 		String msg = null;
-		if (command == Commands.PROFILER) {
+		if (command == CommandsImpl.PROFILER) {
 			msg = commandProfileExecuted(profiler);
-		} else if (command == Commands.BORDERS) {
+		} else if (command == CommandsImpl.BORDERS) {
 			msg = commandDrawBordersExecuted(stage);
 		}
 		return msg;

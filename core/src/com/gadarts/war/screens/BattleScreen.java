@@ -5,6 +5,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.gadarts.shared.console.CommandParameter;
+import com.gadarts.shared.console.Commands;
+import com.gadarts.shared.console.ConsoleCommandResult;
 import com.gadarts.shared.level.Map;
 import com.gadarts.shared.par.SectionType;
 import com.gadarts.war.DefaultGameSettings;
@@ -12,9 +15,6 @@ import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.InGameScreen;
 import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.level.MapCreator;
-import com.gadarts.war.menu.console.commands.CommandParameter;
-import com.gadarts.war.menu.console.commands.Commands;
-import com.gadarts.war.menu.console.commands.ConsoleCommandResult;
 import com.gadarts.war.menu.hud.Hud;
 import com.gadarts.war.sound.SFX;
 import com.gadarts.war.systems.CharacterSystem;
@@ -181,6 +181,7 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 		consoleCommandResult.setMessage(reactToCommand(command, hud.getProfiler(), getHudStage()));
 		return true;
 	}
+
 
 	@Override
 	public void onConsoleDeactivated() {
