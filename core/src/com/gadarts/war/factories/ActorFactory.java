@@ -223,35 +223,48 @@ public class ActorFactory {
 		body.setCenterOfMassTransform(auxMatrix.rotate(Vector3.Y, rotation));
 		modelInstanceComponent.getModelInstance().transform.rotate(Vector3.Y, rotation);
 		env.add(physicsComponent);
-		if (pointLightsDefinitions != null && pointLightsDefinitions.size() > 0) {
-			for (PointLightDefinition pointLightDefinition : pointLightsDefinitions) {
-				Entity pointLight = engine.createEntity();
-				PointLightComponent component = engine.createComponent(PointLightComponent.class);
-				pointLight.add(component);
-				component.init(pointLightDefinition, env);
-				engine.addEntity(pointLight);
-				ComponentsMapper.environmentObject.get(env).addSourceLight(pointLight);
-			}
-		}
+		addLightsToEntity(pointLightsDefinitions, env);
 		return env;
 	}
 
-	public void createBullet(Matrix4 rotation, Vector3 worldTrans, WeaponDefinition weapon) {
-		Entity bulletEntity = engine.createEntity();
-		bulletEntity.add(engine.createComponent(BulletComponent.class));
-		Vector3 forwardVector = auxVector3_2.set(1.1f, 0, 0).rot(rotation);
-		ModelInstanceComponent modelComponent = createBulletModelInstanceComponent(worldTrans, weapon, forwardVector);
-		bulletEntity.add(createBulletPhysics(weapon, bulletEntity, modelComponent, forwardVector));
-		bulletEntity.add(modelComponent);
-		engine.addEntity(bulletEntity);
+	private void addLightsToEntity(List<PointLightDefinition> pointLightsDefinitions, Entity entity) {
+		LightEmitterComponent lightEmitterComponent = engine.createComponent(LightEmitterComponent.class);
+		if (pointLightsDefinitions != null && pointLightsDefinitions.size() > 0) {
+			for (PointLightDefinition pointLightDefinition : pointLightsDefinitions) {
+				lightEmitterComponent.addSourceLight(createPointLight(entity, pointLightDefinition));
+			}
+		}
+		entity.add(lightEmitterComponent);
 	}
 
-	private ModelInstanceComponent createBulletModelInstanceComponent(Vector3 worldTranslation,
-																	  WeaponDefinition weapon,
-																	  Vector3 forwardVector) {
+	private Entity createPointLight(Entity parent, PointLightDefinition pointLightDefinition) {
+		Entity pointLight = engine.createEntity();
+		PointLightComponent component = engine.createComponent(PointLightComponent.class);
+		pointLight.add(component);
+		component.init(pointLightDefinition, parent);
+		engine.addEntity(pointLight);
+		return pointLight;
+	}
+
+	public void createBullet(Matrix4 rotation, Vector3 worldTrans, WeaponDefinition weapon) {
+		Entity entity = engine.createEntity();
+		BulletComponent bulletComponent = engine.createComponent(BulletComponent.class);
+		entity.add(bulletComponent);
+		Vector3 forwardVct = auxVector3_2.set(1.1f, 0, 0).rot(rotation);
+		ModelInstanceComponent modelComponent = addBulletModelInstanceComponent(worldTrans, weapon, forwardVct, entity);
+		entity.add(createBulletPhysics(weapon, entity, modelComponent, forwardVct));
+		addLightsToEntity(weapon.getPointLightsDefinitions(), entity);
+		engine.addEntity(entity);
+	}
+
+	private ModelInstanceComponent addBulletModelInstanceComponent(Vector3 worldTranslation,
+																   WeaponDefinition weapon,
+																   Vector3 forwardVector,
+																   Entity bulletEntity) {
 		worldTranslation.add(forwardVector.x, forwardVector.y, forwardVector.z);
 		ModelInstanceComponent modelComponent = createModelInstanceComponent(weapon, worldTranslation);
 		modelComponent.getModelInstance().transform.rotate(Vector3.X, forwardVector);
+		bulletEntity.add(modelComponent);
 		return modelComponent;
 	}
 

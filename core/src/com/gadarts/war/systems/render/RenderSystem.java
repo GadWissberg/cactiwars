@@ -12,32 +12,27 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.gadarts.shared.console.CommandParameter;
 import com.gadarts.shared.console.Commands;
 import com.gadarts.shared.console.ConsoleCommandResult;
-import com.gadarts.shared.definitions.PointLightDefinition;
 import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameShaderProvider;
 import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
-import com.gadarts.war.components.EnvironmentObjectComponent;
-import com.gadarts.war.components.PointLightComponent;
 import com.gadarts.war.components.model.ModelInstanceComponent;
 import com.gadarts.war.menu.console.ConsoleEventsSubscriber;
 import com.gadarts.war.menu.console.commands.CommandsImpl;
 import com.gadarts.war.menu.console.commands.types.SkipDrawingCommand;
 import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.systems.GameEntitySystem;
+import com.gadarts.war.systems.LightsSystem;
 import com.gadarts.war.systems.physics.CollisionShapesDebugDrawing;
 import com.gadarts.war.systems.physics.PhysicsSystemEventsSubscriber;
 import com.gadarts.war.systems.render.shadow.ShadowRenderer;
 
-import java.util.List;
 import java.util.Optional;
 
 public class RenderSystem extends GameEntitySystem implements PhysicsSystemEventsSubscriber, EntityListener, CelRendererUser, ConsoleEventsSubscriber {
@@ -50,13 +45,13 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 	private ModelBatch modelBatch;
 	private PerspectiveCamera camera;
 	private ImmutableArray<Entity> modelInstanceEntities;
-	private Environment environment;
 	private ShadowRenderer shadowRenderer;
 	private RenderingDebugHandler renderingDebugHandler;
 	private CelRenderer celRenderer;
 	private boolean drawGround = !DefaultGameSettings.SKIP_GROUND_DRAWING;
 	private boolean drawCharacters = !DefaultGameSettings.SKIP_CHARACTER_DRAWING;
 	private boolean drawEnvironment = !DefaultGameSettings.SKIP_ENV_OBJECT_DRAWING;
+	private Environment environment;
 
 	public static void resetDisplay(Color color) {
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -75,8 +70,7 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 		Entity cameraEntity = engine.getEntitiesFor(Family.all(CameraComponent.class).get()).get(0);
 		camera = ComponentsMapper.camera.get(cameraEntity).getCamera();
 		modelInstanceEntities = engine.getEntitiesFor(Family.all(ModelInstanceComponent.class).get());
-		environment = new Environment();
-		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.3f, 0.3f, 0.3f, 1f));
+		environment = engine.getSystem(LightsSystem.class).getEnvironment();
 		shadowRenderer = new ShadowRenderer(environment);
 		engine.addEntityListener(this);
 		celRenderer.initialize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -174,32 +168,15 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 	}
 
 	@Override
-	public void onEnvironmentObjectStaticValueChange(boolean newValue, Entity entity) {
-		EnvironmentObjectComponent environmentObjectComponent = ComponentsMapper.environmentObject.get(entity);
-		List<Entity> sourceLights = environmentObjectComponent.getSourceLights();
-		for (Entity sourceLight : sourceLights) {
-			Environment environment = getEngine().getSystem(RenderSystem.class).getEnvironment();
-			environment.remove(ComponentsMapper.pointLights.get(sourceLight).getPointLightObject());
-			getEngine().removeEntity(sourceLight);
-		}
+	public void onEnvironmentObjectStaticValueChange(boolean b, Entity entity) {
+
 	}
+
 
 	@Override
 	public void entityAdded(Entity entity) {
-		if (ComponentsMapper.pointLights.has(entity)) {
-			addPointLight(entity);
-		}
 	}
 
-	private void addPointLight(Entity entity) {
-		PointLightComponent plc = ComponentsMapper.pointLights.get(entity);
-		PointLightDefinition definition = plc.getDefinition();
-		Vector3 pos = ComponentsMapper.physics.get(plc.getParent()).getMotionState().getWorldTranslation(auxVector31);
-		PointLight pointLight = new PointLight().set(0.8f, 0.8f, 0.8f, pos.x + definition.getOffsetX(),
-				pos.y + definition.getOffsetY(), pos.z + definition.getOffsetZ(), definition.getIntensity());
-		plc.setPointLightObject(pointLight);
-		environment.add(pointLight);
-	}
 
 	@Override
 	public void entityRemoved(Entity entity) {

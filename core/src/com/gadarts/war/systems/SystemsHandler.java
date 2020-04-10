@@ -19,9 +19,12 @@ public class SystemsHandler {
 
 	public void init(BaseGameScreen parentScreen) {
 		CameraSystem cameraSystem = createCameraSystem();
+		LightsSystem lightsSystem = new LightsSystem();
+		engine.addSystem(lightsSystem);
 		RenderSystem renderSystem = createRenderSystem();
 		PhysicsSystem physicsSystem = new PhysicsSystem(soundPlayer);
 		physicsSystem.subscribeForEvents(renderSystem);
+		physicsSystem.subscribeForEvents(lightsSystem);
 		PlayerSystem playerSystem = new PlayerSystem((InGameScreen) parentScreen);
 		playerSystem.subscribeForEvents(cameraSystem);
 		engine.addSystem(physicsSystem);

@@ -79,7 +79,14 @@
       {
         "name": "cannon_ball",
         "model": "cannon_ball",
-        "speed": 1
+        "speed": 1,
+        "light_sources": {
+          "point_lights": [
+            {
+              "intensity": 0.1
+            }
+          ]
+        }
       }
     ]
   }
