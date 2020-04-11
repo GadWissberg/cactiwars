@@ -141,7 +141,7 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 		if (frameBuffer != null) {
 			frameBuffer.begin();
 		}
-		resetDisplay(Color.BLACK);
+		resetDisplay(Color.RED);
 		renderingDebugHandler.resetCounter();
 		modelBatch.begin(camera);
 		renderInstances(modelBatch, true, environment, deltaTime);
