@@ -5,7 +5,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
@@ -83,7 +82,6 @@ public class LightsSystem extends GameEntitySystem implements PhysicsSystemEvent
 		environment.remove(pointLightObject);
 		Pools.get(PointLight.class).free(pointLightObject);
 		getEngine().removeEntity(sourceLight);
-		Gdx.app.log("REMOVED", "Free:" + Pools.get(PointLight.class).getFree() + ", Peak:" + Pools.get(PointLight.class).peak);
 	}
 
 	@Override
@@ -102,7 +100,6 @@ public class LightsSystem extends GameEntitySystem implements PhysicsSystemEvent
 				pos.y + definition.getOffsetY(), pos.z + definition.getOffsetZ(), definition.getIntensity());
 		plc.setPointLightObject(pointLight);
 		environment.add(pointLight);
-		Gdx.app.log("NEW", "Free:" + Pools.get(PointLight.class).getFree());
 	}
 
 	@Override

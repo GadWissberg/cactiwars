@@ -250,7 +250,7 @@ public class ActorFactory {
 		Entity entity = engine.createEntity();
 		BulletComponent bulletComponent = engine.createComponent(BulletComponent.class);
 		entity.add(bulletComponent);
-		Vector3 forwardVct = auxVector3_2.set(1.1f, 0, 0).rot(rotation);
+		Vector3 forwardVct = auxVector3_2.set(1f, 0, 0).rot(rotation);
 		ModelInstanceComponent modelComponent = addBulletModelInstanceComponent(worldTrans, weapon, forwardVct, entity);
 		entity.add(createBulletPhysics(weapon, entity, modelComponent, forwardVct));
 		addLightsToEntity(weapon.getPointLightsDefinitions(), entity);
