@@ -7,7 +7,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.gadarts.shared.SharedC.Camera;
 import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.components.CameraComponent;
@@ -20,12 +22,24 @@ import com.gadarts.war.systems.player.PlayerSystemEventsSubscriber;
  */
 public class CameraSystem extends GameEntitySystem implements PlayerSystemEventsSubscriber {
 	private final static Vector3 auxVector33 = new Vector3();
-	private static final float CAMERA_Z_RELATIVE_OFFSET = 8;
+	public static final int CAMERA_MAX_DISTANCE = 6;
 	private static final Vector3 auxVector31 = new Vector3();
 	private static final Vector3 auxVector32 = new Vector3();
 	private static final Vector3 auxVector34 = new Vector3();
+	public static final int DISTANCE_WHEN_MOVING = 4;
+	public static final int MAX_CAMERA_NORTH = -2;
+	public static final int MAX_CAMERA_SOUTH = 15;
+	public static final int CAMERA_ZOOM_DELAY = 1000;
+	public static final int DEGREES_OF_DISTANCE_VECTOR_WHEN_MOVING = 45;
+	public static final int DEGREES_OF_DISTANCE_VECTOR_NOT_MOVING = 90;
+	public static final int CAMERA_MIN_DISTANCE = 2;
+	private static final float CAMERA_Z_RELATIVE_OFFSET = 4;
+	private static final Vector3 auxVector35 = new Vector3();
+	private static final float MIN_DISTANCE_TO_TARGET = 20;
 	private CameraInputController debugInputProcessor;
 	private Entity cameraEntity;
+	private long lastZoomChange;
+	private boolean zoomActive;
 
 	public static CameraInputController createAndSetDebugInputProcessor(PerspectiveCamera camera) {
 		CameraInputController processor = new CameraInputController(camera);
@@ -70,18 +84,48 @@ public class CameraSystem extends GameEntitySystem implements PlayerSystemEvents
 	private void handleCameraManipulation(Entity target) {
 		ComponentsMapper.physics.get(target).getBody().getInterpolationLinearVelocity(auxVector34);
 		Vector3 camPos = auxVector31.set(ComponentsMapper.camera.get(cameraEntity).getCamera().position);
-		Vector3 targetPosition = ComponentsMapper.physics.get(target).getMotionState().getWorldTranslation(auxVector32);
-		auxVector33.set(targetPosition.x, camPos.y, targetPosition.z).add(0, 0, CAMERA_Z_RELATIVE_OFFSET);
-		manipulateCamera(auxVector34);
-		camPos.interpolate(auxVector33, 0.1f, Interpolation.circle);
+		Vector3 targetRealPos = ComponentsMapper.physics.get(target).getMotionState().getWorldTranslation(auxVector32);
+		Vector3 targetRelativePosition = auxVector33.set(targetRealPos.x, camPos.y, targetRealPos.z);
+		targetRelativePosition.add(0, 0, CAMERA_Z_RELATIVE_OFFSET);
+		manipulateCamera(auxVector34, targetRelativePosition, camPos, targetRealPos);
+		camPos.interpolate(targetRelativePosition, 0.15f, Interpolation.smooth2);
 		ComponentsMapper.camera.get(cameraEntity).getCamera().position.set(camPos);
 	}
 
-	private void manipulateCamera(Vector3 velocity) {
-		if (Math.abs(velocity.len2()) > 0.01) {
-			velocity.scl(4);
-			auxVector33.add(velocity.x, 0, velocity.z);
+	private void manipulateCamera(Vector3 velocity, Vector3 targetRelativePosition, Vector3 camPos, Vector3 targetRealPos) {
+		if (Math.abs(velocity.len2()) > 0.04) {
+			manipulateCameraWhenMoving(velocity, targetRelativePosition, targetRealPos);
+		} else {
+			manipulateCameraZoom(velocity, targetRelativePosition, targetRealPos);
 		}
+
+	}
+
+	private void manipulateCameraZoom(Vector3 velocity, Vector3 targetRelativePosition, Vector3 targetRealPos) {
+		int distanceFromTarget = CAMERA_MAX_DISTANCE;
+		int degreesOfDistanceVector = DEGREES_OF_DISTANCE_VECTOR_WHEN_MOVING;
+		if (zoomActive) {
+			distanceFromTarget = CAMERA_MIN_DISTANCE;
+			degreesOfDistanceVector = DEGREES_OF_DISTANCE_VECTOR_NOT_MOVING;
+		} else if (TimeUtils.timeSinceMillis(lastZoomChange) > CAMERA_ZOOM_DELAY) {
+			zoomActive = true;
+		} else {
+			targetRelativePosition.add(velocity.x, 0, CAMERA_Z_RELATIVE_OFFSET);
+		}
+		Vector3 positionNearAboveTarget = auxVector35.set(targetRealPos).add(auxVector35.set(1, 0, 0)
+				.rotate(Vector3.Z, degreesOfDistanceVector).nor().scl(distanceFromTarget));
+		targetRelativePosition.y = positionNearAboveTarget.y;
+	}
+
+	private void manipulateCameraWhenMoving(Vector3 velocity, Vector3 targetRelativePosition, Vector3 targetRealPos) {
+		velocity.scl(DISTANCE_WHEN_MOVING);
+		float z = MathUtils.clamp(velocity.z >= 0 ? velocity.z * 2 : velocity.z, MAX_CAMERA_NORTH, MAX_CAMERA_SOUTH);
+		targetRelativePosition.add(velocity.x, 0, z);
+		zoomActive = false;
+		lastZoomChange = TimeUtils.millis();
+		Vector3 positionNearAboveTarget = auxVector35.set(targetRealPos).add(auxVector35.set(1, 0, 0)
+				.rotate(Vector3.Z, DEGREES_OF_DISTANCE_VECTOR_WHEN_MOVING).nor().scl(CAMERA_MAX_DISTANCE));
+		targetRelativePosition.y = positionNearAboveTarget.y;
 	}
 
 	@Override
