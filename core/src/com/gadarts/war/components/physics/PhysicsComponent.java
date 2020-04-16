@@ -62,10 +62,17 @@ public class PhysicsComponent implements Component, Pool.Poolable {
         if (body == null) {
             body = new btRigidBody(mass, motionState, collisionShape, localInertia);
         } else {
-            body.activate();
-            body.setCollisionShape(collisionShape);
-            body.setMassProps(mass, localInertia);
+            redefineBodyPhysics(mass, collisionShape);
         }
+    }
+
+    private void redefineBodyPhysics(float mass, btCollisionShape collisionShape) {
+        body.activate();
+        body.clearForces();
+        body.setCollisionShape(collisionShape);
+        body.setMassProps(mass, localInertia);
+        body.setLinearVelocity(Vector3.Zero);
+        body.setAngularVelocity(Vector3.Zero);
     }
 
     public void dispose() {
