@@ -1,9 +1,7 @@
 package com.gadarts.war.level;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
-import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttributes;
@@ -15,8 +13,8 @@ import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
 import com.badlogic.gdx.physics.bullet.collision.btBroadphaseProxy;
-import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
 import com.badlogic.gdx.physics.bullet.collision.btStaticPlaneShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.utils.Array;
@@ -36,7 +34,6 @@ import com.gadarts.shared.par.SectionType;
 import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
-import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.GroundComponent;
 import com.gadarts.war.components.model.ModelInstanceComponent;
 import com.gadarts.war.components.physics.PhysicsComponent;
@@ -58,51 +55,6 @@ public class MapCreator extends MapModeler {
 		super(new ModelBuilder(), entitiesEngine);
 	}
 
-	private void createGroundBody(Map map) {
-		PooledEngine entitiesEngine = getEntitiesEngine();
-		ImmutableArray<Entity> groundRegions = entitiesEngine.getEntitiesFor(Family.all(GroundComponent.class).get());
-		for (Entity entity : groundRegions) {
-			if (ComponentsMapper.ground.get(entity).isPhysical()) {
-				createGroundRegionBody(entity, entitiesEngine, map);
-			}
-		}
-	}
-
-	private void createGroundRegionBody(Entity entity, PooledEngine engine, Map map) {
-		PhysicsComponent physicsComponent = createGroundRegionBodyPhysicsComponent(entity, engine, map);
-		entity.add(physicsComponent);
-		btRigidBody body = physicsComponent.getBody();
-		body.userData = entity;
-		body.setContactCallbackFlag(btBroadphaseProxy.CollisionFilterGroups.KinematicFilter);
-		engine.getSystem(PhysicsSystem.class).getCollisionWorld().addRigidBody(body);
-	}
-
-	private PhysicsComponent createGroundRegionBodyPhysicsComponent(Entity entity, PooledEngine engine, Map map) {
-		Matrix4 transform = ComponentsMapper.modelInstance.get(entity).getModelInstance().transform;
-		GroundComponent groundComponent = ComponentsMapper.ground.get(entity);
-		btCompoundShape compoundShape = new btCompoundShape(true);
-		PhysicsComponent physicsComponent = engine.createComponent(PhysicsComponent.class);
-		physicsComponent.init(0, compoundShape, transform);
-		createGroundRegionBodyChildShapes(map, transform, groundComponent, compoundShape);
-		return physicsComponent;
-	}
-
-	private void createGroundRegionBodyChildShapes(Map map, Matrix4 transform, GroundComponent groundComponent, btCompoundShape cmpShape) {
-		for (int row = 0; row < SharedC.Map.REGION_SIZE_UNIT; row++)
-			for (int col = 0; col < SharedC.Map.REGION_SIZE_UNIT; col++) {
-				int originX = (int) transform.val[Matrix4.M03];
-				int originZ = (int) transform.val[Matrix4.M23];
-				GroundChildShape childShp = addChildShapeToRegionBody(map, row, col, auxMatrix);
-				cmpShape.addChildShape(auxMatrix, childShp);
-				groundComponent.getFrictionMapping()[row][col] = map.getPath()[originZ + row][originX + col];
-			}
-	}
-
-	private GroundChildShape addChildShapeToRegionBody(Map map, int row, int col, Matrix4 localTransform) {
-		Vector3 halfExtents = auxVector31.set(0.5f, 0.1f, 0.5f);
-		localTransform.idt().trn(col + 0.5f, 0, row + 0.5f);
-		return new GroundChildShape(halfExtents, map.getPath()[row][col]);
-	}
 
 	private GroundBody createBoundaryPhysics(Vector3 planeNormal, float distanceFromOrigin) {
 		GroundBody boundaryBody = new GroundBody();
@@ -122,14 +74,49 @@ public class MapCreator extends MapModeler {
 	}
 
 
-	public void createLevelPhysics(Map map) {
-		createGroundBody(map);
+	public void createLevelPhysics() {
 		int distanceFromOrigin = SharedC.Map.REGION_SIZE_UNIT * SharedC.Map.LEVEL_SIZE;
 		createBoundaryPhysics(auxVector31.set(0, 0, 1), 0);
 		createBoundaryPhysics(auxVector31.set(1, 0, 0), 0);
-		createBoundaryPhysics(auxVector31.set(0, 1, 0), -1f);
 		createBoundaryPhysics(auxVector31.set(0, 0, -1), -distanceFromOrigin);
 		createBoundaryPhysics(auxVector31.set(-1, 0, 0), -distanceFromOrigin);
+		createFloor();
+	}
+
+	private void createFloor() {
+		PooledEngine entitiesEngine = getEntitiesEngine();
+		GroundComponent groundComponent = createGroundComponent();
+		Entity entity = entitiesEngine.createEntity();
+		PhysicsComponent physicsComponent = createGroundPhysics(entity);
+		entity.add(physicsComponent);
+		entity.add(groundComponent);
+	}
+
+	private PhysicsComponent createGroundPhysics(Entity entity) {
+		btRigidBody btRigidBody = createGroundPhysicsBody();
+		btRigidBody.userData = entity;
+		PooledEngine entitiesEngine = getEntitiesEngine();
+		entitiesEngine.getSystem(PhysicsSystem.class).getCollisionWorld().addRigidBody(btRigidBody);
+		PhysicsComponent physicsComponent = entitiesEngine.createComponent(PhysicsComponent.class);
+		physicsComponent.replaceRigidBody(btRigidBody);
+		return physicsComponent;
+	}
+
+	private btRigidBody createGroundPhysicsBody() {
+		btBoxShape collisionShape = new btBoxShape(auxVector31.set(20, 0.01f, 20));
+		btRigidBody.btRigidBodyConstructionInfo constructionInfo = new btRigidBody.btRigidBodyConstructionInfo(
+				0,
+				null,
+				collisionShape);
+		btRigidBody btRigidBody = new btRigidBody(constructionInfo);
+		btRigidBody.setContactCallbackFlag(btBroadphaseProxy.CollisionFilterGroups.KinematicFilter);
+		return btRigidBody;
+	}
+
+	private GroundComponent createGroundComponent() {
+		GroundComponent groundComponent = getEntitiesEngine().createComponent(GroundComponent.class);
+		groundComponent.init(true);
+		return groundComponent;
 	}
 
 	public void modelLevelGround(Map map, TextureAtlas tilesAtlas) {
@@ -165,9 +152,6 @@ public class MapCreator extends MapModeler {
 		modelInstance.transform.setToTranslation(auxVector31.set(originColUnits, 0, originRowUnits));
 		modelInstanceComponent.init(modelInstance);
 		ground.add(modelInstanceComponent);
-		GroundComponent groundComponent = engine.createComponent(GroundComponent.class);
-		groundComponent.init(true);
-		ground.add(groundComponent);
 		engine.addEntity(ground);
 	}
 
@@ -216,9 +200,6 @@ public class MapCreator extends MapModeler {
 		boolean modelAxis = Gdx.app.getLogLevel() == Gdx.app.LOG_DEBUG && DefaultGameSettings.SHOW_AXIS && z == 0 && x == 0;
 		Model region = modelGroundRegion(modelAxis, tiles, regionSize, "grass_a");
 		ground.add(createGroundRegionModelInstanceComponent(z, x, region, regionSize));
-		GroundComponent groundComponent = getEntitiesEngine().createComponent(GroundComponent.class);
-		groundComponent.init(!isSurrounding);
-		ground.add(groundComponent);
 		getEntitiesEngine().addEntity(ground);
 	}
 
@@ -238,7 +219,7 @@ public class MapCreator extends MapModeler {
 		Array<TileDefinition> usedTiles = map.getUsedTiles();
 		SharedUtils.generateAtlasOfTiles(GameAssetManager.getInstance(), GameC.Files.TILES_ATLAS_ASSET_NAME, usedTiles);
 		modelLevelGround(map, assetManager.get(GameC.Files.TILES_ATLAS_ASSET_NAME, TextureAtlas.class));
-		createLevelPhysics(map);
+		createLevelPhysics();
 		Array<PlacedActorInfo> actors = map.getActors();
 		Definitions<ActorDefinition> actorsDefs = assetManager.getGameAsset(SectionType.DEF, SharedC.AssetRelated.Actors.ACTORS_DEF_NAME, Definitions.class);
 		PooledEngine entitiesEngine = getEntitiesEngine();

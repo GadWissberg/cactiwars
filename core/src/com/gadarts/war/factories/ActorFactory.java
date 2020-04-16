@@ -206,15 +206,14 @@ public class ActorFactory {
 		btCompoundShape collisionShape = (btCompoundShape) body.getCollisionShape();
 		if (isStatic) {
 			btSphereShape modelBody = Pools.obtain(btSphereShapeWrapper.class);
-			collisionShape.addChildShape(auxMatrix.idt().translate(0, 0, 0), modelBody);
+			collisionShape.addChildShape(auxMatrix.setToTranslation(0, 0, 0), modelBody);
 		} else {
 			btCylinderShape modelBody = Pools.obtain(btCylinderShapeWrapper.class);
 			btCapsuleShapeXWrapper head = Pools.obtain(btCapsuleShapeXWrapper.class);
 			modelBody.setImplicitShapeDimensions(auxVctr.set(0.1f, 2, 0.1f));
-			head.setImplicitShapeDimensions(auxVctr.set(0.1f, 0.2f, 0.1f));
-			collisionShape.addChildShape(auxMatrix.idt().translate(0, 0, 0), modelBody);
-			collisionShape.addChildShape(auxMatrix.idt().translate(0.3f, 2.2f, 0), head);
-
+			head.setImplicitShapeDimensions(auxVctr.set(0.2f, 0.1f, 0.1f));
+			collisionShape.addChildShape(auxMatrix.setToTranslation(0.3f, 2.2f, 0), head);
+			collisionShape.addChildShape(auxMatrix.setToTranslation(0, 0, 0), modelBody);
 		}
 		body.setAngularFactor(0);
 		physicsComponent.recalculateLocalInertia();

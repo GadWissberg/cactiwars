@@ -116,13 +116,13 @@ public class PhysicsSystem extends GameEntitySystem implements EntityListener, G
 	@Override
 	public void onStaticEnvironmentObjectHardCollision(Entity entity) {
 		PhysicsComponent envPhysicsComponent = ComponentsMapper.physics.get(entity);
-		envPhysicsComponent.getBody().setAngularFactor(1);
 		if (envPhysicsComponent.isStatic()) {
+			envPhysicsComponent.getBody().setAngularFactor(1);
 			envPhysicsComponent.setStatic(false);
 			environmentObjectStaticValueChanged(entity, false);
+			envPhysicsComponent.recalculateLocalInertia();
+			getCollisionWorld().addRigidBody(envPhysicsComponent.getBody());
 		}
-		envPhysicsComponent.recalculateLocalInertia();
-		getCollisionWorld().addRigidBody(envPhysicsComponent.getBody());
 	}
 
 	@Override
