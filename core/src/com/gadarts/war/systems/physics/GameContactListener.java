@@ -94,6 +94,9 @@ public class GameContactListener extends ContactListener {
 			} else if (ComponentsMapper.bullets.has(entity1)) {
 				onEnvironmentObjectWithBullet(entity0, entity1);
 				result = true;
+			} else if (ComponentsMapper.environmentObject.has(entity1)) {
+				onEnvironmentWithEnvironmentObject(entity0, entity1);
+				result = true;
 			}
 		} else if (ComponentsMapper.bullets.has(entity0)) {
 			if (ComponentsMapper.ground.has(entity1)) {
@@ -105,6 +108,13 @@ public class GameContactListener extends ContactListener {
 			}
 		}
 		return result;
+	}
+
+	private void onEnvironmentWithEnvironmentObject(Entity entity0, Entity entity1) {
+		PhysicsComponent characterPhysicsComponent = ComponentsMapper.physics.get(entity0);
+		if (characterPhysicsComponent.getBody().getLinearVelocity().len2() > 5f) {
+			staticEnvironmentObjectHardCollision(entity1, characterPhysicsComponent);
+		}
 	}
 
 	private void onEnvironmentObjectWithBullet(Entity env, Entity bullet) {

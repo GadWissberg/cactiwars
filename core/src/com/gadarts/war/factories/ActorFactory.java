@@ -217,7 +217,7 @@ public class ActorFactory {
 		}
 		body.setAngularFactor(0);
 		physicsComponent.recalculateLocalInertia();
-		defineBodyPhysicsCallbacks(body, CollisionFilterGroups.KinematicFilter, CollisionFilterGroups.CharacterFilter);
+		defineBodyPhysicsCallbacks(body, CollisionFilterGroups.KinematicFilter, CollisionFilterGroups.KinematicFilter);
 		body.getMotionState().getWorldTransform(auxMatrix);
 		body.setCenterOfMassTransform(auxMatrix.rotate(Vector3.Y, rotation));
 		modelInstanceComponent.getModelInstance().transform.rotate(Vector3.Y, rotation);
