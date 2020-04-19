@@ -11,7 +11,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameC;
 import com.gadarts.war.Profiler;
-import com.gadarts.war.screens.BaseGameScreen;
 import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.systems.render.RenderSystem;
 
@@ -19,7 +18,6 @@ import java.io.File;
 
 public class Hud {
 	private final RenderSystem renderSystem;
-	private final BaseGameScreen parentScreen;
 	private final Stage stage;
 	private ShaderProgram blurShaderProgram;
 	private Profiler profiler;
@@ -30,10 +28,9 @@ public class Hud {
 	private Vector2 blurMag = new Vector2(1, 1);
 	private ShaderProgram regularShaderProgram;
 
-	public Hud(RenderSystem renderSystem, BaseGameScreen parentScreen, Stage stage) {
+	public Hud(RenderSystem renderSystem, Stage stage) {
 		this.stage = stage;
 		this.renderSystem = renderSystem;
-		this.parentScreen = parentScreen;
 		stage.setDebugAll(DefaultGameSettings.DRAW_TABLES_BORDERS);
 		stage.setViewport(new ScreenViewport(stage.getCamera()));
 		profiler = new Profiler(stage, renderSystem);

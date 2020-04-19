@@ -80,7 +80,7 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 	}
 
 	private void createHud() {
-		hud = new Hud(entitiesEngine.getSystem(RenderSystem.class), this, getStage());
+		hud = new Hud(entitiesEngine.getSystem(RenderSystem.class), getStage());
 		subscribeForMenuEvents(entitiesEngine.getSystem(CharacterSystem.class));
 		subscribeForMenuEvents(entitiesEngine.getSystem(EnvironmentSystem.class));
 		ConsoleImpl actor = getStage().getRoot().findActor(ConsoleImpl.NAME);
