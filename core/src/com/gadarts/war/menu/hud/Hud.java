@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameC;
@@ -16,7 +17,10 @@ import com.gadarts.war.systems.render.RenderSystem;
 
 import java.io.File;
 
-public class Hud {
+/**
+ * Represents the UI in-game.
+ */
+public class Hud implements Disposable {
 	private final RenderSystem renderSystem;
 	private final Stage stage;
 	private ShaderProgram blurShaderProgram;
@@ -35,13 +39,6 @@ public class Hud {
 		stage.setViewport(new ScreenViewport(stage.getCamera()));
 		profiler = new Profiler(stage, renderSystem);
 		initializeBlur();
-	}
-
-
-	public void dispose() {
-		blurShaderProgram.dispose();
-		blurFrameBuffer.dispose();
-		stage.dispose();
 	}
 
 	private void initializeBlur() {
@@ -72,6 +69,12 @@ public class Hud {
 		blurShaderProgram.setUniformf(blurResolutionLocation, ((float) Gdx.graphics.getWidth()));
 	}
 
+	/**
+	 * Renders the UI and blur-effect.
+	 * Also updates the profiler if enabled.
+	 *
+	 * @param delta The time passed since last frame.
+	 */
 	public void render(float delta) {
 		if (BattleScreen.isPaused()) {
 			initializeBlurEffect();
@@ -94,5 +97,12 @@ public class Hud {
 
 	public Profiler getProfiler() {
 		return profiler;
+	}
+
+	@Override
+	public void dispose() {
+		blurShaderProgram.dispose();
+		blurFrameBuffer.dispose();
+		stage.dispose();
 	}
 }
