@@ -74,14 +74,18 @@ public class Hud {
 
 	public void render(float delta) {
 		if (BattleScreen.isPaused()) {
-			renderSystem.render(Gdx.graphics.getDeltaTime(), blurFrameBuffer);
-			applyBlur();
-			stage.getBatch().setShader(regularShaderProgram);
+			initializeBlurEffect();
 		}
 		profiler.update();
 		stage.act(delta);
 		stage.draw();
 		profiler.reset();
+	}
+
+	private void initializeBlurEffect() {
+		renderSystem.render(Gdx.graphics.getDeltaTime(), blurFrameBuffer);
+		applyBlur();
+		stage.getBatch().setShader(regularShaderProgram);
 	}
 
 	public void resize(int width, int height) {
