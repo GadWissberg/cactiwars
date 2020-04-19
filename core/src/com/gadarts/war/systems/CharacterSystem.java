@@ -12,7 +12,6 @@ import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.utils.Timer;
 import com.gadarts.shared.definitions.WeaponDefinition;
-import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameC;
 import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
@@ -25,8 +24,10 @@ import com.gadarts.war.components.physics.PhysicsComponent;
 import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.menu.hud.MenuEventsSubscriber;
 import com.gadarts.war.screens.BattleScreen;
-import com.gadarts.war.sound.SFX;
 import com.gadarts.war.sound.SoundPlayer;
+import com.gadarts.war.sound.SoundPlayerEventsSubscriber;
+import com.gadarts.war.sound.SoundTypes;
+import com.gadarts.war.sound.SoundsDefinitions;
 import com.gadarts.war.systems.physics.GameContactListenerEventsSubscriber;
 import com.gadarts.war.systems.physics.PhysicsSystem;
 
@@ -35,7 +36,8 @@ import java.util.List;
 import static com.gadarts.war.systems.physics.PhysicsSystem.auxMatrix;
 import static com.gadarts.war.systems.physics.PhysicsSystem.auxVector3_1;
 
-public class CharacterSystem extends GameEntitySystem implements MenuEventsSubscriber, GameContactListenerEventsSubscriber {
+public class CharacterSystem extends GameEntitySystem
+		implements MenuEventsSubscriber, GameContactListenerEventsSubscriber, SoundPlayerEventsSubscriber {
 	private final static Vector3 auxVector31 = new Vector3();
 	private final static Vector3 auxVector32 = new Vector3();
 	private final static Vector3 rayFrom = new Vector3();
@@ -61,6 +63,7 @@ public class CharacterSystem extends GameEntitySystem implements MenuEventsSubsc
 		this.camera = getEngine().getEntitiesFor(Family.all(CameraComponent.class).get()).first();
 		characters = engine.getEntitiesFor(Family.all(CharacterComponent.class).get());
 		engine.getSystem(PhysicsSystem.class).subscribeForCollisionEvents(this);
+		soundPlayer.subscribeForEvents(this);
 	}
 
 	@Override
@@ -75,8 +78,7 @@ public class CharacterSystem extends GameEntitySystem implements MenuEventsSubsc
 
 	private void updateCharacter(Entity character, float deltaTime) {
 		handleMovement(character);
-		if (DefaultGameSettings.ALLOW_SOUND && !DefaultGameSettings.MUTE_CHARACTERS_SOUNDS)
-			handleCharacterSound(character);
+		handleCharacterSound(character);
 		handleShooting(character);
 		List<CharacterAdditional> additionals = ComponentsMapper.characters.get(character).getAdditionals();
 		if (additionals != null) for (CharacterAdditional additional : additionals) {
@@ -105,12 +107,12 @@ public class CharacterSystem extends GameEntitySystem implements MenuEventsSubsc
 		if (additionals != null) for (CharacterAdditional additional : additionals) {
 			additional.onShoot();
 		}
-		if (!DefaultGameSettings.MUTE_CHARACTERS_SOUNDS) {
-			soundPlayer.play(MathUtils.randomBoolean() ? SFX.CANNON_SHOOT_1 : SFX.CANNON_SHOOT_2, ComponentsMapper.camera.get(camera).getCamera(), ComponentsMapper.physics.get(character).getMotionState().getWorldTranslation(auxVector31));
-		}
+		SoundsDefinitions soundsDefinitions = MathUtils.randomBoolean() ? SoundsDefinitions.CANNON_SHOOT_1 : SoundsDefinitions.CANNON_SHOOT_2;
+		soundPlayer.play(soundsDefinitions, ComponentsMapper.camera.get(camera).getCamera(), ComponentsMapper.physics.get(character).getMotionState().getWorldTranslation(auxVector31));
 	}
 
 	private void handleCharacterSound(Entity character) {
+		if (!soundPlayer.isTypeEnabled(SoundTypes.CHARACTER)) return;
 		handleCharacterSoundPitch(character);
 		handleCharacterSoundVolumeAndPan(character);
 	}
@@ -122,7 +124,7 @@ public class CharacterSystem extends GameEntitySystem implements MenuEventsSubsc
 		float value = MathUtils.clamp(0.5f + speed / characterComponent.getMaxFrontSpeed() * 0.5f, 0.6f, 1.6f);
 		if (csd.getEnginePitch() != value) {
 			csd.setEngineWorkPitch(value);
-			csd.getEngineSound().setPitch(csd.getEngineSoundId(), csd.getEnginePitch());
+			csd.getEngineSound().getSound().setPitch(csd.getEngineSoundId(), csd.getEnginePitch());
 		}
 	}
 
@@ -134,7 +136,7 @@ public class CharacterSystem extends GameEntitySystem implements MenuEventsSubsc
 		float pan = SoundPlayer.calculatePan(camera, auxVector31);
 		float dst = auxVector31.dst2(camera.position);
 		float volume = MathUtils.norm(0, 2, 10000f / (dst * dst));
-		csd.getEngineSound().setPan(csd.getEngineSoundId(), pan, volume);
+		csd.getEngineSound().getSound().setPan(csd.getEngineSoundId(), pan, volume);
 	}
 
 	private void handleMovement(Entity character) {
@@ -235,7 +237,6 @@ public class CharacterSystem extends GameEntitySystem implements MenuEventsSubsc
 
 	@Override
 	public void onMenuActivated() {
-		if (!DefaultGameSettings.ALLOW_SOUND) return;
 		for (Entity character : characters) {
 			CharacterSoundData characterSoundData = ComponentsMapper.characters.get(character).getCharacterSoundData();
 			soundPlayer.pauseSound(characterSoundData.getEngineSound(), characterSoundData.getEngineSoundId());
@@ -244,7 +245,6 @@ public class CharacterSystem extends GameEntitySystem implements MenuEventsSubsc
 
 	@Override
 	public void onMenuDeactivated() {
-		if (!DefaultGameSettings.ALLOW_SOUND) return;
 		for (Entity character : characters) {
 			CharacterSoundData characterSoundData = ComponentsMapper.characters.get(character).getCharacterSoundData();
 			soundPlayer.resumeSound(characterSoundData.getEngineSound(), characterSoundData.getEngineSoundId());
@@ -269,5 +269,15 @@ public class CharacterSystem extends GameEntitySystem implements MenuEventsSubsc
 	@Override
 	public void onBulletWithGround(Entity bullet, Entity ground) {
 		getEngine().removeEntity(bullet);
+	}
+
+	@Override
+	public void soundTypeStateChanged(SoundTypes type, boolean enabled) {
+		if (type == SoundTypes.CHARACTER && enabled) {
+			characters.forEach(character -> {
+				CharacterSoundData charSoundData = ComponentsMapper.characters.get(character).getCharacterSoundData();
+				charSoundData.setEngineSoundId(soundPlayer.play(charSoundData.getEngineSound(), true, 0));
+			});
+		}
 	}
 }

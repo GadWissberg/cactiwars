@@ -1,17 +1,17 @@
 package com.gadarts.war.components.character;
 
-import com.badlogic.gdx.audio.Sound;
+import com.gadarts.war.sound.GameSound;
 
 public class CharacterSoundData {
     private long engineSoundId = -1;
-    private Sound engineSound;
+    private GameSound engineSound;
     private float enginePitch = 1;
 
-    public Sound getEngineSound() {
+    public GameSound getEngineSound() {
         return engineSound;
     }
 
-    public void setEngineSound(Sound engineSound) {
+    public void setEngineSound(GameSound engineSound) {
         this.engineSound = engineSound;
     }
 

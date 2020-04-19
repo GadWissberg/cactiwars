@@ -41,7 +41,7 @@ public final class GameC {
 
 	public static final class ShadowMap {
 
-		public static final int SIZE = 2048;
+		public static final int SIZE = 4096;
 		public static final float VIEWPORT_SIZE = 30;
 
 		public static final Color COLOR = new Color(0.1f, 0.1f, 0.1f, 1f);

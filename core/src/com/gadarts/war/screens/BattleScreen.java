@@ -3,7 +3,6 @@ package com.gadarts.war.screens;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.audio.Sound;
 import com.gadarts.shared.console.CommandParameter;
 import com.gadarts.shared.console.Commands;
 import com.gadarts.shared.console.ConsoleCommandResult;
@@ -16,7 +15,6 @@ import com.gadarts.war.factories.ActorFactory;
 import com.gadarts.war.level.MapCreator;
 import com.gadarts.war.menu.console.ConsoleImpl;
 import com.gadarts.war.menu.hud.Hud;
-import com.gadarts.war.sound.SFX;
 import com.gadarts.war.systems.CharacterSystem;
 import com.gadarts.war.systems.EnvironmentSystem;
 import com.gadarts.war.systems.GameEntitySystem;
@@ -68,8 +66,6 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 
 	@Override
 	public void show() {
-		if (!DefaultGameSettings.MUTE_AMB_SOUNDS)
-			getSoundPlayer().play(GameAssetManager.getInstance().get(SFX.AMB_WIND.getFileName(), Sound.class), true);
 		initialize();
 	}
 

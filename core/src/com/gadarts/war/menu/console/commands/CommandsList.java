@@ -9,12 +9,15 @@ import com.gadarts.war.menu.console.commands.types.*;
 import java.util.Arrays;
 import java.util.Optional;
 
-public enum CommandsImpl implements Commands {
-	PROFILER(new ProfilerCommand(), "Toggles profiler and GL operations stats."),
-	PROFILER_2(new ProfilerCommand(), "Toggles profiler and GL operations stats."),
-	PROFILER_3(new ProfilerCommand(), "Toggles profiler and GL operations stats."),
-	PROFILER_4(new ProfilerCommand(), "Toggles profiler and GL operations stats."),
-	PROFILER_5(new ProfilerCommand(), "Toggles profiler and GL operations stats."),
+public enum CommandsList implements Commands {
+	PROFILER(new ProfilerCommand(),
+			"Toggles profiler and GL operations stats."),
+	AUDIO("sound", new AudioCommand(), "Toggles audio for given categories.",
+			new AudioCommand.AllParameter(),
+			new AudioCommand.AmbianceParameter(),
+			new AudioCommand.MenuParameter(),
+			new AudioCommand.WeaponryParameter(),
+			new AudioCommand.MiscParameter()),
 	BORDERS(new BordersCommand(), "Toggles UI components borders."),
 	SKIP_DRAWING("skip_draw", new SkipDrawingCommand(),
 			"Toggles drawing skipping mode for given categories.",
@@ -26,16 +29,16 @@ public enum CommandsImpl implements Commands {
 	HELP("?", new HelpCommand(), "Displays commands list.");
 
 	public static final String DESCRIPTION_PARAMETERS = " Parameters:%s";
-	private final ConsoleCommand command;
+	private final ConsoleCommandImpl command;
 	private final String alias;
 	private final CommandParameter[] parameters;
 	private String description;
 
-	CommandsImpl(ConsoleCommand command, String description) {
+	CommandsList(ConsoleCommandImpl command, String description) {
 		this(null, command, description);
 	}
 
-	CommandsImpl(String alias, ConsoleCommand command, String description, CommandParameter... parameters) {
+	CommandsList(String alias, ConsoleCommandImpl command, String description, CommandParameter... parameters) {
 		this.alias = alias;
 		this.command = command;
 		this.parameters = parameters;
@@ -43,12 +46,12 @@ public enum CommandsImpl implements Commands {
 		extendDescriptionWithParameters(parameters);
 	}
 
-	public static CommandsImpl findCommandByNameOrAlias(String input) throws InputParsingFailureException {
-		Optional<CommandsImpl> result;
+	public static CommandsList findCommandByNameOrAlias(String input) throws InputParsingFailureException {
+		Optional<CommandsList> result;
 		try {
 			result = Optional.of(valueOf(input));
 		} catch (IllegalArgumentException e) {
-			CommandsImpl[] values = values();
+			CommandsList[] values = values();
 			result = Arrays.stream(values).filter(command ->
 					Optional.ofNullable(command.getAlias()).isPresent() &&
 							command.getAlias().equalsIgnoreCase(input)).findFirst();
@@ -76,7 +79,7 @@ public enum CommandsImpl implements Commands {
 		return alias;
 	}
 
-	public ConsoleCommand getCommandImpl() {
+	public ConsoleCommandImpl getCommandImpl() {
 		return command;
 	}
 

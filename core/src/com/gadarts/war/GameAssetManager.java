@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.ModelLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -26,6 +25,7 @@ import com.gadarts.shared.par.*;
 import com.gadarts.shared.par.inflations.DefinitionType;
 import com.gadarts.war.GameC.Files.Font;
 import com.gadarts.war.menu.console.ConsoleImpl;
+import com.gadarts.war.sound.GameSound;
 
 import java.io.IOException;
 
@@ -37,6 +37,7 @@ public class GameAssetManager extends AssetManagerWrapper {
 	}
 
 	void loadAssets(ConsoleImpl consoleImpl) throws IOException, MainParLoadingFailureException {
+		setLoader(GameSound.class, new GameSoundLoader(getFileHandleResolver(), consoleImpl));
 		GameAssetManager gameAssetManager = GameAssetManager.getInstance();
 		tempLoading(gameAssetManager);
 		ParInflater inflater = new ParInflater();
@@ -94,7 +95,7 @@ public class GameAssetManager extends AssetManagerWrapper {
 		for (FileHandle file : internal.list()) {
 			String[] split = file.name().split("\\.");
 			if (!split[split.length - 1].equals(GameC.Files.Sound.FORMAT)) continue;
-			gameAssetManager.load(GameC.Files.Sound.FOLDER_PATH + "/" + file.name(), Sound.class);
+			gameAssetManager.load(GameC.Files.Sound.FOLDER_PATH + "/" + file.name(), GameSound.class);
 		}
 	}
 

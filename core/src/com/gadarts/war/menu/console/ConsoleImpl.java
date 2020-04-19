@@ -23,7 +23,7 @@ import com.gadarts.shared.console.Commands;
 import com.gadarts.shared.console.Console;
 import com.gadarts.shared.console.ConsoleCommandResult;
 import com.gadarts.war.menu.console.commands.CommandInvoke;
-import com.gadarts.war.menu.console.commands.CommandsImpl;
+import com.gadarts.war.menu.console.commands.CommandsList;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -105,7 +105,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 
 			private void tryFindingCommand() {
 				if (input.getText().isEmpty()) return;
-				java.util.List<CommandsImpl> options = Arrays.stream(CommandsImpl.values())
+				java.util.List<CommandsList> options = Arrays.stream(CommandsList.values())
 						.filter(command -> command.name().startsWith(input.getText().toUpperCase()))
 						.collect(toList());
 				if (options.size() == 1) {
@@ -114,7 +114,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 				} else if (options.size() > 1) logSuggestedCommands(options);
 			}
 
-			private void logSuggestedCommands(java.util.List<CommandsImpl> options) {
+			private void logSuggestedCommands(java.util.List<CommandsList> options) {
 				stringBuilder.clear();
 				options.forEach(command -> stringBuilder.append(command.name().toLowerCase()).append(OPTIONS_DELIMITER));
 				insertNewLog(String.format(MSG_SUGGESTED, stringBuilder), false);
@@ -165,7 +165,7 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 		String[] entries = text.toUpperCase().split(" ");
 		String commandName = entries[0];
 		CommandInvoke command;
-		command = new CommandInvoke(CommandsImpl.findCommandByNameOrAlias(commandName));
+		command = new CommandInvoke(CommandsList.findCommandByNameOrAlias(commandName));
 		parseParameters(entries, command);
 		return command;
 	}
@@ -254,7 +254,6 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	@Override
 	public void activate() {
 		if (active || !getActions().isEmpty()) return;
-		Gdx.app.log("!", "ACTIVATE");
 		getStage().setKeyboardFocus(getStage().getRoot().findActor(INPUT_FIELD_NAME));
 		active = true;
 		float amountY = -Gdx.graphics.getHeight() / 3f;
@@ -266,7 +265,6 @@ public class ConsoleImpl extends Table implements Console, InputProcessor {
 	@Override
 	public void deactivate() {
 		if (!active || !getActions().isEmpty()) return;
-		Gdx.app.log("!", "DEACTIVATE");
 		active = false;
 		float amountY = Gdx.graphics.getHeight() / 3f;
 		MoveByAction move = Actions.moveBy(0, amountY, TRANSITION_DURATION, Interpolation.pow2);

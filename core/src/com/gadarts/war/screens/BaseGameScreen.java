@@ -7,12 +7,12 @@ import com.gadarts.war.Profiler;
 import com.gadarts.war.menu.GameMenu;
 import com.gadarts.war.menu.console.ConsoleEventsSubscriber;
 import com.gadarts.war.menu.console.ConsoleImpl;
-import com.gadarts.war.menu.console.commands.CommandsImpl;
+import com.gadarts.war.menu.console.commands.CommandsList;
 import com.gadarts.war.menu.console.commands.types.BordersCommand;
 import com.gadarts.war.menu.console.commands.types.ProfilerCommand;
 import com.gadarts.war.menu.hud.MenuEventsSubscriber;
-import com.gadarts.war.sound.SFX;
 import com.gadarts.war.sound.SoundPlayer;
+import com.gadarts.war.sound.SoundsDefinitions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ public abstract class BaseGameScreen implements Screen, ConsoleEventsSubscriber 
 
 	public void activateMenu() {
 		menu.setVisible(true);
-		getSoundPlayer().play(SFX.MENU_SELECT);
+		getSoundPlayer().play(SoundsDefinitions.MENU_SELECT);
 		for (MenuEventsSubscriber subscriber : subscribers) {
 			subscriber.onMenuActivated();
 		}
@@ -38,7 +38,7 @@ public abstract class BaseGameScreen implements Screen, ConsoleEventsSubscriber 
 
 	public void deactivateMenu() {
 		menu.setVisible(false);
-		getSoundPlayer().play(SFX.MENU_SELECT);
+		getSoundPlayer().play(SoundsDefinitions.MENU_SELECT);
 		for (MenuEventsSubscriber subscriber : subscribers) {
 			subscriber.onMenuDeactivated();
 		}
@@ -102,9 +102,9 @@ public abstract class BaseGameScreen implements Screen, ConsoleEventsSubscriber 
 
 	protected String reactToCommand(Commands command, Profiler profiler, Stage stage) {
 		String msg = null;
-		if (command == CommandsImpl.PROFILER) {
+		if (command == CommandsList.PROFILER) {
 			msg = commandProfileExecuted(profiler);
-		} else if (command == CommandsImpl.BORDERS) {
+		} else if (command == CommandsList.BORDERS) {
 			msg = commandDrawBordersExecuted(stage);
 		}
 		return msg;

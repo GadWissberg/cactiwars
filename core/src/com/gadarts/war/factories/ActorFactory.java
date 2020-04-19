@@ -2,7 +2,6 @@ package com.gadarts.war.factories;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.Matrix4;
@@ -22,7 +21,6 @@ import com.gadarts.shared.definitions.PointLightDefinition;
 import com.gadarts.shared.definitions.WeaponDefinition;
 import com.gadarts.shared.definitions.character.CharacterAdditionalDefinition;
 import com.gadarts.shared.definitions.character.CharacterDefinition;
-import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC.Tank;
 import com.gadarts.war.components.*;
@@ -38,8 +36,9 @@ import com.gadarts.war.components.physics.shapes.btCylinderShapeWrapper;
 import com.gadarts.war.components.physics.shapes.btSphereShapeWrapper;
 import com.gadarts.war.factories.recycle.CollisionShapesPool;
 import com.gadarts.war.factories.recycle.ModelInstancesPool;
-import com.gadarts.war.sound.SFX;
+import com.gadarts.war.sound.GameSound;
 import com.gadarts.war.sound.SoundPlayer;
+import com.gadarts.war.sound.SoundsDefinitions;
 
 import java.util.List;
 
@@ -188,8 +187,7 @@ public class ActorFactory {
 	}
 
 	private void initializeCharacterSoundData(CharacterComponent characterComponent) {
-		if (!DefaultGameSettings.ALLOW_SOUND || DefaultGameSettings.MUTE_CHARACTERS_SOUNDS) return;
-		Sound engineIdleSound = GameAssetManager.getInstance().get(SFX.ENGINE.getFileName(), Sound.class);
+		GameSound engineIdleSound = GameAssetManager.getInstance().get(SoundsDefinitions.ENGINE.getFileName(), GameSound.class);
 		CharacterSoundData characterSoundData = characterComponent.getCharacterSoundData();
 		characterSoundData.setEngineSound(engineIdleSound);
 		characterSoundData.setEngineSoundId(soundPlayer.play(characterSoundData.getEngineSound(), true));

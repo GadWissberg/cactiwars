@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CommandInvoke {
-	private final CommandsImpl command;
+	private final CommandsList command;
 	private Map<String, String> parameters = new HashMap<>();
 
-	public CommandInvoke(CommandsImpl command) {
+	public CommandInvoke(CommandsList command) {
 		this.command = command;
 	}
 
-	public CommandsImpl getCommand() {
+	public CommandsList getCommand() {
 		return command;
 	}
 

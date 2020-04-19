@@ -11,8 +11,8 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.physics.MotionState;
 import com.gadarts.war.components.physics.PhysicsComponent;
-import com.gadarts.war.sound.SFX;
 import com.gadarts.war.sound.SoundPlayer;
+import com.gadarts.war.sound.SoundsDefinitions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -144,7 +144,7 @@ public class GameContactListener extends ContactListener {
 			PerspectiveCamera camera = ComponentsMapper.camera.get(this.camera).getCamera();
 			MotionState motionState = ComponentsMapper.physics.get(envObjectEntity).getMotionState();
 			Vector3 envObjectPos = motionState.getWorldTranslation(auxVector3_1);
-			soundPlayer.playRandomByDefinitions(SFX.LIGHT_METAL_CRASH_1, SFX.LIGHT_METAL_CRASH_2, camera, envObjectPos);
+			soundPlayer.playRandomByDefinitions(SoundsDefinitions.LIGHT_METAL_CRASH_1, SoundsDefinitions.LIGHT_METAL_CRASH_2, camera, envObjectPos);
 		}
 	}
 
@@ -155,7 +155,7 @@ public class GameContactListener extends ContactListener {
 			PerspectiveCamera camera = ComponentsMapper.camera.get(this.camera).getCamera();
 			MotionState motionState = ComponentsMapper.physics.get(characterEntity).getMotionState();
 			Vector3 characterPos = motionState.getWorldTranslation(auxVector3_1);
-			soundPlayer.playRandomByDefinitions(SFX.HEAVY_METAL_CRASH_1, SFX.HEAVY_METAL_CRASH_2, camera, characterPos);
+			soundPlayer.playRandomByDefinitions(SoundsDefinitions.HEAVY_METAL_CRASH_1, SoundsDefinitions.HEAVY_METAL_CRASH_2, camera, characterPos);
 		}
 	}
 
@@ -173,7 +173,7 @@ public class GameContactListener extends ContactListener {
 			subscribers.forEach(sub -> sub.onStaticEnvironmentObjectHardCollision(envEntity));
 		}
 		PerspectiveCamera camera = ComponentsMapper.camera.get(this.camera).getCamera();
-		soundPlayer.playRandomByDefinitions(SFX.HEAVY_METAL_CRASH_1, SFX.HEAVY_METAL_CRASH_2, camera, characterPhysicsComponent.getMotionState().getWorldTranslation(auxVector3_1));
+		soundPlayer.playRandomByDefinitions(SoundsDefinitions.HEAVY_METAL_CRASH_1, SoundsDefinitions.HEAVY_METAL_CRASH_2, camera, characterPhysicsComponent.getMotionState().getWorldTranslation(auxVector3_1));
 	}
 
 	public void subscribe(GameContactListenerEventsSubscriber subscriber) {

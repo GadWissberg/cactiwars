@@ -24,7 +24,7 @@ import com.gadarts.war.components.CameraComponent;
 import com.gadarts.war.components.ComponentsMapper;
 import com.gadarts.war.components.model.ModelInstanceComponent;
 import com.gadarts.war.menu.console.ConsoleEventsSubscriber;
-import com.gadarts.war.menu.console.commands.CommandsImpl;
+import com.gadarts.war.menu.console.commands.CommandsList;
 import com.gadarts.war.menu.console.commands.types.SkipDrawingCommand;
 import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.systems.GameEntitySystem;
@@ -213,11 +213,11 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 
 	@Override
 	public boolean onCommandRun(Commands command, ConsoleCommandResult consoleCommandResult, CommandParameter parameter) {
-		if (command == CommandsImpl.CEL_SHADER) {
+		if (command == CommandsList.CEL_SHADER) {
 			celRenderer.setEnabled(!celRenderer.isEnabled());
 			String msg = celRenderer.isEnabled() ? CEL_SHADING_ACTIVATED : CEL_SHADING_DEACTIVATED;
 			consoleCommandResult.setMessage(msg);
-		} else if (command == CommandsImpl.SKIP_DRAWING) {
+		} else if (command == CommandsList.SKIP_DRAWING) {
 			handleSkipDrawing(parameter);
 		}
 		return true;
