@@ -7,6 +7,7 @@ import com.gadarts.shared.console.CommandParameter;
 import com.gadarts.shared.console.Commands;
 import com.gadarts.shared.console.ConsoleCommandResult;
 import com.gadarts.shared.level.Map;
+import com.gadarts.shared.level.MapModeler;
 import com.gadarts.shared.par.SectionType;
 import com.gadarts.war.DefaultGameSettings;
 import com.gadarts.war.GameAssetManager;
@@ -109,7 +110,11 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 	private void createLevel() {
 		MapCreator mapCreator = new MapCreator(entitiesEngine);
 		String fileName = SectionType.MAP + "/" + "test";
-		mapCreator.createLevelIntoEngine(GameAssetManager.getInstance().get(fileName, Map.class), actorFactory);
+		try {
+			mapCreator.createLevelIntoEngine(GameAssetManager.getInstance().get(fileName, Map.class), actorFactory);
+		} catch (MapModeler.MapModellingException e) {
+			e.printStackTrace();
+		}
 	}
 
 

@@ -1,4 +1,4 @@
-package com.gadarts.war.factories.recycle;
+package com.gadarts.war.factories.pools;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;

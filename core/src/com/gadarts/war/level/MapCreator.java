@@ -119,7 +119,7 @@ public class MapCreator extends MapModeler {
 		return groundComponent;
 	}
 
-	public void modelLevelGround(Map map, TextureAtlas tilesAtlas) {
+	public void modelLevelGround(Map map, TextureAtlas tilesAtlas) throws MapModellingException {
 		for (int row = 0; row < SharedC.Map.LEVEL_SIZE; row++) {
 			for (int col = 0; col < SharedC.Map.LEVEL_SIZE; col++) {
 				modelGroundRegion(map, tilesAtlas, row, col);
@@ -165,7 +165,7 @@ public class MapCreator extends MapModeler {
 		}
 	}
 
-	private void modelSurroundingGround() {
+	private void modelSurroundingGround() throws MapModellingException {
 		modelHorizontalSurroundingGroundModel(SharedC.Map.LEVEL_SIZE + 2,
 				-1 * SharedC.Map.REGION_SIZE_UNIT * 2);
 		modelHorizontalSurroundingGroundModel(SharedC.Map.LEVEL_SIZE + 2,
@@ -175,7 +175,7 @@ public class MapCreator extends MapModeler {
 		modelVerticalSurroundingGroundModel(1);
 	}
 
-	private void modelVerticalSurroundingGroundModel(int x) {
+	private void modelVerticalSurroundingGroundModel(int x) throws MapModellingException {
 		for (int i = 0; i < SharedC.Map.LEVEL_SIZE; i++) {
 			int regionSize = SharedC.Map.REGION_SIZE_UNIT * 2;
 			modelGroundRegion(i * regionSize, x, regionSize, true);
@@ -183,18 +183,18 @@ public class MapCreator extends MapModeler {
 	}
 
 	@SuppressWarnings("SameParameterValue")
-	private void modelHorizontalSurroundingGroundModel(int numberOfRegions, int z) {
+	private void modelHorizontalSurroundingGroundModel(int numberOfRegions, int z) throws MapModellingException {
 		for (int i = 0; i < numberOfRegions; i++) {
 			int regionSize = SharedC.Map.REGION_SIZE_UNIT * 2;
 			modelGroundRegion(z, i - 2, regionSize, true);
 		}
 	}
 
-	private void modelGroundRegion(int z, int x, int regionSize) {
+	private void modelGroundRegion(int z, int x, int regionSize) throws MapModellingException {
 		modelGroundRegion(z, x, regionSize, false);
 	}
 
-	private void modelGroundRegion(int z, int x, int regionSize, boolean isSurrounding) {
+	private void modelGroundRegion(int z, int x, int regionSize, boolean isSurrounding) throws MapModellingException {
 		Entity ground = new Entity();
 		TextureAtlas tiles = GameAssetManager.getInstance().get(GameC.Files.TILES_ATLAS_ASSET_NAME, TextureAtlas.class);
 		boolean modelAxis = Gdx.app.getLogLevel() == Gdx.app.LOG_DEBUG && DefaultGameSettings.SHOW_AXIS && z == 0 && x == 0;
@@ -214,7 +214,7 @@ public class MapCreator extends MapModeler {
 		return modelInstanceComponent;
 	}
 
-	public void createLevelIntoEngine(Map map, ActorFactory actorFactory) {
+	public void createLevelIntoEngine(Map map, ActorFactory actorFactory) throws MapModellingException {
 		GameAssetManager assetManager = GameAssetManager.getInstance();
 		Array<TileDefinition> usedTiles = map.getUsedTiles();
 		SharedUtils.generateAtlasOfTiles(GameAssetManager.getInstance(), GameC.Files.TILES_ATLAS_ASSET_NAME, usedTiles);

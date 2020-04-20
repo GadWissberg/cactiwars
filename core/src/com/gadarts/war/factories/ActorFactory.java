@@ -20,7 +20,6 @@ import com.gadarts.shared.definitions.EnvironmentObjectDefinition;
 import com.gadarts.shared.definitions.PointLightDefinition;
 import com.gadarts.shared.definitions.WeaponDefinition;
 import com.gadarts.shared.definitions.character.CharacterAdditionalDefinition;
-import com.gadarts.shared.definitions.character.CharacterDefinition;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC.Tank;
 import com.gadarts.war.components.*;
@@ -34,8 +33,8 @@ import com.gadarts.war.components.physics.shapes.btBoxShapeWrapper;
 import com.gadarts.war.components.physics.shapes.btCapsuleShapeXWrapper;
 import com.gadarts.war.components.physics.shapes.btCylinderShapeWrapper;
 import com.gadarts.war.components.physics.shapes.btSphereShapeWrapper;
-import com.gadarts.war.factories.recycle.CollisionShapesPool;
-import com.gadarts.war.factories.recycle.ModelInstancesPool;
+import com.gadarts.war.factories.pools.AnimationControllerPool;
+import com.gadarts.war.factories.pools.ModelInstancesPool;
 import com.gadarts.war.sound.GameSound;
 import com.gadarts.war.sound.SoundPlayer;
 import com.gadarts.war.sound.SoundsDefinitions;
@@ -49,15 +48,14 @@ public class ActorFactory {
 
 	private final PooledEngine engine;
 	private final ModelInstancesPool modelInstancePool;
-	private final CollisionShapesPool collisionShapePool;
 	private final SoundPlayer soundPlayer;
 	private BoundingBox auxBndBx = new BoundingBox();
 	private static final Vector2 auxVector2_1 = new Vector2();
+	private AnimationControllerPool animationControllerPool = new AnimationControllerPool();
 
 	public ActorFactory(PooledEngine engine, SoundPlayer soundPlayer) {
 		this.engine = engine;
 		this.modelInstancePool = new ModelInstancesPool();
-		this.collisionShapePool = new CollisionShapesPool();
 		this.soundPlayer = soundPlayer;
 		GameAssetManager instance = GameAssetManager.getInstance();
 	}
@@ -77,13 +75,13 @@ public class ActorFactory {
 		CharacterComponent characterComponent = createCharacterComponent();
 		characterComponent.setCharacterDefinition(pProps.getCharacterDefinition());
 		player.add(characterComponent);
-		player.add(createPlayerPhysicsComponent(pProps.getCharacterDefinition(), pProps.getRotation(), player, mic));
-		player.add(engine.createComponent(AnimationComponent.class).init(mic.getModelInstance(), pProps.getAnimationId()));
+		player.add(createPlayerPhysicsComponent(pProps.getRotation(), player, mic));
+		player.add(engine.createComponent(AnimationComponent.class).init(animationControllerPool.obtain(pProps.getAnimationId(), mic.getModelInstance()), pProps.getAnimationId()));
 	}
 
-	private PhysicsComponent createPlayerPhysicsComponent(CharacterDefinition def, float rotation, Entity player,
+	private PhysicsComponent createPlayerPhysicsComponent(float rotation, Entity player,
 														  ModelInstanceComponent modelInstanceComponent) {
-		PhysicsComponent physicsComponent = createPhysicsComponent(def, player, modelInstanceComponent.getModelInstance(),
+		PhysicsComponent physicsComponent = createPhysicsComponent(player, modelInstanceComponent.getModelInstance(),
 				800);
 		createPlayerPhysicsBody(rotation, physicsComponent);
 		return physicsComponent;
@@ -141,12 +139,9 @@ public class ActorFactory {
 	}
 
 
-	private PhysicsComponent createPhysicsComponent(ActorDefinition def,
-													Entity userData,
-													ModelInstance modelInstance,
-													int mass) {
+	private PhysicsComponent createPhysicsComponent(Entity userData, ModelInstance modelInstance, int mass) {
 		PhysicsComponent physicsComponent = engine.createComponent(PhysicsComponent.class);
-		btCompoundShape collisionShape = obtainBtCompoundShape(def.getName());
+		btCompoundShape collisionShape = obtainBtCompoundShape();
 		physicsComponent.init(mass, collisionShape, modelInstance.transform);
 		for (int i = collisionShape.getNumChildShapes() - 1; i >= 0; i--) {
 			collisionShape.removeChildShapeByIndex(i);
@@ -158,8 +153,8 @@ public class ActorFactory {
 		return physicsComponent;
 	}
 
-	private btCompoundShape obtainBtCompoundShape(String modelFileName) {
-		return (btCompoundShape) collisionShapePool.obtain(modelFileName);
+	private btCompoundShape obtainBtCompoundShape() {
+		return Pools.obtain(btCompoundShape.class);
 	}
 
 	private ModelInstanceComponent createModelInstanceComponent(ActorDefinition def, Vector3 translation) {
@@ -198,7 +193,7 @@ public class ActorFactory {
 		ModelInstanceComponent modelInstanceComponent = createModelInstanceComponent(environmentObjectDefinition, position.x, position.y, position.z);
 		env.add(engine.createComponent(EnvironmentObjectComponent.class));
 		env.add(modelInstanceComponent);
-		PhysicsComponent physicsComponent = createPhysicsComponent(environmentObjectDefinition, env, modelInstanceComponent.getModelInstance(), isStatic ? 0 : 100);
+		PhysicsComponent physicsComponent = createPhysicsComponent(env, modelInstanceComponent.getModelInstance(), isStatic ? 0 : 100);
 		physicsComponent.setStatic(true);
 		btRigidBody body = physicsComponent.getBody();
 		btCompoundShape collisionShape = (btCompoundShape) body.getCollisionShape();
@@ -249,7 +244,7 @@ public class ActorFactory {
 		entity.add(bulletComponent);
 		Vector3 forwardVct = auxVector3_2.set(1f, 0, 0).rot(rotation);
 		ModelInstanceComponent modelComponent = addBulletModelInstanceComponent(worldTrans, weapon, forwardVct, entity);
-		entity.add(createBulletPhysics(weapon, entity, modelComponent, forwardVct));
+		entity.add(createBulletPhysics(entity, modelComponent, forwardVct));
 		addLightsToEntity(weapon.getPointLightsDefinitions(), entity);
 		engine.addEntity(entity);
 	}
@@ -265,11 +260,10 @@ public class ActorFactory {
 		return modelComponent;
 	}
 
-	private PhysicsComponent createBulletPhysics(WeaponDefinition weapon,
-												 Entity bulletEntity,
+	private PhysicsComponent createBulletPhysics(Entity bulletEntity,
 												 ModelInstanceComponent modelCmp,
 												 Vector3 direction) {
-		PhysicsComponent physicsComponent = createPhysicsComponent(weapon, bulletEntity, modelCmp.getModelInstance(), 1);
+		PhysicsComponent physicsComponent = createPhysicsComponent(bulletEntity, modelCmp.getModelInstance(), 1);
 		physicsComponent.getMotionState().setUpdateTranslationOnly(true);
 		btRigidBody body = defineBulletPhysicsBody(physicsComponent);
 		defineBulletShape(body);
