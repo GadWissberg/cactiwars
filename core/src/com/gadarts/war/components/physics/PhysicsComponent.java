@@ -28,7 +28,7 @@ public class PhysicsComponent implements Component, Pool.Poolable {
 					 boolean updateModelInstanceTranslationOnly) {
 		this.mass = mass;
 		this.collisionShape = collisionShape;
-		Vector3 translation = transform.getTranslation(ActorFactory.auxVctr);
+		Vector3 translation = transform.getTranslation(ActorFactory.auxVector);
 		motionState.setTransformationObject(transform.setTranslation(translation));
 		motionState.setUpdateTranslationOnly(updateModelInstanceTranslationOnly);
 		if (mass == 0) localInertia.setZero();

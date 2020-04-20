@@ -1,21 +1,15 @@
 package com.gadarts.war.menu.hud;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gadarts.war.DefaultGameSettings;
-import com.gadarts.war.GameC;
 import com.gadarts.war.Profiler;
 import com.gadarts.war.screens.BattleScreen;
 import com.gadarts.war.systems.render.RenderSystem;
-
-import java.io.File;
 
 /**
  * Represents the UI in-game.
@@ -23,14 +17,9 @@ import java.io.File;
 public class Hud implements Disposable {
 	private final RenderSystem renderSystem;
 	private final Stage stage;
-	private ShaderProgram blurShaderProgram;
-	private Profiler profiler;
-	private FrameBuffer blurFrameBuffer;
-	private int blurRadiusLocation;
-	private int blurDirectionLocation;
-	private int blurResolutionLocation;
-	private Vector2 blurMag = new Vector2(1, 1);
-	private ShaderProgram regularShaderProgram;
+	private final Profiler profiler;
+	private final BlurEffectHandler blurEffectData;
+	private final ShaderProgram regularShaderProgram;
 
 	public Hud(RenderSystem renderSystem, Stage stage) {
 		this.stage = stage;
@@ -38,35 +27,18 @@ public class Hud implements Disposable {
 		stage.setDebugAll(DefaultGameSettings.DRAW_TABLES_BORDERS);
 		stage.setViewport(new ScreenViewport(stage.getCamera()));
 		profiler = new Profiler(stage, renderSystem);
-		initializeBlur();
-	}
-
-	private void initializeBlur() {
 		regularShaderProgram = stage.getBatch().getShader();
-		String blurFragmentShader = Gdx.files.internal(GameC.Files.ASSETS_PATH + "shaders" + File.separator + "fragment_blur.glsl").readString();
-		String blurVertexShader = Gdx.files.internal(GameC.Files.ASSETS_PATH + "shaders" + File.separator + "vertex_blur.glsl").readString();
-		blurShaderProgram = new ShaderProgram(blurVertexShader, blurFragmentShader);
-		blurFrameBuffer = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-		blurRadiusLocation = blurShaderProgram.getUniformLocation(GameC.Menu.BlurShaderKeys.BLUR_RADIUS);
-		blurDirectionLocation = blurShaderProgram.getUniformLocation(GameC.Menu.BlurShaderKeys.BLUR_DIRECTION);
-		blurResolutionLocation = blurShaderProgram.getUniformLocation(GameC.Menu.BlurShaderKeys.BLUR_RESOLUTION);
+		blurEffectData = new BlurEffectHandler();
 	}
 
 	private void applyBlur() {
 		Batch batch = stage.getBatch();
-		batch.setShader(blurShaderProgram);
+		batch.setShader(blurEffectData.getShaderProgram());
 		batch.getProjectionMatrix().idt();
 		batch.begin();
-		setBlurUniforms(blurMag.set(35f, 0f));
-		batch.draw(blurFrameBuffer.getColorBufferTexture(), -1, 1, 2, -2);
+		blurEffectData.refreshBlurUniforms();
+		batch.draw(blurEffectData.getFrameBuffer().getColorBufferTexture(), -1, 1, 2, -2);
 		batch.end();
-	}
-
-	private void setBlurUniforms(Vector2 blur) {
-		blurShaderProgram.setUniformf(blurRadiusLocation, blurMag.len2());
-		blur.nor();
-		blurShaderProgram.setUniformf(blurDirectionLocation, blurMag.x, blurMag.y);
-		blurShaderProgram.setUniformf(blurResolutionLocation, ((float) Gdx.graphics.getWidth()));
 	}
 
 	/**
@@ -86,7 +58,7 @@ public class Hud implements Disposable {
 	}
 
 	private void initializeBlurEffect() {
-		renderSystem.render(Gdx.graphics.getDeltaTime(), blurFrameBuffer);
+		renderSystem.render(Gdx.graphics.getDeltaTime(), blurEffectData.getFrameBuffer());
 		applyBlur();
 		stage.getBatch().setShader(regularShaderProgram);
 	}
@@ -101,8 +73,7 @@ public class Hud implements Disposable {
 
 	@Override
 	public void dispose() {
-		blurShaderProgram.dispose();
-		blurFrameBuffer.dispose();
+		blurEffectData.dispose();
 		stage.dispose();
 	}
 }

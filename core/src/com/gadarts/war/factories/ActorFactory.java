@@ -5,7 +5,6 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
@@ -44,14 +43,12 @@ import java.util.List;
 import static com.gadarts.war.systems.physics.PhysicsSystem.*;
 
 public class ActorFactory {
-	public static Vector3 auxVctr = new Vector3();
-
+	public static Vector3 auxVector = new Vector3();
 	private final PooledEngine engine;
 	private final ModelInstancesPool modelInstancePool;
 	private final SoundPlayer soundPlayer;
-	private BoundingBox auxBndBx = new BoundingBox();
-	private static final Vector2 auxVector2_1 = new Vector2();
-	private AnimationControllerPool animationControllerPool = new AnimationControllerPool();
+	private final BoundingBox auxBndBx = new BoundingBox();
+	private final AnimationControllerPool animationControllerPool = new AnimationControllerPool();
 
 	public ActorFactory(PooledEngine engine, SoundPlayer soundPlayer) {
 		this.engine = engine;
@@ -94,7 +91,7 @@ public class ActorFactory {
 
 	private void definePlayerPhysicsBody(float rotation, PhysicsComponent physicsComponent, btRigidBody body) {
 		body.setDamping(0, 0.1f);
-		Vector3 halves = auxVctr.set(auxBndBx.getWidth() / 2, auxBndBx.getHeight() / 2, auxBndBx.getDepth() / 2);
+		Vector3 halves = auxVector.set(auxBndBx.getWidth() / 2, auxBndBx.getHeight() / 2, auxBndBx.getDepth() / 2);
 		createPlayerPhysicsBodyShape(body, halves);
 		physicsComponent.recalculateLocalInertia();
 		defineBodyPhysicsCallbacks(body, CollisionFilterGroups.CharacterFilter | CollisionFilterGroups.KinematicFilter, CollisionFilterGroups.CharacterFilter);
@@ -130,7 +127,7 @@ public class ActorFactory {
 		CharacterAdditional characterAdditional = Pools.obtain(CharacterAdditional.class);
 		Node additionalNode = new Node();
 		additionalNode.addChildren(additionalModelInstance.nodes);
-		Vector3 offsetCoords = additionalDefinition.getOffsetCoords(auxVctr);
+		Vector3 offsetCoords = additionalDefinition.getOffsetCoords(auxVector);
 		additionalNode.translation.add(offsetCoords.x, offsetCoords.y, offsetCoords.z);
 		parentModelInstance.nodes.add(additionalNode);
 		parentModelInstance.calculateTransforms();
@@ -203,8 +200,8 @@ public class ActorFactory {
 		} else {
 			btCylinderShape modelBody = Pools.obtain(btCylinderShapeWrapper.class);
 			btCapsuleShapeXWrapper head = Pools.obtain(btCapsuleShapeXWrapper.class);
-			modelBody.setImplicitShapeDimensions(auxVctr.set(0.1f, 2, 0.1f));
-			head.setImplicitShapeDimensions(auxVctr.set(0.2f, 0.1f, 0.1f));
+			modelBody.setImplicitShapeDimensions(auxVector.set(0.1f, 2, 0.1f));
+			head.setImplicitShapeDimensions(auxVector.set(0.2f, 0.1f, 0.1f));
 			collisionShape.addChildShape(auxMatrix.setToTranslation(0.3f, 2.2f, 0), head);
 			collisionShape.addChildShape(auxMatrix.setToTranslation(0, 0, 0), modelBody);
 		}
@@ -283,7 +280,7 @@ public class ActorFactory {
 
 	private void defineBulletShape(btRigidBody body) {
 		btSphereShape shape = Pools.obtain(btSphereShapeWrapper.class);
-		shape.setImplicitShapeDimensions(auxVctr.set(0.1f, 0.1f, 0.1f));
+		shape.setImplicitShapeDimensions(auxVector.set(0.1f, 0.1f, 0.1f));
 		btCompoundShape collisionShape = (btCompoundShape) body.getCollisionShape();
 		collisionShape.addChildShape(auxMatrix.idt().translate(0, 0, 0), shape);
 	}
