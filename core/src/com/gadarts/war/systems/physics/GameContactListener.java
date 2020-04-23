@@ -144,7 +144,7 @@ public class GameContactListener extends ContactListener {
 			PerspectiveCamera camera = ComponentsMapper.camera.get(this.camera).getCamera();
 			MotionState motionState = ComponentsMapper.physics.get(envObjectEntity).getMotionState();
 			Vector3 envObjectPos = motionState.getWorldTranslation(auxVector3_1);
-			soundPlayer.playRandomByDefinitions(SoundsDefinitions.LIGHT_METAL_CRASH_1, SoundsDefinitions.LIGHT_METAL_CRASH_2, camera, envObjectPos);
+			soundPlayer.playWithPositionRandom(SoundsDefinitions.LIGHT_METAL_CRASH_1, SoundsDefinitions.LIGHT_METAL_CRASH_2, camera, envObjectPos);
 		}
 	}
 
@@ -155,7 +155,7 @@ public class GameContactListener extends ContactListener {
 			PerspectiveCamera camera = ComponentsMapper.camera.get(this.camera).getCamera();
 			MotionState motionState = ComponentsMapper.physics.get(characterEntity).getMotionState();
 			Vector3 characterPos = motionState.getWorldTranslation(auxVector3_1);
-			soundPlayer.playRandomByDefinitions(SoundsDefinitions.HEAVY_METAL_CRASH_1, SoundsDefinitions.HEAVY_METAL_CRASH_2, camera, characterPos);
+			soundPlayer.playWithPositionRandom(SoundsDefinitions.HEAVY_METAL_CRASH_1, SoundsDefinitions.HEAVY_METAL_CRASH_2, camera, characterPos);
 		}
 	}
 
@@ -173,7 +173,7 @@ public class GameContactListener extends ContactListener {
 			subscribers.forEach(sub -> sub.onStaticEnvironmentObjectHardCollision(envEntity));
 		}
 		PerspectiveCamera camera = ComponentsMapper.camera.get(this.camera).getCamera();
-		soundPlayer.playRandomByDefinitions(SoundsDefinitions.HEAVY_METAL_CRASH_1, SoundsDefinitions.HEAVY_METAL_CRASH_2, camera, characterPhysicsComponent.getMotionState().getWorldTranslation(auxVector3_1));
+		soundPlayer.playWithPositionRandom(SoundsDefinitions.HEAVY_METAL_CRASH_1, SoundsDefinitions.HEAVY_METAL_CRASH_2, camera, characterPhysicsComponent.getMotionState().getWorldTranslation(auxVector3_1));
 	}
 
 	public void subscribe(GameContactListenerEventsSubscriber subscriber) {

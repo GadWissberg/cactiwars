@@ -108,7 +108,7 @@ public class CharacterSystem extends GameEntitySystem
 			additional.onShoot();
 		}
 		SoundsDefinitions soundsDefinitions = MathUtils.randomBoolean() ? SoundsDefinitions.CANNON_SHOOT_1 : SoundsDefinitions.CANNON_SHOOT_2;
-		soundPlayer.play(soundsDefinitions, ComponentsMapper.camera.get(camera).getCamera(), ComponentsMapper.physics.get(character).getMotionState().getWorldTranslation(auxVector31));
+		soundPlayer.playWithPosition(soundsDefinitions, ComponentsMapper.camera.get(camera).getCamera(), ComponentsMapper.physics.get(character).getMotionState().getWorldTranslation(auxVector31));
 	}
 
 	private void handleCharacterSound(Entity character) {

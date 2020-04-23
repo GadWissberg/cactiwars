@@ -29,23 +29,6 @@ public class SoundPlayer {
 		return (value < 0 ? -1 : 1) * MathUtils.norm(value >= 0 ? 0 : 0, value >= 0 ? 15f : -15f, value);
 	}
 
-	public long play(SoundsDefinitions sound) {
-		return play(sound, false);
-	}
-
-	public long play(GameSound sound, boolean loop) {
-		return play(sound, loop, null, null);
-	}
-
-	public long play(GameSound sound, boolean loop, float volume) {
-		return play(sound, loop, null, null, volume);
-	}
-
-	public long play(SoundsDefinitions sound, boolean loop) {
-		GameSound gameSound = GameAssetManager.getInstance().get(sound.getFileName(), GameSound.class);
-		return play(gameSound, loop, null, null);
-	}
-
 	public void pauseSound(SoundsDefinitions sound) {
 		pauseSound(GameAssetManager.getInstance().get(sound.getFileName(), GameSound.class));
 	}
@@ -79,36 +62,53 @@ public class SoundPlayer {
 		resumeSound(GameAssetManager.getInstance().get(sound.getFileName(), GameSound.class));
 	}
 
-	public long playRandomByDefinitions(SoundsDefinitions sound1, SoundsDefinitions sound2, PerspectiveCamera camera, Vector3 soundSourcePosition) {
+	public long play(SoundsDefinitions sound) {
+		return play(sound, false);
+	}
+
+	public long play(SoundsDefinitions sound, boolean loop) {
+		GameSound gameSound = GameAssetManager.getInstance().get(sound.getFileName(), GameSound.class);
+		return play(gameSound, loop, 1);
+	}
+
+	public long play(GameSound sound, boolean loop) {
+		return play(sound, loop, 1);
+	}
+
+	public long play(GameSound sound, boolean loop, float volume) {
+		return playGameSound(sound, loop, volume, 1);
+	}
+
+	public long playWithPositionRandom(SoundsDefinitions sound1,
+									   SoundsDefinitions sound2,
+									   PerspectiveCamera camera,
+									   Vector3 soundSourcePosition) {
 		SoundsDefinitions soundsDefinition = MathUtils.randomBoolean() ? sound1 : sound2;
-		return play(soundsDefinition, camera, soundSourcePosition);
+		return playWithPosition(soundsDefinition, camera, soundSourcePosition);
 	}
 
 
-	public long play(SoundsDefinitions soundDef, PerspectiveCamera camera, Vector3 soundSourcePosition) {
+	public long playWithPosition(SoundsDefinitions soundDef, PerspectiveCamera camera, Vector3 soundSourcePosition) {
 		GameSound gameSound = GameAssetManager.getInstance().get(soundDef.getFileName(), GameSound.class);
-		return play(gameSound, false, camera, soundSourcePosition);
+		return playWithPosition(gameSound, false, camera, soundSourcePosition);
 	}
 
-	private long play(GameSound gameSound,
-					  boolean loop,
-					  PerspectiveCamera camera,
-					  Vector3 soundSourcePosition) {
-		return play(gameSound, loop, camera, soundSourcePosition, 1f);
-	}
-
-	private long play(GameSound gameSound,
-					  boolean loop,
-					  PerspectiveCamera camera,
-					  Vector3 soundSourcePosition,
-					  float givenVolume) {
+	private long playWithPosition(GameSound gameSound,
+								  boolean loop,
+								  PerspectiveCamera camera,
+								  Vector3 soundSourcePosition) {
 		if (!typesEnabled.get(gameSound.getDefinition().getType())) return -1;
 		boolean dynamicSound = camera != null && soundSourcePosition != null;
-		float volume = dynamicSound ? calculateVolume(camera, soundSourcePosition) : givenVolume;
+		float volume = dynamicSound ? calculateVolume(camera, soundSourcePosition) : 1;
 		float pan = dynamicSound ? calculatePan(camera, soundSourcePosition) : 0f;
-		Sound sound = gameSound.getSound();
-		long id = loop ? sound.loop(volume, 1, pan) : sound.play(volume, MathUtils.random(0.8f, 1.2f), pan);
+		long id = playGameSound(gameSound, loop, volume, pan);
 		return id;
+	}
+
+	private long playGameSound(GameSound gameSound, boolean loop, float volume, float pan) {
+		if (!typesEnabled.get(gameSound.getDefinition().getType())) return -1;
+		Sound sound = gameSound.getSound();
+		return loop ? sound.loop(volume, 1, pan) : sound.play(volume, MathUtils.random(0.8f, 1.2f), pan);
 	}
 
 	private float calculateVolume(PerspectiveCamera camera, Vector3 soundSourcePosition) {
