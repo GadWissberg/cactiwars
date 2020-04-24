@@ -33,6 +33,22 @@
     "type": "environment",
     "entries": [
       {
+        "name": "building_1",
+        "display_name": "Building #1",
+        "collision_shapes": [],
+        "static": true,
+        "model": "building_1",
+        "texture": "building_1_texture_1"
+      },
+      {
+        "name": "building_2",
+        "display_name": "Building #2",
+        "collision_shapes": [],
+        "static": true,
+        "model": "building_1",
+        "texture": "building_1_texture_2"
+      },
+      {
         "name": "street_lamp",
         "display_name": "Street Lamp",
         "collision_shapes": [],
@@ -43,8 +59,8 @@
         "light_sources": {
           "point_lights": [
             {
-              "intensity": 5,
-              "offset_parent_y": 2
+              "intensity": 0.1,
+              "offset_parent_y": 0
             }
           ],
           "stop_on_move": true

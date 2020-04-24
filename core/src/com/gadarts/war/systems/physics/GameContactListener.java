@@ -54,23 +54,6 @@ public class GameContactListener extends ContactListener {
 //        return match0 || match1;
 //    }
 
-	private void checkCollisionOnContactAdded(btCollisionObject colObj0, btCollisionObject colObj1, int id0, int id1) {
-		Entity entity0 = (Entity) colObj0.userData;
-		Entity entity1 = (Entity) colObj1.userData;
-		if (entity0 == null || entity1 == null) return;
-		if (ComponentsMapper.characters.has(entity0)) {
-			if (colObj1.userData != null) {
-				if (ComponentsMapper.ground.has(entity1)) {
-					onContactAddedForCharacterWithGround(entity0, entity1);
-				}
-			}
-		}
-	}
-
-	private void onContactAddedForCharacterWithGround(Entity character, Entity ground) {
-		ComponentsMapper.characters.get(character);
-		ComponentsMapper.ground.get(ground).getFrictionMapping();
-	}
 
 	private boolean checkCollisionOnContactStarted(btCollisionObject filterMatched, btCollisionObject match) {
 		boolean result = false;

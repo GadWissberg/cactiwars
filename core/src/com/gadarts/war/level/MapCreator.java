@@ -115,7 +115,6 @@ public class MapCreator extends MapModeler {
 
 	private GroundComponent createGroundComponent() {
 		GroundComponent groundComponent = getEntitiesEngine().createComponent(GroundComponent.class);
-		groundComponent.init(true);
 		return groundComponent;
 	}
 
@@ -152,6 +151,7 @@ public class MapCreator extends MapModeler {
 		modelInstance.transform.setToTranslation(auxVector31.set(originColUnits, 0, originRowUnits));
 		modelInstanceComponent.init(modelInstance);
 		ground.add(modelInstanceComponent);
+		ground.add(engine.createComponent(GroundComponent.class));
 		engine.addEntity(ground);
 	}
 
@@ -178,7 +178,7 @@ public class MapCreator extends MapModeler {
 	private void modelVerticalSurroundingGroundModel(int x) throws MapModellingException {
 		for (int i = 0; i < SharedC.Map.LEVEL_SIZE; i++) {
 			int regionSize = SharedC.Map.REGION_SIZE_UNIT * 2;
-			modelGroundRegion(i * regionSize, x, regionSize, true);
+			modelGroundRegion(i * regionSize, x, regionSize);
 		}
 	}
 
@@ -186,20 +186,17 @@ public class MapCreator extends MapModeler {
 	private void modelHorizontalSurroundingGroundModel(int numberOfRegions, int z) throws MapModellingException {
 		for (int i = 0; i < numberOfRegions; i++) {
 			int regionSize = SharedC.Map.REGION_SIZE_UNIT * 2;
-			modelGroundRegion(z, i - 2, regionSize, true);
+			modelGroundRegion(z, i - 2, regionSize);
 		}
 	}
 
 	private void modelGroundRegion(int z, int x, int regionSize) throws MapModellingException {
-		modelGroundRegion(z, x, regionSize, false);
-	}
-
-	private void modelGroundRegion(int z, int x, int regionSize, boolean isSurrounding) throws MapModellingException {
 		Entity ground = new Entity();
 		TextureAtlas tiles = GameAssetManager.getInstance().get(GameC.Files.TILES_ATLAS_ASSET_NAME, TextureAtlas.class);
 		boolean modelAxis = Gdx.app.getLogLevel() == Gdx.app.LOG_DEBUG && DefaultGameSettings.SHOW_AXIS && z == 0 && x == 0;
 		Model region = modelGroundRegion(modelAxis, tiles, regionSize, "grass_a");
 		ground.add(createGroundRegionModelInstanceComponent(z, x, region, regionSize));
+		ground.add(getEntitiesEngine().createComponent(GroundComponent.class));
 		getEntitiesEngine().addEntity(ground);
 	}
 

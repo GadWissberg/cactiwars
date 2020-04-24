@@ -4,6 +4,7 @@ import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.ModelLoader;
+import com.badlogic.gdx.assets.loaders.TextureLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
@@ -88,6 +89,11 @@ public class GameAssetManager extends AssetManagerWrapper {
 		gameAssetManager.addGameAsset(new GameAsset(SectionType.MDL + "/menu_dec_saguaro", loader.loadModel(Gdx.files.getFileHandle(GameC.Files.MODELS_FOLDER_NAME + "/" + "menu_dec_saguaro.g3dj", Files.FileType.Internal)), SectionType.MDL));
 		gameAssetManager.addGameAsset(new GameAsset(SectionType.MDL + "/menu_dec_prickly", loader.loadModel(Gdx.files.getFileHandle(GameC.Files.MODELS_FOLDER_NAME + "/" + "menu_dec_prickly.g3dj", Files.FileType.Internal)), SectionType.MDL));
 		gameAssetManager.addGameAsset(new GameAsset(SectionType.MDL + "/cannon_ball", loader.loadModel(Gdx.files.getFileHandle(GameC.Files.MODELS_FOLDER_NAME + "/" + "cannon_ball.g3dj", Files.FileType.Internal)), SectionType.MDL));
+		gameAssetManager.addGameAsset(new GameAsset(SectionType.MDL + "/building_1", loader.loadModel(Gdx.files.getFileHandle(GameC.Files.MODELS_FOLDER_NAME + "/" + "building_1.g3dj", Files.FileType.Internal)), SectionType.MDL));
+		TextureLoader.TextureParameter par = new TextureLoader.TextureParameter();
+		par.genMipMaps = true;
+		gameAssetManager.load(Gdx.files.getFileHandle(GameC.Files.MODELS_FOLDER_NAME + "/" + "building_1_texture_1.png", Files.FileType.Internal).path(), Texture.class, par);
+		gameAssetManager.load(Gdx.files.getFileHandle(GameC.Files.MODELS_FOLDER_NAME + "/" + "building_1_texture_2.png", Files.FileType.Internal).path(), Texture.class, par);
 	}
 
 	private void loadSounds(GameAssetManager gameAssetManager) {

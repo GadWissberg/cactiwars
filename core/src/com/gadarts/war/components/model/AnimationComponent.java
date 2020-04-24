@@ -14,7 +14,7 @@ public class AnimationComponent implements Component, Pool.Poolable {
 
 	public AnimationComponent init(AnimationController animationController, String animationId) {
 		this.animationController = animationController;
-		animationController.setAnimation(animationId, -1, 0.5f, new AnimationController.AnimationListener() {
+		animationController.setAnimation(animationId, -1, 0.1f, new AnimationController.AnimationListener() {
 			@Override
 			public void onEnd(AnimationController.AnimationDesc animationDesc) {
 

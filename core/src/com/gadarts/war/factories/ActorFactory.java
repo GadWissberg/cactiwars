@@ -2,16 +2,18 @@ package com.gadarts.war.factories;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.Files;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
-import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
+import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.physics.bullet.collision.btBroadphaseProxy.CollisionFilterGroups;
-import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
-import com.badlogic.gdx.physics.bullet.collision.btCylinderShape;
-import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.utils.Pools;
 import com.gadarts.shared.definitions.ActorDefinition;
@@ -20,6 +22,7 @@ import com.gadarts.shared.definitions.PointLightDefinition;
 import com.gadarts.shared.definitions.WeaponDefinition;
 import com.gadarts.shared.definitions.character.CharacterAdditionalDefinition;
 import com.gadarts.war.GameAssetManager;
+import com.gadarts.war.GameC;
 import com.gadarts.war.GameC.Tank;
 import com.gadarts.war.components.*;
 import com.gadarts.war.components.character.CharacterAdditional;
@@ -190,12 +193,20 @@ public class ActorFactory {
 		ModelInstanceComponent modelInstanceComponent = createModelInstanceComponent(environmentObjectDefinition, position.x, position.y, position.z);
 		env.add(engine.createComponent(EnvironmentObjectComponent.class));
 		env.add(modelInstanceComponent);
-		PhysicsComponent physicsComponent = createPhysicsComponent(env, modelInstanceComponent.getModelInstance(), isStatic ? 0 : 100);
+		ModelInstance modelInstance = modelInstanceComponent.getModelInstance();
+		PhysicsComponent physicsComponent = createPhysicsComponent(env, modelInstance, isStatic ? 0 : 100);
 		physicsComponent.setStatic(true);
 		btRigidBody body = physicsComponent.getBody();
 		btCompoundShape collisionShape = (btCompoundShape) body.getCollisionShape();
 		if (isStatic) {
-			btSphereShape modelBody = Pools.obtain(btSphereShapeWrapper.class);
+			btCollisionShape modelBody;
+			if (environmentObjectDefinition.getName().equals("building_1") || environmentObjectDefinition.getName().equals("building_2")) {
+				modelBody = new btBoxShape(new Vector3(1, 4, 3));
+			} else if (environmentObjectDefinition.getName().equals("rock_1")) {
+				modelBody = Pools.obtain(btSphereShapeWrapper.class);
+			} else {
+				modelBody = new btSphereShape(0.4f);
+			}
 			collisionShape.addChildShape(auxMatrix.setToTranslation(0, 0, 0), modelBody);
 		} else {
 			btCylinderShape modelBody = Pools.obtain(btCylinderShapeWrapper.class);
@@ -210,7 +221,16 @@ public class ActorFactory {
 		defineBodyPhysicsCallbacks(body, CollisionFilterGroups.KinematicFilter, CollisionFilterGroups.KinematicFilter);
 		body.getMotionState().getWorldTransform(auxMatrix);
 		body.setCenterOfMassTransform(auxMatrix.rotate(Vector3.Y, rotation));
-		modelInstanceComponent.getModelInstance().transform.rotate(Vector3.Y, rotation);
+		modelInstance.transform.rotate(Vector3.Y, rotation);
+		String texture = environmentObjectDefinition.getTexture();
+		if (texture != null) {
+			for (Material material : modelInstance.materials) {
+				if (material.has(TextureAttribute.Diffuse)) {
+					TextureAttribute attribute = (TextureAttribute) material.get(TextureAttribute.Diffuse);
+					attribute.textureDescription.texture = GameAssetManager.getInstance().get(Gdx.files.getFileHandle(GameC.Files.MODELS_FOLDER_NAME + "/" + texture + ".png", Files.FileType.Internal).path(), Texture.class);
+				}
+			}
+		}
 		env.add(physicsComponent);
 		addLightsToEntity(pointLightsDefinitions, env);
 		return env;

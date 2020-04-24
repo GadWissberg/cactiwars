@@ -37,7 +37,7 @@ public class LightsSystem extends GameEntitySystem implements PhysicsSystemEvent
 		lights = engine.getEntitiesFor(Family.all(PointLightComponent.class).get());
 		engine.addEntityListener(this);
 		environment = new Environment();
-		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.3f, 0.3f, 0.3f, 1f));
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
 	}
 
 	@Override
