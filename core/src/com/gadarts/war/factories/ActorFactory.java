@@ -202,6 +202,8 @@ public class ActorFactory {
 			btCollisionShape modelBody;
 			if (environmentObjectDefinition.getName().equals("building_1") || environmentObjectDefinition.getName().equals("building_2")) {
 				modelBody = new btBoxShape(new Vector3(1, 4, 3));
+			} else if (environmentObjectDefinition.getName().equals("building_3") || environmentObjectDefinition.getName().equals("building_4")) {
+				modelBody = new btBoxShape(new Vector3(2, 4, 3));
 			} else if (environmentObjectDefinition.getName().equals("rock_1")) {
 				modelBody = Pools.obtain(btSphereShapeWrapper.class);
 			} else {

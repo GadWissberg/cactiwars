@@ -28,14 +28,13 @@ public class CameraSystem extends GameEntitySystem implements PlayerSystemEvents
 	private static final Vector3 auxVector34 = new Vector3();
 	public static final int DISTANCE_WHEN_MOVING = 4;
 	public static final int MAX_CAMERA_NORTH = -2;
-	public static final int MAX_CAMERA_SOUTH = 15;
+	public static final int MAX_CAMERA_SOUTH = 10;
 	public static final int CAMERA_ZOOM_DELAY = 1000;
 	public static final int DEGREES_OF_DISTANCE_VECTOR_WHEN_MOVING = 45;
 	public static final int DEGREES_OF_DISTANCE_VECTOR_NOT_MOVING = 90;
 	public static final int CAMERA_MIN_DISTANCE = 2;
 	private static final float CAMERA_Z_RELATIVE_OFFSET = 4;
 	private static final Vector3 auxVector35 = new Vector3();
-	private static final float MIN_DISTANCE_TO_TARGET = 20;
 	private CameraInputController debugInputProcessor;
 	private Entity cameraEntity;
 	private long lastZoomChange;

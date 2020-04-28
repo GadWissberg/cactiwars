@@ -49,6 +49,22 @@
         "texture": "building_1_texture_2"
       },
       {
+        "name": "building_3",
+        "display_name": "Building #3",
+        "collision_shapes": [],
+        "static": true,
+        "model": "building_2",
+        "texture": "building_2_texture_1"
+      },
+      {
+        "name": "building_4",
+        "display_name": "Building #4",
+        "collision_shapes": [],
+        "static": true,
+        "model": "building_2",
+        "texture": "building_2_texture_2"
+      },
+      {
         "name": "street_lamp",
         "display_name": "Street Lamp",
         "collision_shapes": [],

@@ -7289,7 +7289,7 @@
       "textures": [
         {
           "id": "Texture 1",
-          "filename": "building_1_texture_1.png",
+          "filename": "building_1_texture_2.png",
           "type": "DIFFUSE"
         }
       ]
@@ -7321,7 +7321,7 @@
       "textures": [
         {
           "id": "Texture 1",
-          "filename": "building_1_texture_1.png",
+          "filename": "building_1_texture_2.png",
           "type": "DIFFUSE"
         }
       ]
