@@ -38,9 +38,9 @@ import java.util.Optional;
 public class RenderSystem extends GameEntitySystem implements PhysicsSystemEventsSubscriber, EntityListener, CelRendererUser, ConsoleEventsSubscriber {
 	private static final String CEL_SHADING_ACTIVATED = "Cel-shading enabled.";
 	private static final String CEL_SHADING_DEACTIVATED = "Cel-shading disabled.";
-	private static Vector3 auxVector31 = new Vector3();
-	private static Vector3 auxVector32 = new Vector3();
-	private static BoundingBox auxBoundingBox1 = new BoundingBox();
+	private static final Vector3 auxVector31 = new Vector3();
+	private static final Vector3 auxVector32 = new Vector3();
+	private static final BoundingBox auxBoundingBox1 = new BoundingBox();
 
 	private ModelBatch modelBatch;
 	private PerspectiveCamera camera;

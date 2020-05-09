@@ -156,7 +156,7 @@ public class MapCreator extends MapModeler {
 	}
 
 	private Material getMaterial(Map map, int row, int col, TextureAtlas tilesAtlas) {
-		String name = map.getUsedTiles().get(map.getPath()[row][col]).getTileName();
+		String name = map.getUsedTiles().get(map.getPathMap()[row][col]).getRegionName();
 		if (materials.containsKey(name)) return materials.get(name);
 		else {
 			Material material = obtainGroundMaterial(tilesAtlas, name);
