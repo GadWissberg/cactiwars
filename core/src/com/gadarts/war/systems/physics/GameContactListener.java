@@ -42,19 +42,6 @@ public class GameContactListener extends ContactListener {
 		}
 	}
 
-//    @Override
-//    public boolean onContactAdded(btCollisionObject colObj0, int partId0, int index0, boolean match0,
-//                                  btCollisionObject colObj1, int partId1, int index1, boolean match1) {
-//        if (match0) {
-//            checkCollisionOnContactAdded(colObj0, colObj1, index0, index1);
-//        }
-//        if (match1) {
-//            checkCollisionOnContactAdded(colObj1, colObj0, index1, index0);
-//        }
-//        return match0 || match1;
-//    }
-
-
 	private boolean checkCollisionOnContactStarted(btCollisionObject filterMatched, btCollisionObject match) {
 		boolean result = false;
 		Entity entity0 = (Entity) filterMatched.userData;

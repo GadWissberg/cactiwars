@@ -105,6 +105,7 @@ public class BattleScreen extends BaseGameScreen implements InGameScreen {
 
 	private void createWorld() {
 		createLevel();
+		entitiesEngine.getSystem(RenderSystem.class).onWorldInitialized();
 	}
 
 	private void createLevel() {

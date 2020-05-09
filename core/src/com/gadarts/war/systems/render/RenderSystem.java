@@ -9,9 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
@@ -36,6 +34,7 @@ import com.gadarts.war.systems.render.shadow.ShadowRenderer;
 import java.util.Optional;
 
 public class RenderSystem extends GameEntitySystem implements PhysicsSystemEventsSubscriber, EntityListener, CelRendererUser, ConsoleEventsSubscriber {
+
 	private static final String CEL_SHADING_ACTIVATED = "Cel-shading enabled.";
 	private static final String CEL_SHADING_DEACTIVATED = "Cel-shading disabled.";
 	private static final Vector3 auxVector31 = new Vector3();
@@ -52,6 +51,7 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 	private boolean drawCharacters = !DefaultGameSettings.SKIP_CHARACTER_DRAWING;
 	private boolean drawEnvironment = !DefaultGameSettings.SKIP_ENV_OBJECT_DRAWING;
 	private Environment environment;
+	private ModelCache modelCache;
 
 	public static void resetDisplay(Color color) {
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -74,6 +74,7 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 		shadowRenderer = new ShadowRenderer(environment);
 		engine.addEntityListener(this);
 		celRenderer.initialize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		modelCache = new ModelCache();
 	}
 
 
@@ -101,9 +102,16 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 			animate(deltaTime, entity);
 			if (isVisible(camera, entity))
 				if (!shouldSkipRender(entity))
-					if (renderGround || !ComponentsMapper.ground.has(entity))
+					if ((renderGround || !ComponentsMapper.ground.has(entity)) && !isStaticEntity(entity))
 						renderInstance(batch, environment, modelInstance);
 		}
+		renderInstance(batch, environment, modelCache);
+	}
+
+	private boolean isStaticEntity(Entity entity) {
+		return (ComponentsMapper.physics.has(entity)
+				&& ComponentsMapper.physics.get(entity).isStatic())
+				|| (ComponentsMapper.ground.has(entity));
 	}
 
 	private void animate(float deltaTime, Entity entity) {
@@ -112,9 +120,9 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 		}
 	}
 
-	private void renderInstance(ModelBatch batch, Environment environment, ModelInstance modelInstance) {
-		if (environment != null) batch.render(modelInstance, environment);
-		else batch.render(modelInstance);
+	private void renderInstance(ModelBatch batch, Environment environment, RenderableProvider renderableProvider) {
+		if (environment != null) batch.render(renderableProvider, environment);
+		else batch.render(renderableProvider);
 		renderingDebugHandler.inc();
 	}
 
@@ -156,6 +164,7 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 		modelBatch.dispose();
 		shadowRenderer.dispose();
 		celRenderer.dispose();
+		modelCache.dispose();
 	}
 
 	public int getNumberOfVisible() {
@@ -169,7 +178,7 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 
 	@Override
 	public void onEnvironmentObjectStaticValueChange(boolean b, Entity entity) {
-
+		cacheStaticModels();
 	}
 
 
@@ -248,5 +257,19 @@ public class RenderSystem extends GameEntitySystem implements PhysicsSystemEvent
 	@Override
 	public void onConsoleDeactivated() {
 
+	}
+
+	public void onWorldInitialized() {
+		cacheStaticModels();
+	}
+
+	private void cacheStaticModels() {
+		modelCache.begin();
+		modelInstanceEntities.forEach(entity -> {
+			if (isStaticEntity(entity)) {
+				modelCache.add(ComponentsMapper.modelInstance.get(entity).getModelInstance());
+			}
+		});
+		modelCache.end();
 	}
 }
