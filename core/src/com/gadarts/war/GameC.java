@@ -67,6 +67,7 @@ public final class GameC {
 
 				public static final int BIG = 80;
 				public static final int MED = 40;
+				public static final int SMALL = 15;
 			}
 		}
 
@@ -75,15 +76,6 @@ public final class GameC {
 			public static final String FOLDER_PATH = ASSETS_PATH + "sounds";
 			public static final String FORMAT = "wav";
 		}
-	}
-
-	public final class Camera {
-
-		public static final float MAX_X_FRONT_OFFSET = 5;
-		public static final float MAX_Z_FRONT_OFFSET = 10f;
-		public static final float MIN_Z_FRONT_OFFSET = 5;
-		public static final float MAX_ZOOM_DISTANCE = 150;
-		public static final float MIN_ZOOM_DISTANCE = 50;
 	}
 
 	public final class Profiler {

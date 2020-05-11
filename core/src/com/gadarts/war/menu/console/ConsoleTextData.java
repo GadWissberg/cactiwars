@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.StringBuilder;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.gadarts.war.GameAssetManager;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 public class ConsoleTextData implements Disposable {
 	private static final String TIME_COLOR = "SKY";
-	private final BitmapFont font = new BitmapFont();
+	private final BitmapFont font;
 	private final float fontHeight;
 	private Stage stage;
 	private StringBuilder stringBuilder = new StringBuilder();
@@ -24,6 +25,7 @@ public class ConsoleTextData implements Disposable {
 	private Label.LabelStyle textStyle;
 
 	public ConsoleTextData() {
+		font = GameAssetManager.getInstance().get("consola.ttf", BitmapFont.class);
 		font.getData().markupEnabled = true;
 		textStyle = new Label.LabelStyle(font, Color.WHITE);
 		GlyphLayout layout = new GlyphLayout();

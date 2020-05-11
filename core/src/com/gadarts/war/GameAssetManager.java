@@ -51,7 +51,7 @@ public class GameAssetManager extends AssetManagerWrapper {
 	private void tempLoading(GameAssetManager gameAssetManager) {
 		temp_loadModels(gameAssetManager);
 		loadSounds(gameAssetManager);
-		loadFonts(gameAssetManager);
+		tempLoadFonts(gameAssetManager);
 	}
 
 	private void createAtlases() {
@@ -108,20 +108,19 @@ public class GameAssetManager extends AssetManagerWrapper {
 		}
 	}
 
-	private void loadFonts(GameAssetManager gameAssetManager) {
-		FileHandleResolver resolver = new InternalFileHandleResolver();
-		gameAssetManager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
-		gameAssetManager.setLoader(BitmapFont.class, Font.FORMAT, new FreetypeFontLoader(resolver));
+	private void tempLoadFonts(GameAssetManager gameAssetManager) {
 		FreetypeFontLoader.FreeTypeFontLoaderParameter params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
 		params.fontFileName = Font.FOLDER_PATH + "/" + "cactus." + Font.FORMAT;
 		params.fontParameters.size = Font.Size.BIG;
 		defineFontParameters(params);
 		gameAssetManager.load("cactus_big.ttf", BitmapFont.class, params);
+
 		params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
 		params.fontFileName = Font.FOLDER_PATH + "/" + "cactus." + Font.FORMAT;
 		params.fontParameters.size = Font.Size.MED;
 		defineFontParameters(params);
 		gameAssetManager.load("cactus_med.ttf", BitmapFont.class, params);
+
 	}
 
 	private void defineFontParameters(FreetypeFontLoader.FreeTypeFontLoaderParameter params) {
@@ -135,4 +134,16 @@ public class GameAssetManager extends AssetManagerWrapper {
 		params.fontParameters.kerning = true;
 	}
 
+	public void loadInitialAssets() {
+		FileHandleResolver resolver = new InternalFileHandleResolver();
+		setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
+		FreetypeFontLoader loader = new FreetypeFontLoader(resolver);
+		setLoader(BitmapFont.class, Font.FORMAT, loader);
+
+		FreetypeFontLoader.FreeTypeFontLoaderParameter params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+		params.fontFileName = Font.FOLDER_PATH + "/" + "consola." + Font.FORMAT;
+		params.fontParameters.size = Font.Size.SMALL;
+		load("consola.ttf", BitmapFont.class, params);
+		finishLoading();
+	}
 }

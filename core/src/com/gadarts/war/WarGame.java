@@ -28,12 +28,14 @@ public class WarGame extends Game implements ConsoleEventsSubscriber {
 	@Override
 	public void create() {
 		try {
+			GameAssetManager gameAssetManager = GameAssetManager.getInstance();
+			gameAssetManager.loadInitialAssets();
 			Gdx.input.setInputProcessor(new InputMultiplexer());
 			consoleImpl = new ConsoleImpl();
 			consoleImpl.subscribeForEvents(this);
 			BaseGameScreen gameScreen = DefaultGameSettings.INITIAL_SCREEN.getScreenClass().newInstance();
 			gameScreen.getStage().addActor(consoleImpl);
-			GameAssetManager.getInstance().loadAssets(consoleImpl);
+			gameAssetManager.loadAssets(consoleImpl);
 			createMenu();
 			setScreen(gameScreen);
 		} catch (IOException | IllegalAccessException | InstantiationException e) {
