@@ -82,7 +82,7 @@ public class GameContactListener extends ContactListener {
 
 	private void onEnvironmentWithEnvironmentObject(Entity entity0, Entity entity1) {
 		PhysicsComponent characterPhysicsComponent = ComponentsMapper.physics.get(entity0);
-		if (characterPhysicsComponent.getBody().getLinearVelocity().len2() > 5f) {
+		if (characterPhysicsComponent.getBody().getLinearVelocity().len2() > 3f) {
 			staticEnvironmentObjectHardCollision(entity1, characterPhysicsComponent);
 		}
 	}
@@ -133,7 +133,9 @@ public class GameContactListener extends ContactListener {
 		PhysicsComponent characterPhysicsComponent = ComponentsMapper.physics.get(characterEntity);
 		btRigidBody characterBody = characterPhysicsComponent.getBody();
 		PhysicsComponent envPhysicsComponent = ComponentsMapper.physics.get(envEntity);
-		if (characterBody.getLinearVelocity().len2() * characterPhysicsComponent.getMass() > envPhysicsComponent.getMass()) {
+		int envMass = envPhysicsComponent.getMass();
+		int charMass = characterPhysicsComponent.getMass();
+		if (characterBody.getLinearVelocity().len2() * charMass > (envMass == 0 ? charMass * 4 : envMass)) {
 			staticEnvironmentObjectHardCollision(envEntity, characterPhysicsComponent);
 		}
 	}

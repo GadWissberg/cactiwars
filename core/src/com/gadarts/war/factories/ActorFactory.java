@@ -174,7 +174,7 @@ public class ActorFactory {
 		CharacterComponent characterComponent = engine.createComponent(CharacterComponent.class);
 		characterComponent.init(Tank.MAX_FRONT_SPEED, Tank.ACCELERATION,
 				Tank.MAX_REVERSE_SPEED, Tank.REVERSE_ACCELERATION);
-		characterComponent.setGroundCrashThreshold(7.5f);
+		characterComponent.setGroundCrashThreshold(15);
 		characterComponent.setDeceleration(Tank.DECELERATION);
 		characterComponent.setRotationDefinition(Tank.ROTATION);
 		initializeCharacterSoundData(characterComponent);
