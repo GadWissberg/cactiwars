@@ -14,7 +14,7 @@ public final class DefaultGameSettings {
 	public static final boolean DRAW_TABLES_BORDERS = false;
 	public static final int FPS_TARGET = 60;
 	public static final boolean CEL_SHADING = true;
-	public static final boolean ALLOW_SOUND = true;
+	public static final boolean ALLOW_SOUND = false;
 	public static final Screens INITIAL_SCREEN = Screens.BATTLE;
 	public static final boolean SKIP_GROUND_DRAWING = false;
 	public static final boolean SKIP_CHARACTER_DRAWING = false;

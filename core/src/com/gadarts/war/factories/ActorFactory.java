@@ -18,13 +18,14 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.utils.Pools;
 import com.gadarts.shared.definitions.ActorDefinition;
 import com.gadarts.shared.definitions.EnvironmentObjectDefinition;
-import com.gadarts.shared.definitions.PointLightDefinition;
 import com.gadarts.shared.definitions.WeaponDefinition;
 import com.gadarts.shared.definitions.character.CharacterAdditionalDefinition;
 import com.gadarts.war.GameAssetManager;
 import com.gadarts.war.GameC;
 import com.gadarts.war.GameC.Tank;
-import com.gadarts.war.components.*;
+import com.gadarts.war.components.BulletComponent;
+import com.gadarts.war.components.EnvironmentObjectComponent;
+import com.gadarts.war.components.PlayerComponent;
 import com.gadarts.war.components.character.CharacterAdditional;
 import com.gadarts.war.components.character.CharacterComponent;
 import com.gadarts.war.components.character.CharacterSoundData;
@@ -57,7 +58,6 @@ public class ActorFactory {
 		this.engine = engine;
 		this.modelInstancePool = new ModelInstancesPool();
 		this.soundPlayer = soundPlayer;
-		GameAssetManager instance = GameAssetManager.getInstance();
 	}
 
 	public Entity createPlayer(PlayerProperties playerProperties) {
@@ -188,7 +188,7 @@ public class ActorFactory {
 		characterSoundData.setEngineSoundId(soundPlayer.play(characterSoundData.getEngineSound(), true));
 	}
 
-	public Entity createEnvironmentObject(EnvironmentObjectDefinition environmentObjectDefinition, Vector3 position, boolean isStatic, float rotation, List<PointLightDefinition> pointLightsDefinitions) {
+	public Entity createEnvironmentObject(EnvironmentObjectDefinition environmentObjectDefinition, Vector3 position, boolean isStatic, float rotation) {
 		Entity env = engine.createEntity();
 		ModelInstanceComponent modelInstanceComponent = createModelInstanceComponent(environmentObjectDefinition, position.x, position.y, position.z);
 		env.add(engine.createComponent(EnvironmentObjectComponent.class));
@@ -234,27 +234,7 @@ public class ActorFactory {
 			}
 		}
 		env.add(physicsComponent);
-		addLightsToEntity(pointLightsDefinitions, env);
 		return env;
-	}
-
-	private void addLightsToEntity(List<PointLightDefinition> pointLightsDefinitions, Entity entity) {
-		LightEmitterComponent lightEmitterComponent = engine.createComponent(LightEmitterComponent.class);
-		if (pointLightsDefinitions != null && pointLightsDefinitions.size() > 0) {
-			for (PointLightDefinition pointLightDefinition : pointLightsDefinitions) {
-				lightEmitterComponent.addSourceLight(createPointLight(entity, pointLightDefinition));
-			}
-		}
-		entity.add(lightEmitterComponent);
-	}
-
-	private Entity createPointLight(Entity parent, PointLightDefinition pointLightDefinition) {
-		Entity pointLight = engine.createEntity();
-		PointLightComponent component = engine.createComponent(PointLightComponent.class);
-		pointLight.add(component);
-		component.init(pointLightDefinition, parent);
-		engine.addEntity(pointLight);
-		return pointLight;
 	}
 
 	public void createBullet(Matrix4 rotation, Vector3 worldTrans, WeaponDefinition weapon) {
@@ -264,7 +244,6 @@ public class ActorFactory {
 		Vector3 forwardVct = auxVector3_2.set(1f, 0, 0).rot(rotation);
 		ModelInstanceComponent modelComponent = addBulletModelInstanceComponent(worldTrans, weapon, forwardVct, entity);
 		entity.add(createBulletPhysics(entity, modelComponent, forwardVct));
-		addLightsToEntity(weapon.getPointLightsDefinitions(), entity);
 		engine.addEntity(entity);
 	}
 

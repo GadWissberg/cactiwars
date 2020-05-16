@@ -243,7 +243,7 @@ public class MapCreator extends MapModeler {
 				EnvironmentObjectDefinition environmentObjectDefinition = (EnvironmentObjectDefinition) actorDefinition;
 				Entity lamp = actorFactory.createEnvironmentObject(environmentObjectDefinition,
 						auxVector31.set(position.x - origin.x, position.y - origin.y, position.z - origin.z),
-						environmentObjectDefinition.isStatic(), actor.getRotation(), environmentObjectDefinition.getPointLightsDefinitions());
+						environmentObjectDefinition.isStatic(), actor.getRotation());
 				entitiesEngine.addEntity(lamp);
 			}
 
